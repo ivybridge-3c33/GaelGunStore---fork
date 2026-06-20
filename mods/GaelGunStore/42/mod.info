@@ -1,9 +1,9 @@
-name=GaelGunStore-Firearms
-id=GaelGunStore_B42
+name=GaelGunStore-Firearms (Fork)
+id=GaelGunStore_B42_fork
 author=Pen-Pen Pirulin
 modversion=1.1
 versionMin=42.17
 poster=poster.png
 icon=logo.png
 
-description=
+description=Local fork with B42 fixes (reload anim, model placeholders, Base.xxx item names).
