@@ -10,7 +10,7 @@
 	<m_Conditions>
 		<m_Name>FireMode</m_Name>
 		<m_Type>STRING</m_Type>
-		<m_Value>REX5Single</m_Value>
+		<m_StringValue>REX5Single</m_StringValue>
 	</m_Conditions>
 	<m_Transitions>
 		<m_Target>Idlerex5</m_Target>

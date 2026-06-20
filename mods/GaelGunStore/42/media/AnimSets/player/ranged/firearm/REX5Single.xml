@@ -10,12 +10,12 @@
 	<m_Conditions>
 		<m_Name>Weapon</m_Name>
 		<m_Type>STRING</m_Type>
-		<m_Value>firearm</m_Value>
+		<m_StringValue>firearm</m_StringValue>
 	</m_Conditions>
 	<m_Conditions>
 		<m_Name>FireMode</m_Name>
 		<m_Type>STRING</m_Type>
-		<m_Value>REX5Single</m_Value>
+		<m_StringValue>REX5Single</m_StringValue>
 	</m_Conditions>
 	<m_2DBlends>
 		<m_XPos>-0.21</m_XPos>

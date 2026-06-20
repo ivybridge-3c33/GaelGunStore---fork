@@ -11,17 +11,17 @@
 	<m_Conditions>
 		<m_Name>Lean_Left</m_Name>
 		<m_Type>BOOL</m_Type>
-		<m_Value>true</m_Value>
+		<m_BoolValue>true</m_BoolValue>
 	</m_Conditions>
 	<m_Conditions>
 		<m_Name>PerformingAction</m_Name>
 		<m_Type>STRING</m_Type>
-		<m_Value>Aiming</m_Value>
+		<m_StringValue>Aiming</m_StringValue>
 	</m_Conditions>
 	<m_Conditions>
 		<m_Name>WeaponAimType</m_Name>
 		<m_Type>STRING</m_Type>
-		<m_Value>Lean_Left</m_Value>
+		<m_StringValue>Lean_Left</m_StringValue>
 	</m_Conditions>
 </animNode>
 

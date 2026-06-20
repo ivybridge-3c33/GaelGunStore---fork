@@ -10,12 +10,12 @@
 	<m_Conditions>
 		<m_Name>isTurning90</m_Name>
 		<m_Type>BOOL</m_Type>
-		<m_Value>false</m_Value>
+		<m_BoolValue>false</m_BoolValue>
 	</m_Conditions>
 	<m_Conditions>
 		<m_Name>isTurningAround</m_Name>
 		<m_Type>BOOL</m_Type>
-		<m_Value>false</m_Value>
+		<m_BoolValue>false</m_BoolValue>
 	</m_Conditions>
 	<m_2DBlends referenceID="1">
 		<m_AnimName>Bob_Idle</m_AnimName>
@@ -53,7 +53,7 @@
 		<m_Conditions>
 			<m_Name>isTurningAround</m_Name>
 			<m_Type>BOOL</m_Type>
-			<m_Value>false</m_Value>
+			<m_BoolValue>false</m_BoolValue>
 		</m_Conditions>
 	</m_Transitions>
 	<m_Transitions>
@@ -64,7 +64,7 @@
 		<m_Conditions>
 			<m_Name>isTurningAround</m_Name>
 			<m_Type>BOOL</m_Type>
-			<m_Value>false</m_Value>
+			<m_BoolValue>false</m_BoolValue>
 		</m_Conditions>
 		<m_Conditions>
 			<m_Name>walkinjury</m_Name>
@@ -74,7 +74,7 @@
 		<m_Conditions>
 			<m_Name>isOverEncumbered</m_Name>
 			<m_Type>BOOL</m_Type>
-			<m_Value>false</m_Value>
+			<m_BoolValue>false</m_BoolValue>
 		</m_Conditions>
 	</m_Transitions>
 	<m_Transitions>
@@ -85,7 +85,7 @@
 		<m_Conditions>
 			<m_Name>isTurningAround</m_Name>
 			<m_Type>BOOL</m_Type>
-			<m_Value>false</m_Value>
+			<m_BoolValue>false</m_BoolValue>
 		</m_Conditions>
 		<m_Conditions>
 			<m_Name>walkinjury</m_Name>
@@ -95,7 +95,7 @@
 		<m_Conditions>
 			<m_Name>isOverEncumbered</m_Name>
 			<m_Type>BOOL</m_Type>
-			<m_Value>false</m_Value>
+			<m_BoolValue>false</m_BoolValue>
 		</m_Conditions>
 	</m_Transitions>
 	<m_Transitions>
@@ -123,7 +123,7 @@
 		<m_Conditions>
 			<m_Name>isTurningAround</m_Name>
 			<m_Type>BOOL</m_Type>
-			<m_Value>false</m_Value>
+			<m_BoolValue>false</m_BoolValue>
 		</m_Conditions>
 		<m_Conditions>
 			<m_Name>walkinjury</m_Name>
@@ -136,7 +136,7 @@
 		<m_Conditions>
 			<m_Name>isOverEncumbered</m_Name>
 			<m_Type>BOOL</m_Type>
-			<m_Value>true</m_Value>
+			<m_BoolValue>true</m_BoolValue>
 		</m_Conditions>
 	</m_Transitions>
 	<m_Transitions>
@@ -146,7 +146,7 @@
 		<m_Conditions>
 			<m_Name>isTurningAround</m_Name>
 			<m_Type>BOOL</m_Type>
-			<m_Value>false</m_Value>
+			<m_BoolValue>false</m_BoolValue>
 		</m_Conditions>
 		<m_Conditions>
 			<m_Name>walkinjury</m_Name>
@@ -159,7 +159,7 @@
 		<m_Conditions>
 			<m_Name>isOverEncumbered</m_Name>
 			<m_Type>BOOL</m_Type>
-			<m_Value>true</m_Value>
+			<m_BoolValue>true</m_BoolValue>
 		</m_Conditions>
 	</m_Transitions>
 </animNode>
