@@ -1,4 +1,5 @@
 ﻿ItemName_AR  =  {
+    ItemName_Base.Minigun = "Minigun"
 
     ItemName_Base.BulletPressTool = "Prensa para fabricar balas"
     ItemName_Base.GunCleaningTools = "Herramientas para limpiar armas"
