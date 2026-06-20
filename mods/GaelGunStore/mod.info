@@ -1,5 +1,6 @@
 name=GaelGunStore-Firearms (Fork)
 id=GaelGunStore_B42_fork
+require=AWCWF_42
 author=ai
 credit=Pen-Pen Pirulin
 modversion=1.1
