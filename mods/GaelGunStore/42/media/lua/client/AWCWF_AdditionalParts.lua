@@ -143,14 +143,30 @@ AWCWF_AdditionalParts.getWeaponPart = function(orig)
     end
 end
 
-AWCWF_AdditionalParts.RemoveAllRealPart = function(orig)
-    return function(item)
+-- RemoveAllRealPart is defined by the AWCWF framework, not by the base game.
+-- This file overrides the framework's AWCWF_AdditionalParts.lua, so the method
+-- would otherwise never be defined: patchClassMetaMethod only wraps EXISTING
+-- methods, so the patch below was silently skipped and the framework's
+-- AWCWF_RenderPart.lua called handweapon:RemoveAllRealPart() on nil every frame
+-- (thousands of errors, broken held-weapon render = "body snaps" when firing).
+-- Define it directly as a no-op ("simplificado, sin limpieza de partes").
+AWCWF_AdditionalParts.RemoveAllRealPart = function(item)
+    return
+end
+
+local function defineClassMethod(class, methodName, func)
+    if not __classmetatables then
         return
     end
+    local metatable = __classmetatables[class]
+    if not metatable or not metatable.__index then
+        return
+    end
+    metatable.__index[methodName] = func
 end
 
 patchClassMetaMethod(zombie.inventory.types.HandWeapon.class, "setWeaponPart", AWCWF_AdditionalParts.setWeaponPart)
 patchClassMetaMethod(zombie.inventory.types.HandWeapon.class, "getWeaponPart", AWCWF_AdditionalParts.getWeaponPart)
-patchClassMetaMethod(zombie.inventory.types.HandWeapon.class, "RemoveAllRealPart", AWCWF_AdditionalParts.RemoveAllRealPart)
+defineClassMethod(zombie.inventory.types.HandWeapon.class, "RemoveAllRealPart", AWCWF_AdditionalParts.RemoveAllRealPart)
 
 debugAttach("[GGS AttachDBG] AWCWF_AdditionalParts simplificado cargado (modData sync, sin limpieza de partes).")
