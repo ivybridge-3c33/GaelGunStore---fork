@@ -1,0 +1,158 @@
+module Base
+{
+/****************************** 45 ******************************/
+    item Bullets45
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        Count	=	5,
+        Weight	=	0.01,
+        Tags = base:ammo,
+        DisplayName = Bullets45,
+        Icon	=	45ACPBullet,
+        MetalValue = 1,
+        WorldStaticModel = 9mmRounds,
+    }
+    item Bullets45Box
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        Weight	=	0.1,
+        
+        DisplayName = Bullets45Box,
+        Icon	=	Bullets45Box,
+        MetalValue = 30,
+        WorldStaticModel = BoxOf45Auto,
+        PlaceOneSound = BoxOfRoundsPlaceOne,
+        PlaceMultipleSound = BoxOfRoundsPlaceAll,
+        DoubleClickRecipe = OpenBoxofBullets45,
+    }
+    model Bullets45Box{
+        mesh = Ammo/Bullets45Box,
+        texture = GunTexture/Ammo45,
+    }
+    item Bullets45Carton
+    {
+        DisplayCategory = Ammo,
+        ItemType = base:normal,
+        Weight = 12.5,
+        Icon = Parcel_Medium_Ammo,
+        AlwaysWelcomeGift = true,
+        MetalValue = 300.0,
+        PlaceMultipleSound = BoxOfRoundsPlaceAll,
+        PlaceOneSound = BoxOfRoundsPlaceOne,
+        WorldStaticModel = Parcel_Ammo_Medium,
+        Tags = base:hasmetal;base:ignorezombiedensity,
+        DoubleClickRecipe = OpenAmmoCarton12,
+    }
+    item 45Clip
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.1,
+        
+        DisplayName = 45Clip,
+        Icon	=	45Clip,
+        MaxAmmo = 12,
+        AmmoType = base:bullets_45,
+        StaticModel = GunMagazine,
+        GunType = Base.Pistol2,
+        WorldStaticModel = Clip_45Clip_Ground,
+    }
+    model Clip_45Clip_Ground
+    {
+            mesh = Ammo/WorldItems|45Clip,
+    	    texture = GunTexture/45Clip_tex,
+    }
+    item 45Clip25
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.1,
+        
+        DisplayName = 45Clip25,
+        Icon	=	45Clip25,
+        MaxAmmo = 25,
+        AmmoType = base:bullets_45,
+        StaticModel = GunMagazine,
+        GunType = Base.UMP45,
+        WorldStaticModel = Clip_45Clip25_Ground,
+    }
+    model Clip_45Clip25_Ground
+    {
+            mesh = Ammo/WorldItems|45Clip25,
+    	    texture = GunTexture/45Clip25_tex,
+    }
+    item 45Clip30old
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.1,
+        
+        DisplayName	=	.45 Auto Magazine 30 round,
+        Icon	=	45Clip30old,
+        MaxAmmo = 30,
+        AmmoType = base:bullets_45,
+        StaticModel = GunMagazine,
+        GunType = Base.UMP45,
+        WorldStaticModel = Clip_45Clip30old,
+    }
+    item 45Drum60old
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.1,
+        
+        DisplayName	=	.45 Auto Drum 60 round,
+        Icon	=	45Drum50,
+        MaxAmmo = 60,
+        AmmoType = base:bullets_45,
+        StaticModel = GunMagazine,
+        GunType = Base.UMP45,
+        WorldStaticModel = Clip_45Drum60old,
+    }
+    item 45Drum50
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.1,
+        
+        DisplayName = 45Drum50,
+        Icon	=	45Drum50,
+        MaxAmmo = 50,
+        AmmoType = base:bullets_45,
+        StaticModel = GunMagazine,
+        GunType = Base.UMP45,
+        WorldStaticModel = Clip_45Drum50_Ground,
+    }
+    model Clip_45Drum50_Ground
+    {
+            mesh = Ammo/WorldItems|45Drum50,
+    	    texture = GunTexture/45Drum50_tex,
+    }
+    item 45Drum100
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.1,
+        
+        DisplayName = 45Drum100,
+        Icon	=	45Drum100,
+        MaxAmmo = 100,
+        AmmoType = base:bullets_45,
+        StaticModel = GunMagazine,
+        GunType = Base.UMP45,
+        WorldStaticModel = Clip_45Drum100_Ground,
+    }
+    model Clip_45Drum100_Ground
+    {
+            mesh = Ammo/WorldItems|45Drum100,
+    	    texture = GunTexture/45Drum100_tex,
+    }
+}

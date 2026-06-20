@@ -1,0 +1,113 @@
+module Base
+{
+/****************************** 545x39 ******************************/
+    item 545x39Bullets
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        Count	=	5,
+        Weight	=	0.015,
+        AlwaysWelcomeGift	=	TRUE,
+        Tags = base:ammo,
+        DisplayName = 545x39Bullets,
+        Icon	=	545x39Bullet,
+        MetalValue = 1,
+        WorldStaticModel = RifleAmmo,
+    }
+    item 545x39Box
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        Count   =   30,
+        AmmoType = ggs:545x39_bullets,
+        Weight	=	0.2,
+        AlwaysWelcomeGift	=	TRUE,
+        
+        DisplayName = 545x39Box,
+        Icon	=	Bullets545x39Box,
+        MetalValue = 40,
+        WorldStaticModel = Bullets545x39Box,
+        PlaceOneSound = BoxOfRoundsPlaceOne,
+        PlaceMultipleSound = BoxOfRoundsPlaceAll,
+        DoubleClickRecipe = OpenBoxof545x39Bullets,
+    }
+    
+    model Bullets545x39Box{
+        mesh = Ammo/Bullets545x39Box,
+        texture = GunTexture/Ammo50AE,
+    }
+    item 545x39Carton
+    {
+        DisplayCategory = Ammo,
+        ItemType = base:normal,
+        Weight = 9.0,
+        Icon = Parcel_Medium_Ammo,
+        AlwaysWelcomeGift = true,
+        MetalValue = 300.0,
+        PlaceMultipleSound = BoxOfRoundsPlaceAll,
+        PlaceOneSound = BoxOfRoundsPlaceOne,
+        WorldStaticModel = Parcel_Ammo_Medium,
+        Tags = base:hasmetal;base:ignorezombiedensity,
+        DoubleClickRecipe = OpenAmmoCarton12,
+    }
+    item 545x39Clip30
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.1,
+        
+        DisplayName	=	.545x39 Magazine 30 rounds,
+        Icon	=	545x39Clip30,
+        MaxAmmo = 30,
+        AmmoType = ggs:545x39_bullets,
+        StaticModel = GunMagazine,
+        GunType = Base.AK74,
+        WorldStaticModel = 545x39Clip30_Ground,
+    }
+    model 545x39Clip30_Ground
+    {
+            mesh = Ammo/WorldItems|545x39Clip30,
+    	    texture = GunTexture/545x39Clip30_tex,
+    }
+    item 545x39Clip60
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.1,
+        
+        DisplayName = 545x39Clip60,
+        Icon	=	545x39Clip60,
+        MaxAmmo = 60,
+        AmmoType = ggs:545x39_bullets,
+        StaticModel = GunMagazine,
+        GunType = Base.AK74,
+        WorldStaticModel = 545x39Clip60_Ground,
+    }
+    model 545x39Clip60_Ground
+    {
+            mesh = Ammo/WorldItems|545x39Clip60,
+    	    texture = GunTexture/545x39Clip60_tex,
+    }
+    item 545x39Drum100
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.1,
+        
+        DisplayName = 545x39Drum100,
+        Icon	=	545x39Drum100,
+        MaxAmmo = 100,
+        AmmoType = ggs:545x39_bullets,
+        StaticModel = GunMagazine,
+        GunType = Base.AK74,
+        WorldStaticModel = 545x39Drum100_Ground,
+    }
+    model 545x39Drum100_Ground
+    {
+            mesh = Ammo/WorldItems|545x39Drum100,
+    	    texture = GunTexture/545x39Drum100_tex,
+    }
+}

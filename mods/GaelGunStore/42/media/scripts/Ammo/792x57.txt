@@ -1,0 +1,114 @@
+module Base
+{
+/****************************** 792x57 ******************************/
+    item 792x57Bullets
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        Count	=	5,
+        Weight	=	0.02,
+        AlwaysWelcomeGift	=	TRUE,
+        Tags = base:ammo,
+        DisplayName = 792x57Bullets,
+        Icon	=	792x57Bullets,
+        MetalValue = 1,
+        WorldStaticModel = RifleAmmo,
+    }
+    item 792x57Box
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        Count   =   20,
+        AmmoType = ggs:792x57_bullets,
+        Weight	=	0.3,
+        AlwaysWelcomeGift	=	TRUE,
+        
+        DisplayName = 792x57Box,
+        Icon	=	792x57Box,
+        MetalValue = 40,
+        WorldStaticModel = 792x57Box,
+        PlaceOneSound = BoxOfRoundsPlaceOne,
+        PlaceMultipleSound = BoxOfRoundsPlaceAll,
+        DoubleClickRecipe = OpenBoxof792x57Bullets,
+    }
+    model 792x57Box{
+        mesh = Ammo/792x57Box,
+        texture = GunTexture/Ammo357,
+    }
+    item 792x57Carton
+    {
+        DisplayCategory = Ammo,
+        ItemType = base:normal,
+        Weight = 11.0,
+        Icon = Parcel_Medium_Military,
+        AlwaysWelcomeGift = true,
+        MetalValue = 400.0,
+        PlaceMultipleSound = BoxOfRoundsPlaceAll,
+        PlaceOneSound = BoxOfRoundsPlaceOne,
+        WorldStaticModel = Parcel_Military_Medium,
+        Tags = base:hasmetal;base:ignorezombiedensity,
+        DoubleClickRecipe = OpenAmmoCarton12,
+    }
+	item 792x57Clip
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.1,
+        
+        DisplayName = 792x57Clip,
+        Icon	=	792x57Clip,
+        MaxAmmo = 10,
+        AmmoType = ggs:792x57_bullets,
+        StaticModel = GunMagazine,
+        GunType = Base.SVD;Base.SVU;Base.SVT40;Base.SV98,
+        WorldStaticModel = 792x57Clip_Ground,
+    }
+    model 792x57Clip_Ground
+    {
+            mesh = Ammo/WorldItems|792x57Clip,
+    	    texture = GunTexture/SVT_40_tex,
+    }
+
+
+    item 792x57Box75
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.1,
+        
+        DisplayName	=	792x57Box75,
+        Icon	=	792x57Box75,
+        MaxAmmo = 75,
+        AmmoType = ggs:792x57_bullets,
+        StaticModel = GunMagazine,
+        GunType = Base.Lewis,
+        WorldStaticModel = 792x57Box75_Ground,
+    }
+    model 792x57Box75_Ground
+    {
+            mesh = Ammo/WorldItems|792x57Box75,
+    	    texture = GunTexture/Lewis_tex,
+    }
+    item 792x57Box97
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.1,
+        
+        DisplayName	=	792x57Box97,
+        Icon	=	792x57Box97,
+        MaxAmmo = 97,
+        AmmoType = ggs:792x57_bullets,
+        StaticModel = GunMagazine,
+        GunType = Base.MG42,
+        WorldStaticModel = 792x57Box97_Ground,
+    }
+    model 792x57Box97_Ground
+    {
+            mesh = Ammo/WorldItems|792x57Box97,
+    	    texture = GunTexture/MG42_tex,
+    }
+}

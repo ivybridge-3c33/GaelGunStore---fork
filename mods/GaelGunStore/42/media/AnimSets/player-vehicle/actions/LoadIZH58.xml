@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animNode x_extends="LoadDblBarrel.xml">
+	<m_Name>LoadIZH58</m_Name>
+	<m_Conditions x_name="41f93782-2532-4b18-8458-e96b6651a101">
+		<m_Value>doublebarrelizh58</m_Value>
+	</m_Conditions>
+	<m_Events x_name="cb9d1cf6-aecf-403e-a008-cbf23ead7e74">
+		<m_ParameterValue>IZH58_OPEN</m_ParameterValue>
+	</m_Events>
+</animNode>

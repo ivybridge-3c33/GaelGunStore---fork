@@ -1,0 +1,7 @@
+﻿UI_PTBR = {
+UI_optionscreen_binding_KeySetting_AWCWF = "Configurações Avançadas de Armas",
+UI_optionscreen_binding_LauchGrenadelauncherat = "Lançar Dispositivo Acoplado",
+UI_optionscreen_binding_OpenWindownCat = "Abrir Painel de Armas",
+UI_optionscreen_binding_GunLineDown = "Mudar Postura Tática",
+UI_optionscreen_binding_SwtichLightSet = "Mudar Modo de Iluminação",
+}

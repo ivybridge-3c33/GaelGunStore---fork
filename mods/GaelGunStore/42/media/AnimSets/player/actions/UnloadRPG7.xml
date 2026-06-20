@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animNode x_extends="LoadRPG7.xml">
+	<m_Name>UnloadRPG7</m_Name>
+	<m_Conditions x_name="f9e242c0-330f-4f15-bad9-02b57ed1871a">
+		<m_Name>isUnloading</m_Name>
+	</m_Conditions>
+	<m_Events x_name="6cebeb54-6ac1-477b-bbf0-1359c72ed039">
+		<m_EventName>unloadFinished</m_EventName>
+	</m_Events>
+	<m_Events x_name="3aaf10b4-c1ad-4dff-94be-9d19a2a9f918">
+		<m_TimePc>0.1</m_TimePc>
+		<m_ParameterValue>unload</m_ParameterValue>
+	</m_Events>
+	<m_Events x_name="8a5860e2-dddb-41f0-b085-2d60204d9999">
+		<m_EventName>playReloadSound</m_EventName>
+		<m_ParameterValue>ejectAmmoStart</m_ParameterValue>
+	</m_Events>
+</animNode>

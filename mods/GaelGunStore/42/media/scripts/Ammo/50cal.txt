@@ -1,0 +1,94 @@
+module Base
+{
+/****************************** 50 ******************************/
+    item Bullets50
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        Count	=	5,
+        Weight	=	0.02,
+        AlwaysWelcomeGift	=	TRUE,
+        Tags = base:ammo,
+        DisplayName	=	Bullets50,
+        Icon	=	Bullets50,
+        MetalValue = 1,
+        WorldStaticModel = RifleAmmo,
+    }
+    item Bullets50Box
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        Count   =   20,
+        AmmoType = ggs:bullets_50,
+        Weight	=	0.6,
+        AlwaysWelcomeGift	=	TRUE,
+        
+        DisplayName	=	Bullets50Box,
+        Icon	=	Bullets50Box,
+        MetalValue = 40,
+        WorldStaticModel = Bullets50Box,
+        PlaceOneSound = BoxOfRoundsPlaceOne,
+        PlaceMultipleSound = BoxOfRoundsPlaceAll,
+        DoubleClickRecipe = OpenBoxofBullets50,
+    }
+    item Bullets50CalCarton
+    {
+        DisplayCategory = Ammo,
+        ItemType = base:normal,
+        Weight = 18.0,
+        Icon = Parcel_Medium_Ammo,
+        AlwaysWelcomeGift = true,
+        MetalValue = 300.0,
+        PlaceMultipleSound = BoxOfRoundsPlaceAll,
+        PlaceOneSound = BoxOfRoundsPlaceOne,
+        WorldStaticModel = Parcel_Ammo_Medium,
+        Tags = base:hasmetal;base:ignorezombiedensity,
+        DoubleClickRecipe = OpenAmmoCarton12,
+    }
+    model Bullets50Box{
+        mesh = Ammo/Bullets50Box,
+        texture = GunTexture/Ammo50,
+    }
+    item 50Clip
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.5,
+        
+        InsertAllBulletsLoad		= TRUE,
+        DisplayName = 50Clip,
+        Icon	=	50Clip,
+        MaxAmmo = 10,
+        AmmoType = ggs:bullets_50,
+        StaticModel = GunMagazine,
+        GunType = Base.M82A3,
+        WorldStaticModel = Clip_50Clip_Ground,
+    }
+    model Clip_50Clip_Ground
+    {
+            mesh = Ammo/WorldItems|50Clip,
+    	    texture = GunTexture/M82A3_tex,
+    }
+    item 50Clip18
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.5,
+        
+        InsertAllBulletsLoad		= TRUE,
+        DisplayName = 50Clip18,
+        Icon	=	50Clip18,
+        MaxAmmo = 18,
+        AmmoType = ggs:bullets_50,
+        StaticModel = GunMagazine,
+        GunType = Base.M82A3,
+        WorldStaticModel = Clip_50Clip18_Ground,
+    }
+    model Clip_50Clip18_Ground
+    {
+            mesh = Ammo/WorldItems|50Clip18,
+    	    texture = GunTexture/M82A3_tex,
+    }
+}

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animNode x_extends="RackDblBarrel.xml">
+	<m_Name>RackIZH58Sawn</m_Name>
+	<m_Conditions x_name="41f93782-2532-4b18-8458-e96b6651a101">
+		<m_Value>doublebarrelizh58sawn</m_Value>
+	</m_Conditions>
+</animNode>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fileGuidTable>
+	<files>
+		<path>media/clothing/clothingItems/Primitive_Quiver.xml</path>
+		<guid>1dd93f3-afe5-4c8e-b00b-e135a678489b8</guid>
+	</files>
+	<files>
+		<path>media/clothing/clothingItems/tactical_Quiver.xml</path>
+		<guid>272fd877-7e50-4f8f-8161-f2887a6e4570</guid>
+	</files>
+	<files>
+		<path>media/clothing/clothingItems/tactical_Quiver_woodland.xml</path>
+		<guid>bdaed9bb-9453-42eb-9c78-37ad9042d86d</guid>
+	</files>
+	<files>
+		<path>media/clothing/clothingItems/decorated_Quiver.xml</path>
+		<guid>ca8c0250-323a-40cc-abb0-e81ff0cc8f5e</guid>
+	</files>
+</fileGuidTable>

@@ -1,0 +1,139 @@
+module Base
+{
+	model FemaleBody
+	{
+		mesh = Skinned/FemaleBody,
+
+
+		attachment REX5Bow_Back
+		{
+			offset = -0.0210 -0.0010 0.0000,
+			rotate = -35.0000 -17.0000 -57.0000,
+			bone = Bip01_BackPack,
+		}
+
+		attachment REX5_BowSlot
+		{
+			offset = 0.2260 0.0070 -0.0320,
+			rotate = 179.0000 10.0000 90.0000,
+			bone = Bip01_Spine1,
+		}
+
+		attachment REX5_Quiver
+		{
+			offset = 0.3240 -0.2320 -0.1900,
+			rotate = -157.0000 9.0000 176.0000,
+			bone = Bip01_Spine1,
+		}
+
+		attachment REX5_QuiverOne
+		{
+			offset = 0.3240 -0.2320 -0.1900,
+			rotate = -157.0000 9.0000 176.0000,
+			bone = Bip01_Spine1,
+		}
+
+		attachment REX5_QuiverTwo
+		{
+			offset = 0.3240 -0.2320 -0.1900,
+			rotate = -157.0000 9.0000 176.0000,
+			bone = Bip01_Spine1,
+		}
+
+		attachment REX5_QuiverThree
+		{
+			offset = 0.3240 -0.2320 -0.1900,
+			rotate = -157.0000 9.0000 176.0000,
+			bone = Bip01_Spine1,
+		}
+
+		attachment REX5_QuiverFour
+		{
+			offset = 0.3240 -0.2320 -0.1900,
+			rotate = -157.0000 9.0000 176.0000,
+			bone = Bip01_Spine1,
+		}
+
+		attachment REX5_QuiverFive
+		{
+			offset = 0.3240 -0.2320 -0.1900,
+			rotate = -157.0000 9.0000 176.0000,
+			bone = Bip01_Spine1,
+		}
+
+		attachment REX5_QuiverSix
+		{
+			offset = 0.3240 -0.2320 -0.1900,
+			rotate = -157.0000 9.0000 176.0000,
+			bone = Bip01_Spine1,
+		}
+	}
+	model MaleBody
+	{
+
+	mesh = Skinned/MaleBody,
+
+		attachment REX5Bow_Back
+		{
+			offset = -0.0210 -0.0010 0.0000,
+			rotate = -35.0000 -17.0000 -57.0000,
+			bone = Bip01_BackPack,
+		}
+
+		attachment REX5_BowSlot
+		{
+			offset = 0.2260 0.0070 -0.0320,
+			rotate = 179.0000 10.0000 90.0000,
+			bone = Bip01_Spine1,
+		}
+
+		attachment REX5_Quiver
+		{
+			offset = 0.3240 -0.2320 -0.1900,
+			rotate = -157.0000 9.0000 176.0000,
+			bone = Bip01_Spine1,
+		}
+
+		attachment REX5_QuiverOne
+		{
+			offset = 0.3240 -0.2320 -0.1900,
+			rotate = -157.0000 9.0000 176.0000,
+			bone = Bip01_Spine1,
+		}
+
+		attachment REX5_QuiverTwo
+		{
+			offset = 0.3240 -0.2320 -0.1900,
+			rotate = -157.0000 9.0000 176.0000,
+			bone = Bip01_Spine1,
+		}
+
+		attachment REX5_QuiverThree
+		{
+			offset = 0.3240 -0.2320 -0.1900,
+			rotate = -157.0000 9.0000 176.0000,
+			bone = Bip01_Spine1,
+		}
+
+		attachment REX5_QuiverFour
+		{
+			offset = 0.3240 -0.2320 -0.1900,
+			rotate = -157.0000 9.0000 176.0000,
+			bone = Bip01_Spine1,
+		}
+
+		attachment REX5_QuiverFive
+		{
+			offset = 0.3240 -0.2320 -0.1900,
+			rotate = -157.0000 9.0000 176.0000,
+			bone = Bip01_Spine1,
+		}
+
+		attachment REX5_QuiverSix
+		{
+			offset = 0.3240 -0.2320 -0.1900,
+			rotate = -157.0000 9.0000 176.0000,
+			bone = Bip01_Spine1,
+		}
+}
+}

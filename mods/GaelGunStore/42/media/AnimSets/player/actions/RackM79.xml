@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animNode x_extends="LoadM79.xml">
+	<m_Name>RackM79</m_Name>
+	<m_AnimName>Bob_Reload_DBShotgun_Rack</m_AnimName>
+	<m_Conditions x_name="f9e242c0-330f-4f15-bad9-02b57ed1871a">
+		<m_Name>isRacking</m_Name>
+	</m_Conditions>
+	<m_Events x_name="6cebeb54-6ac1-477b-bbf0-1359c72ed039">
+		<m_EventName>rackingFinished</m_EventName>
+	</m_Events>
+	<m_Events x_name="3aaf10b4-c1ad-4dff-94be-9d19a2a9f918">
+		<m_TimePc>0.15</m_TimePc>
+		<m_ParameterValue>rack</m_ParameterValue>
+	</m_Events>
+	<m_Events x_name="cb9d1cf6-aecf-403e-a008-cbf23ead7e74">
+		<m_EventName>changeWeaponSprite</m_EventName>
+		<m_TimePc>0.42</m_TimePc>
+		<m_ParameterValue>original</m_ParameterValue>
+	</m_Events>
+	<m_Events x_name="07b9f21c-9b41-48a8-9032-2a737dd84247">
+		<m_EventName>rackBullet</m_EventName>
+		<m_TimePc>0.3</m_TimePc>
+		<m_ParameterValue></m_ParameterValue>
+	</m_Events>
+</animNode>

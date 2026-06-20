@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<animNode x_extends="UnloadDblBarrel.xml">
+	<m_Name>UnloadIZH58</m_Name>
+	<m_Conditions />
+	<m_Conditions>
+		<m_StringValue>doublebarrelizh58</m_StringValue>
+	</m_Conditions>
+	<m_Conditions />
+	<m_Events />
+	<m_Events />
+	<m_Events>
+		<m_ParameterValue>IZH58_OPEN</m_ParameterValue>
+	</m_Events>
+</animNode>

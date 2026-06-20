@@ -1,0 +1,437 @@
+VERSION = 1,
+	option GGSGS.LootAmount
+	{
+		type = enum,
+		numValues = 6,
+		default = 4,
+		page = GGSGS,
+		translation = GGSGS_LootAmount,
+	}
+	option GGSGS.Pre1994LootOnly
+	{
+		type = boolean,
+		default = false,
+		page = GGSGS,
+		translation = GGSGS_Pre1994LootOnly,
+	}
+	option GGSGS.LaserAndGunLightUseBattery
+	{
+		type = boolean,
+		default = true,
+		page = GGS,
+		translation = LaserAndGunLightUseBattery,
+	}
+	option GGSGS.ManualRack
+	{
+		type = boolean,
+		default = true,
+		page = GGS,
+		translation = GGSGS_ManualRack,
+	}
+	option GGSGS.weaponpart_wear_by_shot
+	{
+		type = boolean,
+		default = true,
+		page = GGS,
+		translation = GGSGS_weaponpart_wear_by_shot,
+	}
+	option GGSGS.AttachmentsLowerChance
+	{
+		type = integer, min = 1, max = 1000, default = 200,
+		page =GGS,
+		translation = GGSGS_AttachmentsLowerChance,
+	}
+	option GGSGS.SilencersLowerChance
+	{
+		type = integer, min = 1, max = 1000, default = 200,
+		page = GGS,
+		translation = GGSGS_SilencersLowerChance,
+	}
+	option GGSGS.weapon_random_condition
+	{
+		type = boolean,
+		default = true,
+		page = GGS,
+		translation = GGSGS_weapon_random_condition,
+	}
+	option GGSGS.weaponpart_loot_max_condition
+	{
+		type = boolean,
+		default = false,
+		page = GGS,
+		translation = GGSGS_weaponpart_loot_max_condition,
+	}
+	option GGSGS.weaponpart_random_condition
+	{
+		type = boolean,
+		default = true,
+		page = GGS,
+		translation = GGSGS_weaponpart_random_condition,
+	}
+	option GGSGS.DevAttachmentSpawner
+	{
+		type = boolean,
+		default = false,
+		page = GGS,
+		translation = GGSGS_DevAttachmentSpawner,
+	}
+	option GGSLO.prob_ammo_crafts
+	{
+		type = double, min = 0, max= 10, default = 1,
+		page = GGSLO,
+		translation = GGSLO_prob_ammo_crafts,
+	}
+	option GGSLO.prob_ammo
+	{
+		type = double, min = 0, max= 10, default = 1,
+		page = GGSLO,
+		translation = GGSLO_prob_ammo,
+	}
+	option GGSLO.prob_ammo_mags
+	{
+		type = double, min = 0, max= 10, default = 1,
+		page = GGSLO,
+		translation = GGSLO_prob_ammo_mags,
+	}
+		option GGSLO.prob_repair_items
+	{
+		type = double, min = 0, max= 10, default = 1,
+		page = GGSLO,
+		translation = GGSLO_prob_repair_items,
+	}
+	option GGSLO.prob_shotguns
+	{
+		type = double, min = 0, max= 10, default = 1,
+		page = GGSLO,
+		translation = GGSLO_prob_shotguns,
+	}
+	option GGSLO.prob_autoshotguns
+	{
+		type = double, min = 0, max= 10, default = 1,
+		page = GGSLO,
+		translation = GGSLO_prob_autoshotguns,
+	}
+	option GGSLO.prob_attgrips
+	{
+		type = double, min = 0, max= 10, default = 1,
+		page = GGSLO,
+		translation = GGSLO_prob_attgrips,
+	}
+	option GGSLO.prob_atthanguard
+	{
+		type = double, min = 0, max= 10, default = 1,
+		page = GGSLO,
+		translation = GGSLO_prob_atthanguard,
+	}
+	option GGSLO.prob_attlaser
+	{
+		type = double, min = 0, max= 10, default = 1,
+		page = GGSLO,
+		translation = GGSLO_prob_attlaser,
+	}
+	option GGSLO.prob_attlight
+	{
+		type = double, min = 0, max= 10, default = 1,
+		page = GGSLO,
+		translation = GGSLO_prob_attlight,
+	}
+	option GGSLO.prob_lmg
+	{
+		type = double, min = 0, max= 10, default = 1,
+		page = GGSLO,
+		translation = GGSLO_prob_lmg,
+	}
+	option GGSLO.prob_loot_extra
+	{
+		type = double, min = 0, max= 10, default = 1,
+		page = GGSLO,
+		translation = GGSLO_prob_loot_extra,
+	}
+	option GGSLO.prob_attscopes
+	{
+		type = double, min = 0, max= 10, default = 1,
+		page = GGSLO,
+		translation = GGSLO_prob_attscopes,
+	}
+	option GGSLO.prob_attmount
+	{
+		type = double, min = 0, max= 10, default = 1,
+		page = GGSLO,
+		translation = GGSLO_prob_attmount,
+	}
+	option GGSLO.prob_pistol
+	{
+		type = double, min = 0, max= 10, default = 1,
+		page = GGSLO,
+		translation = GGSLO_prob_pistol,
+	}
+	option GGSLO.prob_revolver
+	{
+		type = double, min = 0, max= 10, default = 1,
+		page = GGSLO,
+		translation = GGSLO_prob_revolver,
+	}
+	option GGSLO.prob_ar
+	{
+		type = double, min = 0, max= 10, default = 1,
+		page = GGSLO,
+		translation = GGSLO_prob_ar,
+	}
+	option GGSLO.prob_rifles
+	{
+		type = double, min = 0, max= 10, default = 1,
+		page = GGSLO,
+		translation = GGSLO_prob_rifles,
+	}
+	option GGSLO.prob_smg
+	{
+		type = double, min = 0, max= 10, default = 1,
+		page = GGSLO,
+		translation = GGSLO_prob_smg,
+	}
+	option GGSLO.prob_attstock
+	{
+		type = double, min = 0, max= 10, default = 1,
+		page = GGSLO,
+		translation = GGSLO_prob_attstock,
+	}
+	option GGSLO.prob_silencer
+	{
+		type = double, min = 0, max= 10, default = 1,
+		page = GGSLO,
+		translation = GGSLO_prob_silencer,
+	}
+	option GGSLO.prob_others
+	{
+		type = double, min = 0, max= 10, default = 1,
+		page = GGSLO,
+		translation = GGSLO_prob_others,
+	}
+option GGSGS.barrel_shroud_bipod
+	{
+		type = double, min = 0, max= 100, default = 10,
+		page = GGSGS,
+		translation = GGSGS_barrel_shroud_bipod,
+	}
+	option GGSGS.canon_pistol_sup
+	{
+		type = double, min = 0, max= 100, default = 5,
+		page = GGSGS,
+		translation = GGSGS_canon_pistol_sup,
+	}
+	option GGSGS.canon_revolver_type
+	{
+		type = double, min = 0, max= 100, default = 5,
+		page = GGSGS,
+		translation = GGSGS_canon_revolver_type,
+	}
+	option GGSGS.canon_rifle_sup
+	{
+		type = double, min = 0, max= 100, default = 5,
+		page = GGSGS,
+		translation = GGSGS_canon_rifle_sup,
+	}
+	option GGSGS.canon_shotgun_sup
+	{
+		type = double, min = 0, max= 100, default = 5,
+		page = GGSGS,
+		translation = GGSGS_canon_shotgun_sup,
+	}
+	option GGSGS.canon_smg_sup
+	{
+		type = double, min = 0, max= 100, default = 5,
+		page = GGSGS,
+		translation = GGSGS_canon_smg_sup,
+	}
+	option GGSGS.grip
+	{
+		type = double, min = 0, max= 100, default = 10,
+		page = GGSGS,
+		translation = GGSGS_grip,
+	}
+	option GGSGS.grip_grip_normal
+	{
+		type = double, min = 0, max= 100, default = 10,
+		page = GGSGS,
+		translation = GGSGS_grip_grip_normal,
+	}
+	option GGSGS.handguard
+	{
+		type = double, min = 0, max= 100, default = 70,
+		page = GGSGS,
+		translation = GGSGS_handguard,
+	}
+	option GGSGS.handguard_ak_hg
+	{
+		type = double, min = 0, max= 100, default = 100,
+		page = GGSGS,
+		translation = GGSGS_handguard_ak_hg,
+	}
+	option GGSGS.handguard_ar_hg
+	{
+		type = double, min = 0, max= 100, default = 100,
+		page = GGSGS,
+		translation = GGSGS_handguard_ar_hg,
+	}
+	option GGSGS.handguard_svd_hg
+	{
+		type = double, min = 0, max= 100, default = 100,
+		page = GGSGS,
+		translation = GGSGS_handguard_svd_hg,
+	}
+	option GGSGS.handguard_win_hg
+	{
+		type = double, min = 0, max= 100, default = 100,
+		page = GGSGS,
+		translation = GGSGS_handguard_win_hg,
+	}
+	option GGSGS.l_scope_ak_mount_scope
+	{
+		type = double, min = 0, max= 100, default = 50,
+		page = GGSGS,
+		translation = GGSGS_l_scope_ak_mount_scope,
+	}
+	option GGSGS.laser_pistol_laser
+	{
+		type = double, min = 0, max= 100, default = 10,
+		page = GGSGS,
+		translation = GGSGS_laser_pistol_laser,
+	}
+	option GGSGS.laser_rifle_laser
+	{
+		type = double, min = 0, max= 100, default = 10,
+		page = GGSGS,
+		translation = GGSGS_laser_rifle_laser,
+	}
+	option GGSGS.light_pistol_light
+	{
+		type = double, min = 0, max= 100, default = 10,
+		page = GGSGS,
+		translation = GGSGS_light_pistol_light,
+	}
+	option GGSGS.light_rifle_light
+	{
+		type = double, min = 0, max= 100, default = 10,
+		page = GGSGS,
+		translation = GGSGS_light_rifle_light,
+	}
+	option GGSGS.misc
+	{
+		type = double, min = 0, max= 100, default = 10,
+		page = GGSGS,
+		translation = GGSGS_misc,
+	}
+	option GGSGS.mount
+	{
+		type = double, min = 0, max= 100, default = 70,
+		page = GGSGS,
+		translation = GGSGS_mount,
+	}
+	option GGSGS.mount_ak_mount
+	{
+		type = double, min = 0, max= 100, default = 50,
+		page = GGSGS,
+		translation = GGSGS_mount_ak_mount,
+	}
+	option GGSGS.mount_rifle_mount
+	{
+		type = double, min = 0, max= 100, default = 50,
+		page = GGSGS,
+		translation = GGSGS_mount_rifle_mount,
+	}
+	option GGSGS.mount_shotgun_mount
+	{
+		type = double, min = 0, max= 100, default = 50,
+		page = GGSGS,
+		translation = GGSGS_mount_shotgun_mount,
+	}
+	option GGSGS.scope_large_scope
+	{
+		type = double, min = 0, max= 100, default = 10,
+		page = GGSGS,
+		translation = GGSGS_scope_large_scope,
+	}
+	option GGSGS.scope_medium_scope
+	{
+		type = double, min = 0, max= 100, default = 15,
+		page = GGSGS,
+		translation = GGSGS_scope_medium_scope,
+	}
+	option GGSGS.scope_mini_scope
+	{
+		type = double, min = 0, max= 100, default = 25,
+		page = GGSGS,
+		translation = GGSGS_scope_mini_scope,
+	}
+	option GGSGS.stock_ak_type
+	{
+		type = double, min = 0, max= 100, default = 100,
+		page = GGSGS,
+		translation = GGSGS_stock_ak_type,
+	}
+	option GGSGS.stock_ar_type
+	{
+		type = double, min = 0, max= 100, default = 100,
+		page = GGSGS,
+		translation = GGSGS_stock_ar_type,
+	}
+	option GGSGS.stock_mosin_type
+	{
+		type = double, min = 0, max= 100, default = 100,
+		page = GGSGS,
+		translation = GGSGS_stock_mosin_type,
+	}
+	option GGSGS.stock_pistol_type
+	{
+		type = double, min = 0, max= 100, default = 5,
+		page = GGSGS,
+		translation = GGSGS_stock_pistol_type,
+	}
+	option GGSGS.stock_revolver_type
+	{
+		type = double, min = 0, max= 100, default = 5,
+		page = GGSGS,
+		translation = GGSGS_stock_revolver_type,
+	}
+	option GGSGS.stock_scar_type
+	{
+		type = double, min = 0, max= 100, default = 100,
+		page = GGSGS,
+		translation = GGSGS_stock_scar_type,
+	}
+	option GGSGS.stock_shotgun_type
+	{
+		type = double, min = 0, max= 100, default = 100,
+		page = GGSGS,
+		translation = GGSGS_stock_shotgun_type,
+	}
+	option GGSGS.stock_svd_vss_type
+	{
+		type = double, min = 0, max= 100, default = 100,
+		page = GGSGS,
+		translation = GGSGS_stock_svd_vss_type,
+	}
+	option GGSGS.stock_win_type
+	{
+		type = double, min = 0, max= 100, default = 100,
+		page = GGSGS,
+		translation = GGSGS_stock_win_type,
+	}
+	option GGSGS.stool_ak_gl
+	{
+		type = double, min = 0, max= 100, default = 5,
+		page = GGSGS,
+		translation = GGSGS_stool_ak_gl,
+	}
+	option GGSGS.stool_ar_gl
+	{
+		type = double, min = 0, max= 100, default = 5,
+		page = GGSGS,
+		translation = GGSGS_stool_ar_gl,
+	}
+	option GGSGS.stool_scar_gl
+	{
+		type = double, min = 0, max= 100, default = 5,
+		page = GGSGS,
+		translation = GGSGS_stool_scar_gl,
+	}

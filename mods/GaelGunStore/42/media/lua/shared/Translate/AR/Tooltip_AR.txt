@@ -1,0 +1,5 @@
+﻿Tooltip_AR  =  {
+
+    Tooltip_DoubleClickToRemove = "Doble-click para remover"
+    Tooltip_GunP = "Preciona G para recargar<br>Presiona G para disparar"
+}

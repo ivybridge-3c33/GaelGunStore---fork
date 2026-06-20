@@ -1,0 +1,6 @@
+﻿ContextMenu_RU = {
+ContextMenu_Remove_Battery_To_Laser = "Извлечь батарею из лазера",
+ContextMenu_ADD_Battery_To_Laser = "Установить батарею в лазер",
+ContextMenu_Remove_Battery_To_Light = "Извлечь батарею из фонарика",
+ContextMenu_ADD_Battery_To_Light = "Установить батарею в фонарик",
+}

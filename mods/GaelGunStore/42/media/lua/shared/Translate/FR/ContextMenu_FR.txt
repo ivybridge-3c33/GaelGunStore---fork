@@ -1,0 +1,6 @@
+﻿ContextMenu_FR = {
+ContextMenu_Remove_Battery_To_Laser = "Retirer la batterie du laser",
+ContextMenu_ADD_Battery_To_Laser = "Ajouter une batterie au laser",
+ContextMenu_Remove_Battery_To_Light = "Retirer la batterie de la lampe de poche",
+ContextMenu_ADD_Battery_To_Light = "Ajouter une batterie à la lampe de poche",
+}

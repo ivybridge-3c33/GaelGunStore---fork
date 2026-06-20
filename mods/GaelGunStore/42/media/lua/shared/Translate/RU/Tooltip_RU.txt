@@ -1,0 +1,5 @@
+Tooltip_RU = {
+Tooltip_DoubleClickToRemove = "Дважды щёлкните, чтобы снять",
+Tooltip_GunP = "Нажмите G, чтобы перезарядить<br>Нажмите G, чтобы стрелять",
+
+}

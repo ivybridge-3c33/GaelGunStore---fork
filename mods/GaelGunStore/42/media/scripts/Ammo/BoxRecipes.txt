@@ -1,0 +1,786 @@
+module Base{
+    craftRecipe GGS_OpenBoxof9x39Bullets
+    {
+        timedAction = OpenShellsBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft;CanBeDoneInDark,
+        inputs
+        {
+            item 1 [Base.9x39Box] flags[Prop2],
+        }
+        outputs
+        {
+            item 30 Base.9x39Bullets,
+        }
+    }
+    craftRecipe GGS_Place9x39Bullets
+    {
+        timedAction = PlaceAmmoInBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft,
+        inputs
+        {
+            item 30 [Base.9x39Bullets],
+        }
+        outputs
+        {
+        item 1 Base.9x39Box,
+        }
+    }
+    craftRecipe GGS_OpenBoxofBullets22LR
+    {
+        timedAction = OpenShellsBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft;CanBeDoneInDark,
+        inputs
+        {
+            item 1 [Base.Bullets22LRBox] flags[Prop2],
+        }
+        outputs
+        {
+            item 60 Base.Bullets22LR,
+        }
+    }
+    craftRecipe GGS_PlaceBullets22LR
+    {
+        timedAction = PlaceAmmoInBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft,
+        inputs
+        {
+            item 60 [Base.Bullets22LR],
+        }
+        outputs
+        {
+        item 1 Base.Bullets22LRBox,
+        }
+    }
+    craftRecipe GGS_OpenBoxofBullets32
+    {
+        timedAction = OpenShellsBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft;CanBeDoneInDark,
+        inputs
+        {
+            item 1 [Base.Bullets32Box] flags[Prop2],
+        }
+        outputs
+        {
+            item 50 Base.Bullets32,
+        }
+    }
+    craftRecipe GGS_PlaceBullets32
+    {
+        timedAction = PlaceAmmoInBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft,
+        inputs
+        {
+            item 50 [Base.Bullets32],
+        }
+        outputs
+        {
+        item 1 Base.Bullets32Box,
+        }
+    }
+    craftRecipe GGS_OpenBoxofBullets50
+    {
+        timedAction = OpenShellsBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft;CanBeDoneInDark,
+        inputs
+        {
+            item 1 [Base.Bullets50Box] flags[Prop2],
+        }
+        outputs
+        {
+            item 20 Base.Bullets50,
+        }
+    }
+    craftRecipe GGS_PlaceBullets50
+    {
+        timedAction = PlaceAmmoInBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft,
+        inputs
+        {
+            item 20 [Base.Bullets50],
+        }
+        outputs
+        {
+        item 1 Base.Bullets50Box,
+        }
+    }
+    craftRecipe GGS_OpenBoxofBullets50Magnum
+    {
+        timedAction = OpenShellsBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft;CanBeDoneInDark,
+        inputs
+        {
+            item 1 [Base.Bullets50MagnumBox] flags[Prop2],
+        }
+        outputs
+        {
+            item 30 Base.Bullets50Magnum,
+        }
+    }
+    craftRecipe GGS_PlaceBullets50Magnum
+    {
+        timedAction = PlaceAmmoInBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft,
+        inputs
+        {
+            item 30 [Base.Bullets50Magnum],
+        }
+        outputs
+        {
+        item 1 Base.Bullets50MagnumBox,
+        }
+    }
+    craftRecipe GGS_OpenBoxofBullets357
+    {
+        timedAction = OpenShellsBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft;CanBeDoneInDark,
+        inputs
+        {
+            item 1 [Base.Bullets357Box] flags[Prop2],
+        }
+        outputs
+        {
+            item 30 Base.Bullets357,
+        }
+    }
+    craftRecipe GGS_PlaceBullets357
+    {
+        timedAction = PlaceAmmoInBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft,
+        inputs
+        {
+            item 30 [Base.Bullets357],
+        }
+        outputs
+        {
+        item 1 Base.Bullets357Box,
+        }
+    }
+    craftRecipe GGS_OpenBoxof545x39Bullets
+    {
+        timedAction = OpenShellsBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft;CanBeDoneInDark,
+        inputs
+        {
+            item 1 [Base.545x39Box] flags[Prop2],
+        }
+        outputs
+        {
+            item 30 Base.545x39Bullets,
+        }
+    }
+    craftRecipe GGS_Place545x39Bullets
+    {
+        timedAction = PlaceAmmoInBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft,
+        inputs
+        {
+            item 30 [Base.545x39Bullets],
+        }
+        outputs
+        {
+        item 1 Base.545x39Box,
+        }
+    }
+    craftRecipe GGS_OpenBoxof556Bullets
+    {
+        timedAction = OpenShellsBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft;CanBeDoneInDark,
+        inputs
+        {
+            item 1 [Base.556Box] flags[Prop2],
+        }
+        outputs
+        {
+            item 60 Base.556Bullets,
+        }
+    }
+    craftRecipe GGS_Place556Bullets
+    {
+        timedAction = PlaceAmmoInBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft,
+        inputs
+        {
+            item 60 [Base.556Bullets],
+        }
+        outputs
+        {
+        item 1 Base.556Box,
+        }
+    }
+    craftRecipe GGS_OpenBoxof30_06Bullets
+    {
+        timedAction = OpenShellsBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft;CanBeDoneInDark,
+        inputs
+        {
+            item 1 [Base.30_06Box] flags[Prop2],
+        }
+        outputs
+        {
+            item 20 Base.30_06Bullets,
+        }
+    }
+    craftRecipe GGS_Place30_06Bullets
+    {
+        timedAction = PlaceAmmoInBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft,
+        inputs
+        {
+            item 20 [Base.30_06Bullets],
+        }
+        outputs
+        {
+        item 1 Base.30_06Box,
+        }
+    }
+    craftRecipe GGS_OpenBoxof303Bullets
+    {
+        timedAction = OpenShellsBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft;CanBeDoneInDark,
+        inputs
+        {
+            item 1 [Base.303Box] flags[Prop2],
+        }
+        outputs
+        {
+            item 20 Base.303Bullets,
+        }
+    }
+    craftRecipe GGS_Place303Bullets
+    {
+        timedAction = PlaceAmmoInBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft,
+        inputs
+        {
+            item 20 [Base.303Bullets],
+        }
+        outputs
+        {
+        item 1 Base.303Box,
+        }
+    }
+    craftRecipe GGS_OpenBoxof762x39Bullets
+    {
+        timedAction = OpenShellsBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft;CanBeDoneInDark,
+        inputs
+        {
+            item 1 [Base.762x39Box] flags[Prop2],
+        }
+        outputs
+        {
+            item 30 Base.762x39Bullets,
+        }
+    }
+    craftRecipe GGS_Place762x39Bullets
+    {
+        timedAction = PlaceAmmoInBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft,
+        inputs
+        {
+            item 30 [Base.762x39Bullets],
+        }
+        outputs
+        {
+        item 1 Base.762x39Box,
+        }
+    }
+    craftRecipe GGS_OpenBoxof762x54rBullets
+    {
+        timedAction = OpenShellsBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft;CanBeDoneInDark,
+        inputs
+        {
+            item 1 [Base.762x54rBox] flags[Prop2],
+        }
+        outputs
+        {
+            item 20 Base.762x54rBullets,
+        }
+    }
+    craftRecipe GGS_Place762x54rBullets
+    {
+        timedAction = PlaceAmmoInBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft,
+        inputs
+        {
+            item 20 [Base.762x54rBullets],
+        }
+        outputs
+        {
+        item 1 Base.762x54rBox,
+        }
+    }
+    craftRecipe GGS_OpenBoxof792x57Bullets
+    {
+        timedAction = OpenShellsBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft;CanBeDoneInDark,
+        inputs
+        {
+            item 1 [Base.792x57Box] flags[Prop2],
+        }
+        outputs
+        {
+            item 20 Base.792x57Bullets,
+        }
+    }
+    craftRecipe GGS_Place792x57Bullets
+    {
+        timedAction = PlaceAmmoInBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft,
+        inputs
+        {
+            item 20 [Base.792x57Bullets],
+        }
+        outputs
+        {
+        item 1 Base.792x57Box,
+        }
+    }
+    craftRecipe GGS_OpenBoxofBullets9mm
+    {
+        timedAction = OpenShellsBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft;CanBeDoneInDark,
+        inputs
+        {
+            item 1 [Base.Bullets9mmBox] flags[Prop2],
+        }
+        outputs
+        {
+            item 50 Base.Bullets9mm,
+        }
+    }
+    craftRecipe GGS_PlaceBullets9mm
+    {
+        timedAction = PlaceAmmoInBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft,
+        inputs
+        {
+            item 50 [Base.Bullets9mm],
+        }
+        outputs
+        {
+        item 1 Base.Bullets9mmBox,
+        }
+    }
+    craftRecipe GGS_OpenBoxofBullets38
+    {
+        timedAction = OpenShellsBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft;CanBeDoneInDark,
+        inputs
+        {
+            item 1 [Base.Bullets38Box] flags[Prop2],
+        }
+        outputs
+        {
+            item 50 Base.Bullets38,
+        }
+    }
+    craftRecipe GGS_PlaceBullets38
+    {
+        timedAction = PlaceAmmoInBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft,
+        inputs
+        {
+            item 50 [Base.Bullets38],
+        }
+        outputs
+        {
+        item 1 Base.Bullets38Box,
+        }
+    }
+    craftRecipe GGS_OpenBoxofBullets44
+    {
+        timedAction = OpenShellsBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft;CanBeDoneInDark,
+        inputs
+        {
+            item 1 [Base.Bullets44Box] flags[Prop2],
+        }
+        outputs
+        {
+            item 50 Base.Bullets44,
+        }
+    }
+    craftRecipe GGS_PlaceBullets44
+    {
+        timedAction = PlaceAmmoInBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft,
+        inputs
+        {
+            item 50 [Base.Bullets44],
+        }
+        outputs
+        {
+        item 1 Base.Bullets44Box,
+        }
+    }
+    craftRecipe GGS_OpenBoxofBullets45
+    {
+        timedAction = OpenShellsBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft;CanBeDoneInDark,
+        inputs
+        {
+            item 1 [Base.Bullets45Box] flags[Prop2],
+        }
+        outputs
+        {
+            item 50 Base.Bullets45,
+        }
+    }
+    craftRecipe GGS_PlaceBullets45
+    {
+        timedAction = PlaceAmmoInBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft,
+        inputs
+        {
+            item 50 [Base.Bullets45],
+        }
+        outputs
+        {
+        item 1 Base.Bullets45Box,
+        }
+    }
+    craftRecipe GGS_OpenBoxof308Bullets
+    {
+        timedAction = OpenShellsBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft;CanBeDoneInDark,
+        inputs
+        {
+            item 1 [Base.308Box] flags[Prop2],
+        }
+        outputs
+        {
+            item 20 Base.308Bullets,
+        }
+    }
+    craftRecipe GGS_Place308Bullets
+    {
+        timedAction = PlaceAmmoInBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft,
+        inputs
+        {
+            item 20 [Base.308Bullets],
+        }
+        outputs
+        {
+        item 1 Base.308Box,
+        }
+    }
+    craftRecipe OpenBoxof3030Bullets
+    {
+        timedAction = OpenShellsBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft;CanBeDoneInDark,
+        inputs
+        {
+            item 1 [Base.3030Box] flags[Prop2],
+        }
+        outputs
+        {
+            item 20 Base.3030Bullets,
+        }
+    }
+    craftRecipe OpenBoxofGrenadeAmmo
+    {
+        timedAction = OpenShellsBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft;CanBeDoneInDark,
+        inputs
+        {
+            item 1 [Base.GrenadeAmmoBox] flags[Prop2],
+        }
+        outputs
+        {
+            item 6 Base.GrenadeAmmo,
+        }
+    }
+    craftRecipe GGS_OpenAmmoCarton12
+    {
+        timedAction = UnPackBox,
+        time = 50,
+        Tags = InHandCraft;Packing;CanBeDoneInDark,
+        category = Packing,
+        inputs
+        {
+            item 1 [Base.Bullets9mmCarton;Base.Bullets9x39Carton;Base.Bullets22Carton;Base.Bullets32Carton;Base.Bullets38Carton;Base.Bullets44Carton;Base.Bullets45Carton;Base.Bullets50CalCarton;Base.Bullets45Carton;Base.Bullets50CalCarton;Base.Bullets50MagnumCarton;Base.308Carton;Base.Bullets357Carton;Base.545x39Carton;Base.556Carton;Base.762x39Carton;Base.762x54rCarton;Base.30_06Carton;Base.303Carton;Base.792x57Carton;Base.ShotgunShellsCarton] mappers[boxType] flags[AllowFavorite;InheritFavorite],
+        }
+        outputs
+        {
+            item 12 mapper:boxType,
+        }
+        itemMapper boxType
+        {
+            Base.Bullets9mmBox = Base.Bullets9mmCarton,
+            Base.9x39Box = Base.Bullets9x39Carton,
+            Base.Bullets22LRBox = Base.Bullets22Carton,
+            Base.Bullets32Box = Base.Bullets32Carton,
+            Base.Bullets38Box = Base.Bullets38Carton,
+            Base.Bullets44Box = Base.Bullets44Carton,
+            Base.Bullets45Box = Base.Bullets45Carton,
+            Base.Bullets50Box = Base.Bullets50CalCarton,
+            Base.Bullets50MagnumBox = Base.Bullets50MagnumCarton,
+            Base.308Box = Base.308Carton,
+            Base.Bullets357Box = Base.Bullets357Carton,
+            Base.545x39Box = Base.545x39Carton,
+            Base.556Box = Base.556Carton,
+            Base.762x39Box = Base.762x39Carton,
+            Base.762x54rBox = Base.762x54rCarton,
+            Base.30_06Box = Base.30_06Carton,
+            Base.303Box = Base.303Carton,
+            Base.792x57Box = Base.792x57Carton,
+            Base.ShotgunShellsBox = Base.ShotgunShellsCarton,
+        }
+    }
+    craftRecipe GGS_Place12AmmoBoxesInCarton
+    {
+        timedAction = PackingBox,
+        time = 50,
+        Tags = InHandCraft;Packing,
+        category = Packing,
+
+        inputs
+        {
+            item 12 [Base.Bullets9mmBox;Base.9x39Box;Base.Bullets22LRBox;Base.Bullets32Box;Base.Bullets38Box;Base.Bullets44Box;Base.Bullets45Box;Base.Bullets50Box;Base.Bullets50MagnumBox;Base.308Box;Base.Bullets357Box;Base.545x39Box;Base.556Box;Base.762x39Box;Base.762x54rBox;Base.30_06Box;Base.303Box;Base.792x57Box;Base.ShotgunShellsBox] mappers[itemType] flags[AllowFavorite;InheritFavorite;IsExclusive],
+        }
+        outputs
+        {
+            item 1 mapper:itemType,
+        }
+        itemMapper itemType
+        {
+            Base.Bullets9mmCarton = Base.Bullets9mmBox,
+            Base.Bullets9x39Carton = Base.9x39Box,
+            Base.Bullets22Carton =  Base.Bullets22LRBox,
+            Base.Bullets32Carton = Base.Bullets32Box,
+            Base.Bullets38Carton = Base.Bullets38Box,
+            Base.Bullets44Carton = Base.Bullets44Box,
+            Base.Bullets45Carton = Base.Bullets45Box,
+            Base.Bullets50CalCarton = Base.Bullets50Box,
+            Base.Bullets50MagnumCarton = Base.Bullets50MagnumBox,
+            Base.308Carton = Base.308Box,
+            Base.Bullets357Carton = Base.Bullets357Box,
+            Base.545x39Carton = Base.545x39Box,
+            Base.556Carton = Base.556Box,
+            Base.762x39Carton = Base.762x39Box,
+            Base.762x54rCarton = Base.762x54rBox,
+            Base.30_06Carton = Base.30_06Box,
+            Base.303Carton =  Base.303Box,
+            Base.792x57Carton = Base.792x57Box,
+            Base.ShotgunShellsCarton = Base.ShotgunShellsBox,
+        }
+    }
+
+    craftRecipe GGS_OpenBoxofcasing
+    {
+        timedAction = OpenShellsBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft;CanBeDoneInDark,
+        inputs
+        {
+            item 1 [Base.box_pistol_casing;Base.box_revolver_casing;Base.box_rifle_casing;box_shells_casing] mappers[itemType] flags[AllowFavorite;InheritFavorite;IsExclusive],
+        }
+        outputs
+        {
+            item 120 mapper:itemType,
+            item 1 Base.empty_casing_box,
+        }
+        itemMapper itemType
+        {
+            Base.pistol_casing = Base.box_pistol_casing,
+            Base.revolver_casing = Base.box_revolver_casing,
+            Base.rifle_casing = Base.box_rifle_casing,
+            Base.shells_casing = Base.box_shells_casing,
+
+        }
+    }
+    craftRecipe GGS_Placeboxcasing
+    {
+        timedAction = PlaceAmmoInBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft,
+        inputs
+        {
+            item 120 [Base.pistol_casing;Base.revolver_casing;Base.rifle_casing;Base.shells_casing] mappers[itemType] flags[AllowFavorite;InheritFavorite;IsExclusive],
+            item 1 [Base.empty_casing_box],
+        }
+        outputs
+        {
+            item 1 mapper:itemType,
+        }
+            itemMapper itemType
+        {
+            Base.box_pistol_casing = Base.pistol_casing,
+            Base.box_revolver_casing = Base.revolver_casing,
+            Base.box_rifle_casing = Base.rifle_casing,
+            box_shells_casing = Base.shells_casing,
+
+        }
+    }
+    craftRecipe GGS_OpenBoxofArrowsWood
+    {
+        timedAction = OpenShellsBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft;CanBeDoneInDark,
+        inputs
+        {
+            item 1 [Base.arrow_wood_pack] flags[Prop2],
+        }
+        outputs
+        {
+            item 8 Base.arrow_wood,
+        }
+    }
+    craftRecipe GGS_OpenBoxofArrowsMetal
+    {
+        timedAction = OpenShellsBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft;CanBeDoneInDark,
+        inputs
+        {
+            item 1 [Base.arrow_metal_pack] flags[Prop2],
+        }
+        outputs
+        {
+            item 8 Base.arrow_metal,
+        }
+    }
+    craftRecipe GGS_OpenBoxofArrowsCarbon
+    {
+        timedAction = OpenShellsBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft;CanBeDoneInDark,
+        inputs
+        {
+            item 1 [Base.arrow_carbon_pack] flags[Prop2],
+        }
+        outputs
+        {
+            item 8 Base.arrow_carbon,
+        }
+    }
+    craftRecipe GGS_OpenBoxofBoltsCarbon
+    {
+        timedAction = OpenShellsBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft;CanBeDoneInDark,
+        inputs
+        {
+            item 1 [Base.bolt_carbon_pack] flags[Prop2],
+        }
+        outputs
+        {
+            item 8 Base.bolt_carbon,
+        }
+    }
+    craftRecipe GGS_OpenBoxofBoltsWood
+    {
+        timedAction = OpenShellsBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft;CanBeDoneInDark,
+        inputs
+        {
+            item 1 [Base.bolt_wood_pack] flags[Prop2],
+        }
+        outputs
+        {
+            item 8 Base.bolt_wood,
+        }
+    }
+    craftRecipe GGS_OpenBoxofBoltsMetal
+    {
+        timedAction = OpenShellsBox,
+        Time = 5,
+        category = Packing,
+        Tags = InHandCraft;CanBeDoneInDark,
+        inputs
+        {
+            item 1 [Base.bolt_metal_pack] flags[Prop2],
+        }
+        outputs
+        {
+            item 8 Base.bolt_metal,
+        }
+    }
+}

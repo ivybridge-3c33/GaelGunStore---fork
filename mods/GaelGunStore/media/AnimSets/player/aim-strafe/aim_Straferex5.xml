@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<animNode x_extends="aim_rex5Strafedefault.xml">
+	<m_Name>aim_rex5</m_Name>
+	<m_AnimName>LVX_BOW_AIMHOLD_HIGH</m_AnimName>
+	<m_ConditionPriority>36</m_ConditionPriority>
+	<m_Priority>15</m_Priority>
+	<m_SpeedScale>4</m_SpeedScale>
+	<m_SyncTrackingEnabled>true</m_SyncTrackingEnabled>
+	<m_Looped>false</m_Looped>
+	<m_EarlyTransitionOut>true</m_EarlyTransitionOut>
+	<m_Conditions>
+		<m_Name>FireMode</m_Name>
+		<m_Type>STRING</m_Type>
+		<m_StringValue>REX5Single</m_StringValue>
+	</m_Conditions>
+	<m_Transitions>
+		<m_Target>Idlerex5</m_Target>
+		<m_AnimName>LVX_BOW_IDLE_Default</m_AnimName>
+	</m_Transitions>
+	<m_Transitions>
+		<m_Target>sneakIdleRifle</m_Target>
+		<m_AnimName>LVX_BOW_IDLE_Default</m_AnimName>
+	</m_Transitions>
+	<m_Transitions>
+		<m_Target>sneakIdleLowRifle</m_Target>
+		<m_AnimName>LVX_BOW_IDLE_Default</m_AnimName>
+	</m_Transitions>
+	<m_Transitions>
+		<m_Target>Idlerex5</m_Target>
+		<m_AnimName>LVX_BOW_IDLE_Default</m_AnimName>
+	</m_Transitions>
+</animNode>

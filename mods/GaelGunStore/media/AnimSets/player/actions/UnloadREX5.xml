@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<animNode x_extends="LoadREX5.xml">
+	<m_Name>UnLoadREX5</m_Name>
+	<m_AnimName>LVX_BOW_RESTOCK_R1</m_AnimName>
+	<m_Looped>false</m_Looped>
+	<m_SyncTrackingEnabled>false</m_SyncTrackingEnabled>
+	<m_EarlyTransitionOut>true</m_EarlyTransitionOut>
+	<m_SpeedScale>66</m_SpeedScale>
+	<m_BlendTime>0.20</m_BlendTime>
+	<m_Conditions />
+	<m_Conditions />
+	<m_Conditions>
+		<m_Name>isUnloading</m_Name>
+	</m_Conditions>
+	<m_Events>
+		<m_EventName>unloadFinished</m_EventName>
+	</m_Events>
+	<m_Events>
+		<m_TimePc>0.01</m_TimePc>
+		<m_ParameterValue>unload</m_ParameterValue>
+	</m_Events>
+	<m_Events>
+		<m_ParameterValue>ejectAmmoStart</m_ParameterValue>
+	</m_Events>
+</animNode>

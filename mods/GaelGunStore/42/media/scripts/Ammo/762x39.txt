@@ -1,0 +1,132 @@
+module Base
+{
+/****************************** 762x39 ******************************/
+    item 762x39Bullets
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        Count	=	5,
+        Weight	=	0.015,
+        AlwaysWelcomeGift	=	TRUE,
+        Tags = base:ammo,
+        DisplayName = 762x39Bullets,
+        Icon	=	762x39Bullet,
+        MetalValue = 1,
+        WorldStaticModel = RifleAmmo,
+    }
+    item 762x39Box
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        Count   =   30,
+        AmmoType = ggs:762x39_bullets,
+        Weight	=	0.2,
+        AlwaysWelcomeGift	=	TRUE,
+        
+        DisplayName = 762x39Box,
+        Icon	=	Bullets762x39Box,
+        MetalValue = 40,
+        WorldStaticModel = Bullets762x39Box,
+        PlaceOneSound = BoxOfRoundsPlaceOne,
+        PlaceMultipleSound = BoxOfRoundsPlaceAll,
+        DoubleClickRecipe = OpenBoxof762x39Bullets,
+    }
+    item 762x39Carton
+    {
+        DisplayCategory = Ammo,
+        ItemType = base:normal,
+        Weight = 10.0,
+        Icon = Parcel_Medium_Military,
+        AlwaysWelcomeGift = true,
+        MetalValue = 400.0,
+        PlaceMultipleSound = BoxOfRoundsPlaceAll,
+        PlaceOneSound = BoxOfRoundsPlaceOne,
+        WorldStaticModel = Parcel_Military_Medium,
+        Tags = base:hasmetal;base:ignorezombiedensity,
+        DoubleClickRecipe = OpenAmmoCarton12,
+    }
+    model Bullets762x39Box{
+        mesh = Ammo/Bullets762x39Box,
+        texture = GunTexture/762x39Box_tex,
+    }
+    item 762x39Clip
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.1,
+        
+        DisplayName = 762x39Clip,
+        Icon	=	762x39_30rnd_al,
+        MaxAmmo = 30,
+        AmmoType = ggs:762x39_bullets,
+        StaticModel = GunMagazine,
+        GunType = Base.AK47,
+        WorldStaticModel = 762x39Clip_Ground,
+    }
+    model 762x39Clip_Ground
+    {
+            mesh = Ammo/WorldItems|Clip_762x39,
+    	    texture = GunTexture/AK47_tex,
+    }
+    item 762x39Clip45
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.1,
+        
+        DisplayName = 762x39Clip45,
+        Icon	=	762x39Clip45,
+        MaxAmmo = 45,
+        AmmoType = ggs:762x39_bullets,
+        StaticModel = GunMagazine,
+        GunType = Base.AK47,
+        WorldStaticModel = 762x39Clip45_Ground,
+    }
+    model 762x39Clip45_Ground
+    {
+            mesh = Ammo/WorldItems|762x39Clip45,
+    	    texture = GunTexture/762x39Clip45_tex,
+    }
+    item 762x39Drum73
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.2,
+        
+        DisplayName	=	762x39 Drum 73 rounds,
+        Icon	=	762x39Drum73,
+        MaxAmmo = 73,
+        AmmoType = ggs:762x39_bullets,
+        StaticModel = GunMagazine,
+        GunType = Base.AK47,
+        WorldStaticModel = 762x39Drum73_Ground,
+    }
+    model 762x39Drum73_Ground
+    {
+            mesh = Ammo/WorldItems|762x39Drum73,
+    	    texture = GunTexture/762x39Drum73_tex,
+    }
+    item 762x39Drum100
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.2,
+        
+        DisplayName = 762x39Drum100,
+        Icon	=	762x39Drum100,
+        MaxAmmo = 100,
+        AmmoType = ggs:762x39_bullets,
+        StaticModel = GunMagazine,
+        GunType = Base.AK47,
+        WorldStaticModel = 762x39Drum100_Ground,
+    }
+    model 762x39Drum100_Ground
+    {
+            mesh = Ammo/WorldItems|762x39Drum100,
+    	    texture = GunTexture/762x39Drum100_tex,
+    }
+}

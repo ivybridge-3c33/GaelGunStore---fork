@@ -1,0 +1,126 @@
+module Base
+{
+/****************************** 22LR ******************************/
+    item Bullets22LR
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        Count	=	5,
+        Weight	=	0.01,
+        Tags = base:ammo,
+        DisplayName = Bullets22LR,
+        Icon	=	Bullets22LR,
+        MetalValue = 1,
+        WorldStaticModel = 9mmRounds,
+    }
+    item Bullets22LRBox
+    {
+        ItemType = base:normal,
+        Count   =   60,
+        AmmoType = ggs:bullets_22LR,
+        Weight	=	0.2,
+        
+        DisplayName = Bullets22LRBox,
+        DisplayCategory = Ammo,
+        Icon	=	Bullets22LRBox,
+        MetalValue = 30,
+        WorldStaticModel = HandGunAmmoBox,
+        PlaceOneSound = BoxOfRoundsPlaceOne,
+        PlaceMultipleSound = BoxOfRoundsPlaceAll,
+        DoubleClickRecipe = OpenBoxofBullets22LR,
+    }
+        item Bullets22Carton
+    {
+        DisplayCategory = Ammo,
+        ItemType = base:normal,
+        Weight = 2.5,
+        Icon = Parcel_Medium_Ammo,
+        AlwaysWelcomeGift = true,
+        MetalValue = 300.0,
+        PlaceMultipleSound = BoxOfRoundsPlaceAll,
+        PlaceOneSound = BoxOfRoundsPlaceOne,
+        WorldStaticModel = Parcel_Ammo_Medium,
+        Tags = base:hasmetal;base:ignorezombiedensity,
+        DoubleClickRecipe = OpenAmmoCarton12,
+    }
+    item 22LRClip
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.05,
+        
+        DisplayName = 22LRClip,
+        Icon	=	22LRClip,
+        MaxAmmo = 25,
+        AmmoType = ggs:bullets_22LR,
+        StaticModel = GunMagazine,
+        GunType = Base.Ruger10_22,
+        WorldStaticModel = Clip_22LRClip_Ground,
+    }
+    model Clip_22LRClip_Ground
+    {
+            mesh = Ammo/WorldItems|22LRClip,
+    	    texture = GunTexture/22LRClip50_tex,
+    }
+    item 22LRClip50
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.05,
+        
+        DisplayName = 22LRClip50,
+        Icon	=	22LRClip50,
+        MaxAmmo = 50,
+        AmmoType = ggs:bullets_22LR,
+        StaticModel = GunMagazine,
+        GunType = Base.Ruger10_22,
+        WorldStaticModel = Clip_22LRClip50_Ground,
+    }
+    model Clip_22LRClip50_Ground
+    {
+            mesh = Ammo/WorldItems|22LRClip50,
+    	    texture = GunTexture/22LRClip50_tex,
+    }
+    item 22LRDrum100
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.05,
+        
+        DisplayName = 22LRDrum100,
+        Icon	=	22LRDrum100,
+        MaxAmmo = 100,
+        AmmoType = ggs:bullets_22LR,
+        StaticModel = GunMagazine,
+        GunType = Base.Ruger10_22,
+        WorldStaticModel = Clip_22LRDrum100_Ground,
+    }
+    model Clip_22LRDrum100_Ground
+    {
+            mesh = Ammo/WorldItems|22LRDrum100,
+    	    texture = GunTexture/22LRDrum100_tex,
+    }
+    item BizonClip64
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.05,
+        
+        DisplayName	=	Clip PPBizon 64 rounds,
+        Icon	=	BizonClip64,
+        MaxAmmo = 64,
+        AmmoType = ggs:bullets_22LR,
+        StaticModel = GunMagazine,
+        GunType = Base.PP_Bizon,
+        WorldStaticModel = BizonClip64_Ground,
+    }
+    model BizonClip64_Ground
+    {
+            mesh = Ammo/WorldItems|ClipPP_Bizon,
+    	    texture = GunTexture/PP_Bizon_tex,
+    }
+}

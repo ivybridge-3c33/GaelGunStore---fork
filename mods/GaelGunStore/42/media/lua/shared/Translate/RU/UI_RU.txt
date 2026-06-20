@@ -1,0 +1,7 @@
+UI_RU = {
+UI_optionscreen_binding_KeySetting_AWCWF = "Расширенные настройки клавиш оружия",
+UI_optionscreen_binding_LauchGrenadelauncherat = "Запустить навесное устройство",
+UI_optionscreen_binding_OpenWindownCat = "Открыть панель оружия",
+UI_optionscreen_binding_GunLineDown = "Сменить тактическую стойку",
+UI_optionscreen_binding_SwtichLightSet = "Переключить режим света",
+}

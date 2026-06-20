@@ -1,0 +1,1044 @@
+module Base
+{
+    craftRecipe Make_GunattParts_Guns
+    {
+        timedAction = Welding,
+        time = 100,
+        NeedToBeLearn = false,
+        Tags = AnySurfaceCraft,
+        category = GgsEngineer,
+        xpAward = Maintenance:2,
+        inputs
+        {
+            item 1 [Base.GunToolsKit],
+            item 1 tags[Firearm] mode:destroy,
+        }
+        outputs
+        {
+            item 3 Base.GunAttParts,
+        }
+    }
+    craftRecipe Make_GunattParts_Attachments
+    {
+        timedAction = Welding,
+        time = 100,
+        NeedToBeLearn = false,
+        Tags = AnySurfaceCraft,
+        category = GgsEngineer,
+        xpAward = Maintenance:2,
+        inputs
+        {
+            item 1 [Base.GunToolsKit],
+            item 1 tags[bipods;GunParts] mode:destroy,
+        }
+        outputs
+        {
+            item 2 Base.GunAttParts,
+        }
+    }
+    craftRecipe Assemble9mmBullets
+    {
+        time = 100,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        timedAction = CraftWeapon1H,
+        xpAward = Maintenance:1,
+        inputs
+        {
+            item 1 [Base.GunPowder],
+            item 1 [Base.BulletPressTool] mode:keep flags[MayDegradeLight],
+            item 3 [Base.pistol_casing],
+            item 3 [Base.pistol_bullet_tip],
+        }
+        outputs
+        {
+            item 3 Base.Bullets9mm,
+        }
+    }
+    craftRecipe MixGunPowder
+    {
+        time = 1,
+        category = GgsEngineer,
+        Tags = InHandCraft,
+        inputs
+        {
+            item 20 [Base.GunPowder] flags[HasOneUse],
+
+        }
+        outputs
+        {
+            item 1 Base.GunPowder,
+        }
+
+    }
+    craftRecipe Disassemble9mmBullets
+    {
+        timedAction = Making,
+        time = 30,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:pliers;base:visegrips] mode:keep,
+            item 5 [Base.Bullets9mm] mode:destroy,
+        }
+        outputs
+        {
+            item 1 Base.GunPowder flags[HasOneUse],
+            item 4 Base.pistol_casing,
+            item 4 Base.pistol_bullet_tip,
+        }
+    }
+    craftRecipe Assemble22LRBullets
+    {
+        time = 100,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        timedAction = CraftWeapon1H,
+        xpAward = Maintenance:1,
+        inputs
+        {
+            item 1 [Base.GunPowder],
+            item 1 [Base.BulletPressTool] mode:keep flags[MayDegradeLight],
+            item 5 [Base.pistol_casing],
+            item 5 [Base.pistol_bullet_tip],
+        }
+        outputs
+        {
+            item 5 Base.Bullets22LR,
+        }
+    }
+    craftRecipe Disassemble22LRBullets
+    {
+        timedAction = Making,
+        time = 30,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:pliers;base:visegrips] mode:keep,
+            item 5 [Base.Bullets22LR] mode:destroy,
+        }
+        outputs
+        {
+            item 1 Base.GunPowder flags[HasOneUse],
+            item 4 Base.pistol_casing,
+            item 4 Base.pistol_bullet_tip,
+        }
+    }
+    craftRecipe Assemble45Bullets
+    {
+        time = 100,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        timedAction = CraftWeapon1H,
+        xpAward = Maintenance:1,
+        inputs
+        {
+            item 1 [Base.GunPowder],
+            item 1 [Base.BulletPressTool] mode:keep flags[MayDegradeLight],
+            item 3 [Base.pistol_casing],
+            item 3 [Base.pistol_bullet_tip],
+        }
+        outputs
+        {
+            item 3 Base.Bullets45,
+        }
+    }
+    craftRecipe Disassemble45Bullets
+    {
+        timedAction = Making,
+        time = 30,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:pliers;base:visegrips] mode:keep,
+            item 5 [Base.Bullets45] mode:destroy,
+        }
+        outputs
+        {
+            item 1 Base.GunPowder flags[HasOneUse],
+            item 4 Base.pistol_casing,
+            item 4 Base.pistol_bullet_tip,
+        }
+    }
+    craftRecipe Assemble32Bullets
+    {
+        time = 100,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        timedAction = CraftWeapon1H,
+        xpAward = Maintenance:1,
+        inputs
+        {
+            item 1 [Base.GunPowder],
+            item 1 [Base.BulletPressTool] mode:keep flags[MayDegradeLight],
+            item 4 [Base.revolver_casing],
+            item 4 [Base.revolver_bullet_tip],
+        }
+        outputs
+        {
+            item 4 Base.Bullets32,
+        }
+    }
+    craftRecipe Disassemble32Bullets
+    {
+        timedAction = Making,
+        time = 30,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:pliers;base:visegrips] mode:keep,
+            item 5 [Base.Bullets32] mode:destroy,
+        }
+        outputs
+        {
+            item 1 Base.GunPowder flags[HasOneUse],
+            item 4 Base.revolver_casing,
+            item 4 Base.revolver_bullet_tip,
+        }
+    }
+    craftRecipe Assemble38Bullets
+    {
+        time = 100,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        timedAction = CraftWeapon1H,
+        xpAward = Maintenance:1,
+        inputs
+        {
+            item 1 [Base.GunPowder],
+            item 1 [Base.BulletPressTool] mode:keep flags[MayDegradeLight],
+            item 4 [Base.revolver_casing],
+            item 4 [Base.revolver_bullet_tip],
+        }
+        outputs
+        {
+            item 4 Base.Bullets38,
+        }
+    }
+    craftRecipe Disassemble38Bullets
+    {
+        timedAction = Making,
+        time = 30,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:pliers;base:visegrips] mode:keep,
+            item 5 [Base.Bullets38] mode:destroy,
+        }
+        outputs
+        {
+            item 1 Base.GunPowder flags[HasOneUse],
+            item 4 Base.revolver_casing,
+            item 4 Base.revolver_bullet_tip,
+        }
+    }
+    craftRecipe Assemble357Bullets
+    {
+        time = 100,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        timedAction = CraftWeapon1H,
+        xpAward = Maintenance:1,
+        inputs
+        {
+            item 1 [Base.GunPowder],
+            item 1 [Base.BulletPressTool] mode:keep flags[MayDegradeLight],
+            item 3 [Base.revolver_casing],
+            item 3 [Base.revolver_bullet_tip],
+        }
+        outputs
+        {
+            item 3 Base.Bullets357,
+        }
+    }
+    craftRecipe Disassemble357Bullets
+    {
+        timedAction = Making,
+        time = 30,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:pliers;base:visegrips] mode:keep,
+            item 5 [Base.Bullets357] mode:destroy,
+        }
+        outputs
+        {
+            item 1 Base.GunPowder flags[HasOneUse],
+            item 4 Base.revolver_casing,
+            item 4 Base.revolver_bullet_tip,
+        }
+    }
+    craftRecipe Assemble44Bullets
+    {
+        time = 100,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        timedAction = CraftWeapon1H,
+        xpAward = Maintenance:1,
+        inputs
+        {
+            item 1 [Base.GunPowder],
+            item 1 [Base.BulletPressTool] mode:keep flags[MayDegradeLight],
+            item 1 [Base.revolver_casing],
+            item 1 [Base.revolver_bullet_tip],
+        }
+        outputs
+        {
+            item 1 Base.Bullets44,
+        }
+    }
+    craftRecipe Disassemble44Bullets
+    {
+        timedAction = Making,
+        time = 30,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:pliers;base:visegrips] mode:keep,
+            item 5 [Base.Bullets44] mode:destroy,
+        }
+        outputs
+        {
+            item 3 Base.GunPowder flags[HasOneUse],
+            item 4 Base.revolver_casing,
+            item 4 Base.revolver_bullet_tip,
+        }
+    }
+    craftRecipe Assemble50MagnumBullets
+    {
+        time = 100,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        timedAction = CraftWeapon1H,
+        xpAward = Maintenance:1,
+        inputs
+        {
+            item 1 [Base.GunPowder],
+            item 1 [Base.BulletPressTool] mode:keep flags[MayDegradeLight],
+            item 1 [Base.revolver_casing],
+            item 1 [Base.revolver_bullet_tip],
+        }
+        outputs
+        {
+            item 1 Base.Bullets50Magnum,
+        }
+    }
+    craftRecipe Disassemble50MagnumBullets
+    {
+        timedAction = Making,
+        time = 30,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:pliers;base:visegrips] mode:keep,
+            item 5 [Base.Bullets50Magnum] mode:destroy,
+        }
+        outputs
+        {
+            item 3 Base.GunPowder flags[HasOneUse],
+            item 4 Base.revolver_casing,
+            item 4 Base.revolver_bullet_tip,
+        }
+    }
+    craftRecipe Assemble9x39Bullets
+    {
+        time = 100,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        timedAction = CraftWeapon1H,
+        xpAward = Maintenance:1,
+        inputs
+        {
+            item 1 [Base.GunPowder],
+            item 1 [Base.BulletPressTool] mode:keep flags[MayDegradeLight],
+            item 1 [Base.rifle_casing],
+            item 1 [Base.rifle_bullet_tip],
+        }
+        outputs
+        {
+            item 1 Base.9x39Bullets,
+        }
+    }
+    craftRecipe Disassemble9x39Bullets
+    {
+        timedAction = Making,
+        time = 30,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:pliers;base:visegrips] mode:keep,
+            item 5 [Base.9x39Bullets] mode:destroy,
+        }
+        outputs
+        {
+            item 3 Base.GunPowder flags[HasOneUse],
+            item 4 Base.rifle_casing,
+            item 4 Base.rifle_bullet_tip,
+        }
+    }
+    craftRecipe Assemble30_06Bullets
+    {
+        time = 100,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        timedAction = CraftWeapon1H,
+        xpAward = Maintenance:1,
+        inputs
+        {
+            item 1 [Base.GunPowder],
+            item 1 [Base.BulletPressTool] mode:keep flags[MayDegradeLight],
+            item 1 [Base.rifle_casing],
+            item 1 [Base.rifle_bullet_tip],
+        }
+        outputs
+        {
+            item 1 Base.30_06Bullets,
+        }
+    }
+    craftRecipe Disassemble30_06Bullets
+    {
+        timedAction = Making,
+        time = 30,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:pliers;base:visegrips] mode:keep,
+            item 5 [Base.30_06Bullets] mode:destroy,
+        }
+        outputs
+        {
+            item 3 Base.GunPowder flags[HasOneUse],
+            item 4 Base.rifle_casing,
+            item 4 Base.rifle_bullet_tip,
+        }
+    }
+    craftRecipe Assemble303Bullets
+    {
+        time = 100,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        timedAction = CraftWeapon1H,
+        xpAward = Maintenance:1,
+        inputs
+        {
+            item 1 [Base.GunPowder],
+            item 1 [Base.BulletPressTool] mode:keep flags[MayDegradeLight],
+            item 1 [Base.rifle_casing],
+            item 1 [Base.rifle_bullet_tip],
+        }
+        outputs
+        {
+            item 1 Base.303Bullets,
+        }
+    }
+    craftRecipe Disassemble303Bullets
+    {
+        timedAction = Making,
+        time = 30,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:pliers;base:visegrips] mode:keep,
+            item 5 [Base.303Bullets] mode:destroy,
+        }
+        outputs
+        {
+            item 3 Base.GunPowder flags[HasOneUse],
+            item 4 Base.rifle_casing,
+            item 4 Base.rifle_bullet_tip,
+        }
+    }
+    craftRecipe Assemble308Bullets
+    {
+        time = 100,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        timedAction = CraftWeapon1H,
+        xpAward = Maintenance:1,
+        inputs
+        {
+            item 1 [Base.GunPowder],
+            item 1 [Base.BulletPressTool] mode:keep flags[MayDegradeLight],
+            item 1 [Base.rifle_casing],
+            item 1 [Base.rifle_bullet_tip],
+        }
+        outputs
+        {
+            item 1 Base.308Bullets,
+        }
+    }
+    craftRecipe Disassemble308Bullets
+    {
+        timedAction = Making,
+        time = 30,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:pliers;base:visegrips] mode:keep,
+            item 5 [Base.308Bullets] mode:destroy,
+        }
+        outputs
+        {
+            item 3 Base.GunPowder flags[HasOneUse],
+            item 4 Base.rifle_casing,
+            item 4 Base.rifle_bullet_tip,
+        }
+    }
+    craftRecipe Assemble50Bullets
+    {
+        time = 100,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        timedAction = CraftWeapon1H,
+        xpAward = Maintenance:1,
+        inputs
+        {
+            item 1 [Base.GunPowder],
+            item 1 [Base.BulletPressTool] mode:keep flags[MayDegradeLight],
+            item 1 [Base.rifle_casing],
+            item 1 [Base.rifle_bullet_tip],
+        }
+        outputs
+        {
+            item 1 Base.Bullets50,
+        }
+    }
+    craftRecipe Disassemble50Bullets
+    {
+        timedAction = Making,
+        time = 30,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:pliers;base:visegrips] mode:keep,
+            item 5 [Base.Bullets50] mode:destroy,
+        }
+        outputs
+        {
+            item 3 Base.GunPowder flags[HasOneUse],
+            item 4 Base.rifle_casing,
+            item 4 Base.rifle_bullet_tip,
+        }
+    }
+    craftRecipe Assemble545x39Bullets
+    {
+        time = 100,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        timedAction = CraftWeapon1H,
+        xpAward = Maintenance:1,
+        inputs
+        {
+            item 1 [Base.GunPowder],
+            item 1 [Base.BulletPressTool] mode:keep flags[MayDegradeLight],
+            item 1 [Base.rifle_casing],
+            item 1 [Base.rifle_bullet_tip],
+        }
+        outputs
+        {
+            item 1 Base.545x39Bullets,
+        }
+    }
+    craftRecipe Disassemble545x39Bullets
+    {
+        timedAction = Making,
+        time = 30,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:pliers;base:visegrips] mode:keep,
+            item 5 [Base.545x39Bullets] mode:destroy,
+        }
+        outputs
+        {
+            item 3 Base.GunPowder flags[HasOneUse],
+            item 4 Base.rifle_casing,
+            item 4 Base.rifle_bullet_tip,
+        }
+    }
+    craftRecipe Assemble556Bullets
+    {
+        time = 100,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        timedAction = CraftWeapon1H,
+        xpAward = Maintenance:1,
+        inputs
+        {
+            item 1 [Base.GunPowder],
+            item 1 [Base.BulletPressTool] mode:keep flags[MayDegradeLight],
+            item 1 [Base.rifle_casing],
+            item 1 [Base.rifle_bullet_tip],
+        }
+        outputs
+        {
+            item 1 Base.556Bullets,
+        }
+    }
+    craftRecipe Disassemble556Bullets
+    {
+        timedAction = Making,
+        time = 30,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:pliers;base:visegrips] mode:keep,
+            item 5 [Base.556Bullets] mode:destroy,
+        }
+        outputs
+        {
+            item 3 Base.GunPowder flags[HasOneUse],
+            item 4 Base.rifle_casing,
+            item 4 Base.rifle_bullet_tip,
+        }
+    }
+    craftRecipe Assemble762x39Bullets
+    {
+        time = 100,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        timedAction = CraftWeapon1H,
+        xpAward = Maintenance:1,
+        inputs
+        {
+            item 1 [Base.GunPowder],
+            item 1 [Base.BulletPressTool] mode:keep flags[MayDegradeLight],
+            item 1 [Base.rifle_casing],
+            item 1 [Base.rifle_bullet_tip],
+        }
+        outputs
+        {
+            item 1 Base.762x39Bullets,
+        }
+    }
+    craftRecipe Disassemble762x39Bullets
+    {
+        timedAction = Making,
+        time = 30,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:pliers;base:visegrips] mode:keep,
+            item 5 [Base.762x39Bullets] mode:destroy,
+        }
+        outputs
+        {
+            item 3 Base.GunPowder flags[HasOneUse],
+            item 4 Base.rifle_casing,
+            item 4 Base.rifle_bullet_tip,
+        }
+    }
+    craftRecipe Assemble762x54rBullets
+    {
+        time = 100,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        timedAction = CraftWeapon1H,
+        xpAward = Maintenance:1,
+        inputs
+        {
+            item 1 [Base.GunPowder],
+            item 1 [Base.BulletPressTool] mode:keep flags[MayDegradeLight],
+            item 1 [Base.rifle_casing],
+            item 1 [Base.rifle_bullet_tip],
+        }
+        outputs
+        {
+            item 1 Base.762x54rBullets,
+        }
+    }
+    craftRecipe Disassemble762x54rBullets
+    {
+        timedAction = Making,
+        time = 30,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:pliers;base:visegrips] mode:keep,
+            item 5 [Base.762x54rBullets] mode:destroy,
+        }
+        outputs
+        {
+            item 3 Base.GunPowder flags[HasOneUse],
+            item 4 Base.rifle_casing,
+            item 4 Base.rifle_bullet_tip,
+        }
+    }
+    craftRecipe Assemble792x57Bullets
+    {
+        time = 100,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        timedAction = CraftWeapon1H,
+        xpAward = Maintenance:1,
+        inputs
+        {
+            item 1 [Base.GunPowder],
+            item 1 [Base.BulletPressTool] mode:keep flags[MayDegradeLight],
+            item 1 [Base.rifle_casing],
+            item 1 [Base.rifle_bullet_tip],
+        }
+        outputs
+        {
+            item 1 Base.792x57Bullets,
+        }
+    }
+    craftRecipe Disassemble792x57Bullets
+    {
+        timedAction = Making,
+        time = 30,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:pliers;base:visegrips] mode:keep,
+            item 5 [Base.792x57Bullets] mode:destroy,
+        }
+        outputs
+        {
+            item 3 Base.GunPowder flags[HasOneUse],
+            item 4 Base.rifle_casing,
+            item 4 Base.rifle_bullet_tip,
+        }
+    }
+    craftRecipe AssembleShotgunShells
+    {
+        time = 100,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        timedAction = CraftWeapon1H,
+        xpAward = Maintenance:1,
+        inputs
+        {
+            item 1 [Base.GunPowder],
+            item 1 [Base.BulletPressTool] mode:keep flags[MayDegradeLight],
+            item 1 [Base.shells_casing],
+            item 1 [Base.shotgun_buckshot],
+        }
+        outputs
+        {
+            item 1 Base.ShotgunShells,
+        }
+    }
+    craftRecipe DisassembleShotgunShells
+    {
+        timedAction = Making,
+        time = 30,
+        category = GgsEngineer,
+        Tags = AnySurfaceCraft,
+        inputs
+        {
+            item 1 tags[base:pliers;base:visegrips] mode:keep,
+            item 5 [Base.ShotgunShells] mode:destroy,
+        }
+        outputs
+        {
+            item 3 Base.GunPowder flags[HasOneUse],
+            item 4 Base.shells_casing,
+            item 4 Base.shotgun_buckshot,
+        }
+    }
+    craftRecipe Make_pistol_bullet_tip
+    {
+        time = 100,
+        Tags = AnySurfaceCraft,
+        SkillRequired = MetalWelding:2,
+        needTobeLearn = false,
+        timedAction = Welding,
+        xpAward = MetalWelding:20,
+        category = GgsWelding,
+        inputs
+        {
+            item 1 [Base.SmallSheetMetal] flags[IsHeadPart],
+            item 4 [Base.BlowTorch],
+            item 1 tags[WeldingMask] mode:keep,
+        }
+        outputs
+        {
+            item 30 Base.pistol_bullet_tip,
+        }
+    }
+    craftRecipe Make_revolver_bullet_tip
+    {
+        time = 100,
+        Tags = AnySurfaceCraft,
+        SkillRequired = MetalWelding:2,
+        needTobeLearn = false,
+        timedAction = Welding,
+        xpAward = MetalWelding:20,
+        category = GgsWelding,
+        inputs
+        {
+            item 1 [Base.SmallSheetMetal] flags[IsHeadPart],
+            item 4 [Base.BlowTorch],
+            item 1 tags[WeldingMask] mode:keep,
+        }
+        outputs
+        {
+            item 25 Base.revolver_bullet_tip,
+        }
+    }
+    craftRecipe Make_rifle_bullet_tip
+    {
+        time = 100,
+        Tags = AnySurfaceCraft,
+        SkillRequired = MetalWelding:2,
+        needTobeLearn = false,
+        timedAction = Welding,
+        xpAward = MetalWelding:20,
+        category = GgsWelding,
+        inputs
+        {
+            item 1 [Base.SmallSheetMetal] flags[IsHeadPart],
+            item 4 [Base.BlowTorch],
+            item 1 tags[WeldingMask] mode:keep,
+        }
+        outputs
+        {
+            item 20 Base.rifle_bullet_tip,
+        }
+    }
+    craftRecipe MakeWaterBottleDuctapedSuppressor
+    {
+        timedAction = MakingElectrical,
+        time = 80,
+        NeedToBeLearn = false,
+        Tags = InHandCraft;Engineer,
+        category = GgsEngineer,
+        inputs
+        {
+            item 1 [Base.DuctTape],
+            item 1 [Base.PopBottle;Base.WaterBottle] flags[IsEmpty;ItemCount],
+        }
+        outputs
+        {
+            item 1 Base.WaterBottle_ductaped,
+        }
+    }
+    craftRecipe MakeSprayCanSuppressor
+    {
+        timedAction = MakingElectrical,
+        time = 80,
+        NeedToBeLearn = false,
+        Tags = AnySurfaceCraft,
+        category = GgsEngineer,
+        inputs
+        {
+            item 1 tags[Aerosol] flags[ItemCount] mode:destroy,
+            item 1 [Base.DuctTape],
+        }
+        outputs
+        {
+            item 1 Base.SprayCan_Silencer,
+        }
+    }
+    craftRecipe MakeCanSuppressor
+    {
+        timedAction = Making,
+        time = 60,
+        Tags = InHandCraft,
+        category = GgsEngineer,
+        inputs
+        {
+            item 1 [Base.BeerCan;Base.BeerCanEmpty;Base.Pop;Base.Pop2;Base.Pop3;Base.PopEmpty;Base.Pop2Empty;Base.Pop3Empty] flags[IsEmpty;Prop2;ItemCount],
+            item 1 [Base.DuctTape],
+            item 1 tags[SharpKnife;SewingNeedle;Awl] flags[Prop1;MayDegradeLight] mode:keep,
+        }
+        outputs
+        {
+            item 1 Base.SodaCan_Silencer,
+        }
+    }
+    craftRecipe MakeOilFilterSuppressor
+    {
+        timedAction = MakingElectrical,
+        time = 80,
+        NeedToBeLearn = false,
+        Tags = InHandCraft;Engineer,
+        category = GgsEngineer,
+        inputs
+        {
+            item 1 [Base.OilFilter],
+            item 5 [Base.GunAttParts],
+        }
+        outputs
+        {
+            item 1 Base.OilFilter_Silencer,
+        }
+    }
+    craftRecipe MakePipeSuppressor
+    {
+        timedAction = MakingElectrical,
+        time = 100,
+        NeedToBeLearn = false,
+        Tags = AnySurfaceCraft,
+        category = GgsEngineer,
+        inputs
+        {
+            item 1 [Base.MetalPipe;Base.MetalPipe_Broken],
+            item 10 [Base.GunAttParts],
+            item 1 tags[MetalSaw;SmallSaw] mode:keep flags[MayDegradeLight],
+        }
+        outputs
+        {
+            item 1 Base.scrap_pipe_suppressor,
+        }
+    }
+    craftRecipe MakePipeStock
+    {
+        timedAction = MakingElectrical,
+        time = 100,
+        NeedToBeLearn = false,
+        Tags = AnySurfaceCraft,
+        category = GgsEngineer,
+        inputs
+        {
+            item 1 [Base.MetalPipe;Base.MetalPipe_Broken],
+            item 10 [Base.GunAttParts],
+            item 1 tags[MetalSaw;SmallSaw] mode:keep flags[MayDegradeLight],
+            item 1 [Base.DuctTape],
+
+        }
+        outputs
+        {
+            item 1 Base.scrap_stock,
+        }
+    }
+    craftRecipe MakeScrapMount
+    {
+        timedAction = MakingElectrical,
+        time = 100,
+        NeedToBeLearn = false,
+        Tags = AnySurfaceCraft,
+        category = GgsEngineer,
+        inputs
+        {
+            item 2 [Base.SmallSheetMetal],
+            item 10 [Base.GunAttParts],
+            item 1 tags[MetalSaw;SmallSaw] mode:keep flags[MayDegradeLight],
+            item 1 [Base.DuctTape],
+
+        }
+        outputs
+        {
+            item 1 Base.scrap_mount,
+        }
+    }
+    craftRecipe MakeScrapMountShotgun
+    {
+        timedAction = MakingElectrical,
+        time = 100,
+        NeedToBeLearn = false,
+        Tags = AnySurfaceCraft,
+        category = GgsEngineer,
+        inputs
+        {
+            item 2 [Base.SmallSheetMetal],
+            item 10 [Base.GunAttParts],
+            item 2 tags[MetalSaw;SmallSaw] mode:keep flags[MayDegradeLight],
+            item 1 [Base.DuctTape],
+
+        }
+        outputs
+        {
+            item 1 Base.scrap_mount_shotgun,
+        }
+    }
+    craftRecipe MakeScrapScrewdriverGrip
+    {
+        timedAction = MakingElectrical,
+        time = 100,
+        NeedToBeLearn = false,
+        Tags = AnySurfaceCraft,
+        category = GgsEngineer,
+        inputs
+        {
+            item 1 [Base.Screwdriver] flags[ItemCount] mode:destroy,
+            item 2 [Base.GunAttParts],
+            item 1 tags[MetalSaw;SmallSaw] mode:keep flags[MayDegradeLight],
+
+        }
+        outputs
+        {
+            item 1 Base.scrap_grip_screwdriver,
+        }
+    }
+    craftRecipe MakePipeBipod
+    {
+        timedAction = MakingElectrical,
+        time = 100,
+        NeedToBeLearn = false,
+        Tags = AnySurfaceCraft,
+        category = GgsEngineer,
+        inputs
+        {
+            item 1 [Base.MetalPipe;Base.MetalPipe_Broken],
+            item 10 [Base.GunAttParts],
+            item 1 tags[MetalSaw;SmallSaw] mode:keep flags[MayDegradeLight],
+            item 1 [Base.DuctTape],
+
+        }
+        outputs
+        {
+            item 1 Base.scrap_bipod,
+        }
+    }
+    craftRecipe AssembleBow
+    {
+        time = 100,
+        category = GgsSurvivalist,
+        Tags = AnySurfaceCraft,
+        SkillRequired = Maintenance:1,
+        timedAction = CraftWeapon1H,
+        xpAward = Maintenance:10,
+        inputs
+        {
+            item 1 tags[SharpKnife] mode:keep flags[Prop1;SharpnessCheck;IsNotDull],
+            item 1 [Base.LongStick;Base.Sapling] flags[Prop2;InheritCondition],
+            item 1 [Base.String;Base.Rope;Base.SheetRope],
+        }
+        outputs
+        {
+            item 1 Base.Bow_crafted,
+        }
+    }
+     craftRecipe SewHideQuiver
+    {
+        timedAction = SewingCloth,
+        time = 200,
+        xpAward = Tailoring:11,
+        AllowBatchCraft = false,
+        Tags = AnySurfaceCraft,
+        category = GgsSurvivalist,
+        SkillRequired = Tailoring:1,
+        inputs
+        {
+            item 1 tags[base:scissors;base:sharpknife] mode:keep flags[IsNotDull;MayDegradeLight],
+            item 1 tags[base:sewingneedle;base:awl] mode:keep flags[MayDegradeLight],
+            item 1 tags[base:leathercrudetannedmedium;base:leatherfurtannedmedium],
+            item 1 tags[base:heavythread],
+            item 1 [Base.LeatherStrips] mode:destroy,
+        }
+        outputs
+        {
+            item 1 Base.Primitive_Quiver,
+        }
+    }
+}

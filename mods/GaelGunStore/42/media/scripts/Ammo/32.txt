@@ -1,0 +1,50 @@
+module Base
+{
+/****************************** 86 ******************************/
+    item Bullets32
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        Count	=	5,
+        Weight	=	0.015,
+        Tags = base:ammo,
+        DisplayName = Bullets32,
+        Icon	=	32Bullet,
+        MetalValue = 1,
+        WorldStaticModel = 32SpecialBullets,
+    }
+    item Bullets32Box
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        Count   =   50,
+        AmmoType = ggs:bullets_32,
+        Weight	=	0.2,
+        
+        DisplayName = Bullets32Box,
+        Icon	=	Bullets32Box,
+        MetalValue = 30,
+        WorldStaticModel = Bullets32Box,
+        PlaceOneSound = BoxOfRoundsPlaceOne,
+        PlaceMultipleSound = BoxOfRoundsPlaceAll,
+        DoubleClickRecipe = OpenBoxofBullets32,
+    }
+    item Bullets32Carton
+    {
+        DisplayCategory = Ammo,
+        ItemType = base:normal,
+        Weight = 7.4,
+        Icon = Parcel_Medium_Ammo,
+        AlwaysWelcomeGift = true,
+        MetalValue = 300.0,
+        PlaceMultipleSound = BoxOfRoundsPlaceAll,
+        PlaceOneSound = BoxOfRoundsPlaceOne,
+        WorldStaticModel = Parcel_Ammo_Medium,
+        Tags = base:hasmetal;base:ignorezombiedensity,
+        DoubleClickRecipe = OpenAmmoCarton12,
+    }
+    model Bullets32Box{
+        mesh = Ammo/Bullets32Box,
+        texture = GunTexture/Ammo45,
+    }
+}

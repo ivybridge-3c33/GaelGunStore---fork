@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animNode x_extends="LoadDblBarrel.xml">
+	<m_Name>UnloadDblBarrel</m_Name>
+	<m_Conditions x_name="9c4b5c98-1e38-4ab1-a8c7-4790be869747">
+		<m_Name>isUnloading</m_Name>
+	</m_Conditions>
+	<m_Events x_name="24c5ed00-b5f1-4883-b023-e268845fea46">
+		<m_EventName>unloadFinished</m_EventName>
+	</m_Events>
+	<m_Events x_name="40c50c8f-e284-4a03-b5db-644238499604">
+		<m_TimePc>0.1</m_TimePc>
+		<m_ParameterValue>unload</m_ParameterValue>
+	</m_Events>
+</animNode>

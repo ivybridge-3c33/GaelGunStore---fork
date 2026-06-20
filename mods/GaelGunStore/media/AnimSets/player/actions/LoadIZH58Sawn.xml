@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<animNode x_extends="LoadIZH58.xml">
+	<m_Name>LoadIZH58</m_Name>
+	<m_Conditions />
+	<m_Conditions>
+		<m_StringValue>doublebarrelizh58sawn</m_StringValue>
+	</m_Conditions>
+	<m_Conditions />
+	<m_Events />
+	<m_Events />
+	<m_Events>
+		<m_ParameterValue>IZH58_short_OPEN</m_ParameterValue>
+	</m_Events>
+	<m_Events>
+		<m_EventName>playReloadSound</m_EventName>
+		<m_Time>Start</m_Time>
+		<m_ParameterValue>insertAmmoStart</m_ParameterValue>
+	</m_Events>
+</animNode>

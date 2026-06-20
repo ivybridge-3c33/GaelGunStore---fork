@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<animNode x_extends="Idlerex5default.xml">
+	<m_Name>Idlerex5</m_Name>
+	<m_AnimName>LVX_BOW_IDLE_Default</m_AnimName>
+	<m_SpeedScale>0.42</m_SpeedScale>
+	<m_BlendTime>0.20</m_BlendTime>
+	<m_SyncTrackingEnabled>false</m_SyncTrackingEnabled>
+	<m_Looped>true</m_Looped>
+	<m_EarlyTransitionOut>true</m_EarlyTransitionOut>
+	<m_Conditions>
+		<m_Name>FireMode</m_Name>
+		<m_Type>STRING</m_Type>
+		<m_Value>REX5Single</m_Value>
+	</m_Conditions>
+	<m_2DBlends>
+		<m_AnimName>LVX_BOW_IDLE_Default</m_AnimName>
+	</m_2DBlends>
+	<m_2DBlends>
+		<m_AnimName>Bob_Idle_HeavyBreathing_Rifle</m_AnimName>
+	</m_2DBlends>
+	<m_2DBlends>
+		<m_AnimName>LVX_BOW_IDLE_Default</m_AnimName>
+	</m_2DBlends>
+	<m_Transitions>
+		<m_Target>aim_rex5</m_Target>
+		<m_AnimName>LVX_BOW_AIMHOLD</m_AnimName>
+	</m_Transitions>
+	<m_Transitions>
+		<m_Target>walkRifle</m_Target>
+	</m_Transitions>
+	<m_Transitions>
+		<m_Target>runRifle</m_Target>
+		<m_AnimName>Bob_IdleToRun_Rifle</m_AnimName>
+	</m_Transitions>
+	<m_Transitions>
+		<m_Target>Idlerex5</m_Target>
+		<m_AnimName>LVX_BOW_IDLE_Default</m_AnimName>
+	</m_Transitions>
+	<m_Transitions />
+	<m_Transitions />
+	<m_Transitions />
+	<m_Transitions>
+		<m_Target>sneakidleRifle</m_Target>
+	</m_Transitions>
+	<m_Transitions>
+		<m_Target>sneakIdleLowRifle</m_Target>
+	</m_Transitions>
+</animNode>

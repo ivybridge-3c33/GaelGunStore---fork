@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<animNode x_extends="UnloadDblBarrel.xml">
+	<m_Name>UnloadDblBlaze</m_Name>
+	<m_Conditions />
+	<m_Conditions>
+		<m_Value>blazereload</m_Value>
+	</m_Conditions>
+	<m_Conditions />
+	<m_Events />
+	<m_Events />
+	<m_Events>
+		<m_ParameterValue>Blaze_OPEN</m_ParameterValue>
+	</m_Events>
+</animNode>

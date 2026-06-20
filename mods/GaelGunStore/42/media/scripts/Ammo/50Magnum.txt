@@ -1,0 +1,109 @@
+module Base
+{
+/****************************** 50Magnum ******************************/
+    item Bullets50Magnum
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        Count	=	3,
+        Weight	=	0.04,
+        DisplayName = Bullets50Magnum,
+        Icon	=	50magnumBullet,
+        MetalValue = 1,
+        WorldStaticModel = 9mmRounds,
+        Tags = base:ammo,
+    }
+    item Bullets50MagnumBox
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        Count   =   30,
+        AmmoType = ggs:bullets_50magnum,
+        Weight	=	0.38,
+        DisplayName = Bullets50MagnumBox,
+        Icon	=	Bullets50MagnumBox,
+        MetalValue = 30,
+        WorldStaticModel = Bullets50MagnumBox,
+        PlaceOneSound = BoxOfRoundsPlaceOne,
+        PlaceMultipleSound = BoxOfRoundsPlaceAll,
+        DoubleClickRecipe = OpenBoxofBullets50Magnum,
+    }
+    model Bullets50MagnumBox{
+        mesh = Ammo/Bullets50MagnumBox,
+        texture = GunTexture/Ammo50AE,
+    }
+    item Bullets50MagnumCarton
+    {
+        DisplayCategory = Ammo,
+        ItemType = base:normal,
+        Weight = 9.0,
+        Icon = Parcel_Medium_Ammo,
+        AlwaysWelcomeGift = true,
+        MetalValue = 300.0,
+        PlaceMultipleSound = BoxOfRoundsPlaceAll,
+        PlaceOneSound = BoxOfRoundsPlaceOne,
+        WorldStaticModel = Parcel_Ammo_Medium,
+        Tags = base:hasmetal;base:ignorezombiedensity,
+        DoubleClickRecipe = OpenAmmoCarton12,
+    }
+    item 50MagnumClip
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.1,
+        
+        DisplayName = 50MagnumClip,
+        Icon	=	50MagnumClip,
+        MaxAmmo = 8,
+        AmmoType = ggs:bullets_50magnum,
+        StaticModel = GunMagazine,
+        GunType = Base.Deagle50AE;Base.Grizzly50AE,
+        WorldStaticModel = Clip_50MagnumClip_Ground,
+    }
+    model Clip_50MagnumClip_Ground
+    {
+            mesh = Ammo/WorldItems|50MagnumClip,
+    	    texture = GunTexture/Deagle_tex,
+    }
+    item 50MagnumClip18
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.1,
+        
+        DisplayName = 50MagnumClip18,
+        Icon	=	50MagnumClip18,
+        MaxAmmo = 18,
+        AmmoType = ggs:bullets_50magnum,
+        StaticModel = GunMagazine,
+        GunType = Base.Deagle50AE;Base.Grizzly50AE,
+        WorldStaticModel = Clip_50MagnumClip18_Ground,
+    }
+    model Clip_50MagnumClip18_Ground
+    {
+            mesh = Ammo/WorldItems|50MagnumClip18,
+    	    texture = GunTexture/Deagle_tex,
+    }
+    item 50MagnumDrum40
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.1,
+        
+        DisplayName = 50MagnumDrum40,
+        Icon	=	50MagnumDrum40,
+        MaxAmmo = 40,
+        AmmoType = ggs:bullets_50magnum,
+        StaticModel = GunMagazine,
+        GunType = Base.Deagle50AE;Base.Grizzly50AE,
+        WorldStaticModel = Clip_50MagnumDrum40_Ground,
+    }
+    model Clip_50MagnumDrum40_Ground
+    {
+            mesh = Ammo/WorldItems|50MagnumDrum40,
+    	    texture = GunTexture/50MagnumDrum40_tex,
+    }
+}

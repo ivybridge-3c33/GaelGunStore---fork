@@ -1,0 +1,131 @@
+module Base
+{
+/****************************** 556 ******************************/
+    item 556Bullets
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        Count	=	5,
+        Weight	=	0.015,
+        AlwaysWelcomeGift	=	TRUE,
+        DisplayName = 556Bullets,
+        Icon	=	556x45Bullet,
+        MetalValue = 1,
+        WorldStaticModel = RifleAmmo,
+        Tags = base:ammo,
+    }
+    item 556Box
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        Weight	=	0.2,
+        AlwaysWelcomeGift	=	TRUE,
+        Count = 60,
+        AmmoType = base:bullets_556,
+        DisplayName = 556Box,
+        Icon	=	Bullets556Box,
+        MetalValue = 40,
+        WorldStaticModel = Bullets556Box,
+        PlaceOneSound = BoxOfRoundsPlaceOne,
+        PlaceMultipleSound = BoxOfRoundsPlaceAll,
+        DoubleClickRecipe = OpenBoxof556Bullets,
+    }
+    model Bullets556Box{
+        mesh = Ammo/Bullets556Box,
+        texture = GunTexture/Ammo556,
+    }   
+    item 556Carton
+    {
+        DisplayCategory = Ammo,
+        ItemType = base:normal,
+        Weight = 10.5,
+        Icon = Parcel_Medium_Military,
+        AlwaysWelcomeGift = true,
+        MetalValue = 400.0,
+        PlaceMultipleSound = BoxOfRoundsPlaceAll,
+        PlaceOneSound = BoxOfRoundsPlaceOne,
+        WorldStaticModel = Parcel_Military_Medium,
+        Tags = base:hasmetal;base:ignorezombiedensity,
+        DoubleClickRecipe = OpenAmmoCarton12,
+    }
+    item 556Clip
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.1,
+        
+        DisplayName = 556Clip,
+        Icon	=	556x45_30rnd_al,
+        MaxAmmo = 30,
+        AmmoType = base:bullets_556,
+        StaticModel = GunMagazine,
+        GunType = Base.AssaultRifle,
+        WorldStaticModel = 556Clip_Ground,
+    }
+    model 556Clip_Ground
+    {
+            mesh = Ammo/WorldItems|mag_556_30rnd,
+            texture = GunTexture/M4_tex,
+    }
+    item 556Drum_60rnd
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.2,
+        
+        DisplayName = 556Drum_60rnd,
+        Icon	=	Drum556,
+        MaxAmmo = 60,
+        AmmoType = base:bullets_556,
+        StaticModel = GunMagazine,
+        GunType = Base.M4,
+        WorldStaticModel = 556Drum_60rnd_Ground,
+    }
+    model 556Drum_60rnd_Ground
+    {
+            mesh = Ammo/WorldItems|drum_556_60rnd,
+            texture = GunTexture/drum556_tex,
+    }
+    item 556Drum_100rnd
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.2,
+        
+        DisplayName = 556Drum_100rnd,
+        Icon	=	Dual_Drum_556,
+        MaxAmmo = 100,
+        AmmoType = base:bullets_556,
+        StaticModel = GunMagazine,
+        GunType = Base.M4,
+        WorldStaticModel = 556Drum_100rnd_Ground,
+    }
+    model 556Drum_100rnd_Ground
+    {
+            mesh = Ammo/WorldItems|drum_556_100rnd,
+            texture = GunTexture/ddrum556_tex,
+    }
+    item 556Box150
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.2,
+        
+        DisplayName = 556Box150,
+        Icon	=	556Box150,
+        MaxAmmo = 150,
+        AmmoType = base:bullets_556,
+        StaticModel = GunMagazine,
+        GunType = Base.M249,
+        WorldStaticModel = 556Box150_Ground,
+    }
+    model 556Box150_Ground
+    {
+            mesh = Ammo/WorldItems|556Box150,
+            texture = GunTexture/M249_tex,
+    }
+}

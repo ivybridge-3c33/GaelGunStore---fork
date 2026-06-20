@@ -1,0 +1,111 @@
+module Base
+{
+
+/****************************** Shells ******************************/
+    item ShotgunShells
+	{
+        ItemType = base:normal,
+	    DisplayCategory = Ammo,
+		Count	=	6,
+		Weight	=	0.04,
+		AlwaysWelcomeGift	=	TRUE,
+		Tags = base:ammo,
+		DisplayName = ShotgunShells,
+		Icon	=	12gShells,
+		MetalValue = 1,
+		WorldStaticModel = ShotGunShells,
+	}
+    item ShotgunShellsBox
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        Weight	=	0.7,
+        
+        DisplayName = ShotgunShellsBox,
+        Icon	=	ShotgunShellsBox,
+        MetalValue = 24,
+        WorldStaticModel = ShotgunShellsBox,
+        PlaceOneSound = BoxOfShellsPlaceOne,
+        PlaceMultipleSound = BoxOfShellsPlaceAll,
+    }
+    model ShotgunShellsBox{
+        mesh = Ammo/ShotgunShellsBox,
+        texture = GunTexture/ShotgunShellsBox_tex,
+    }
+        item ShotgunShellsCarton
+    {
+        DisplayCategory = Ammo,
+        ItemType = base:normal,
+        Weight = 15.0,
+        Icon = Parcel_Medium_Ammo,
+        AlwaysWelcomeGift = true,
+        MetalValue = 240.0,
+        PlaceMultipleSound = BoxOfRoundsPlaceAll,
+        PlaceOneSound = BoxOfRoundsPlaceOne,
+        WorldStaticModel = Parcel_Ammo_Medium,
+        Tags = base:hasmetal;base:ignorezombiedensity,
+        DoubleClickRecipe = OpenAmmoCarton12,
+    }
+    item 12GClip
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.1,
+        
+        DisplayName = 12GClip,
+        Icon	=	12GClip,
+        MaxAmmo = 8,
+        AmmoType = base:shotgun_shells,
+        StaticModel = GunMagazine,
+        GunType = Base.Saiga12;Base.AA12,
+        WorldStaticModel = 12GClip_Ground,
+    }
+    model 12GClip_Ground
+    {
+            mesh = Ammo/WorldItems|Clip_12ga_8rnd,
+    	    texture = GunTexture/Saiga12_tex,
+    }
+    item 12GClip14
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.1,
+        
+        DisplayName = 12GClip14,
+        Icon	=	12GClip14,
+        MaxAmmo = 14,
+        AmmoType = base:shotgun_shells,
+        StaticModel = GunMagazine,
+        GunType = Base.Saiga12;Base.AA12,
+        WorldStaticModel = 12GClip14_Ground,
+    }
+    model 12GClip14_Ground
+    {
+            mesh = Ammo/WorldItems|12GClip14,
+    	    texture = GunTexture/12GClip14_tex,
+    }
+    item 12GDrum24
+    {
+       
+        ItemType = base:normal,
+       DisplayCategory = Ammo,
+        CanStack	=	FALSE,
+        Weight	=	0.1,
+        
+        DisplayName = 12GDrum24,
+        Icon	=	12GDrum24,
+        MaxAmmo = 24,
+        AmmoType = base:shotgun_shells,
+        StaticModel = GunMagazine,
+        GunType = Base.Saiga12;Base.AA12,
+        WorldStaticModel = 12GDrum24_Ground,
+    }
+    model 12GDrum24_Ground
+    {
+            mesh = Ammo/WorldItems|12GDrum24,
+    	    texture = GunTexture/12GDrum24_tex,
+    }
+
+}

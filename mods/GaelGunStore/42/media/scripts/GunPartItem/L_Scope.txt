@@ -1,0 +1,224 @@
+module Base
+{
+    item 1P78
+    {
+        DisplayCategory = WeaponPart,
+        Type = WeaponPart,
+        ItemType = base:weaponpart,
+        DisplayName = 1P78,
+        Icon = 1P78,
+        PartType = L_Scope,
+        Weight = 0.3,
+        WeightModifier = 0.3,
+        AimingTimeModifier = 10,
+        MaxSightRange = 10,
+        MinSightRange = 6,
+        Tags = optics;GunParts,
+        MountOn = Base.AEK;Base.AK101;Base.AK103;Base.AK12;Base.AK19;Base.AK47;Base.AK74;Base.AK74u;Base.AK74u_long;Base.AK9;Base.AKM;Base.AKU12;Base.AK_minidrako;Base.AMD65;Base.AN94;Base.DVB15;Base.Galil;Base.Groza;Base.MG4;Base.PP_Bizon;Base.QBB95;Base.RPD;Base.RPK;Base.RPK12;Base.RPK16;Base.Saiga12;Base.Saiga9mm;Base.SKS;Base.SKS_carbine;Base.SKS_carbine_short;Base.SR3M;Base.SVD;Base.SVD12;Base.SVDK;Base.SVDK_short;Base.SVD_short;Base.SVT_40;Base.SVU;Base.Type81;Base.ValmetM82;Base.VEPR;Base.VSK;Base.VSS;Base.VSS_Tactical;Base.VZ58;Base.V_M87;Base.Wieger940;,
+        Tooltip = Tooltip_Scope,
+        CanAttach = ItemCodeOnTest.hasScrewdriver,
+        CanDetach = ItemCodeOnTest.hasScrewdriver,
+        MetalValue = 22.0,
+        ConditionMax = 40,
+        StaticModel = 1P78,
+        WorldStaticModel = 1P78,
+        HitChanceModifier = 9,
+    }
+    model 1P78
+    {
+        		mesh = Scope/Scopes|1P78,
+        	    texture = GunTexture/1P78_tex,
+        	    cullFace = None,
+    }
+
+    item 1PN93_4
+    {
+        DisplayCategory = WeaponPart,
+        Type = WeaponPart,
+        ItemType = base:weaponpart,
+        DisplayName = 1PN93_4,
+        Icon = 1PN93_4,
+        PartType = L_Scope,
+        Weight = 0.4,
+        WeightModifier = 0.4,
+        AimingTimeModifier = 10,
+        MaxSightRange = 16.0,
+        MinSightRange = 8,
+        Tags = optics;GunParts,
+        MountOn = Base.AEK;Base.AK101;Base.AK103;Base.AK12;Base.AK19;Base.AK47;Base.AK74;Base.AK74u;Base.AK74u_long;Base.AK9;Base.AKM;Base.AKU12;Base.AK_minidrako;Base.AMD65;Base.AN94;Base.DVB15;Base.Galil;Base.Groza;Base.MG4;Base.Minimi;Base.PP_Bizon;Base.QBB95;Base.RPD;Base.RPK;Base.RPK12;Base.RPK16;Base.Saiga12;Base.Saiga9mm;Base.SKS;Base.SKS_carbine;Base.SKS_carbine_short;Base.SR3M;Base.SVD;Base.SVD12;Base.SVDK;Base.SVDK_short;Base.SVD_short;Base.SVT_40;Base.SVU;Base.Type81;Base.ValmetM82;Base.VEPR;Base.VSK;Base.VSS;Base.VSS_Tactical;Base.VZ58;Base.V_M87;Base.Wieger940;,
+        Tooltip = Tooltip_Scope,
+        CanAttach = ItemCodeOnTest.hasScrewdriver,
+        CanDetach = ItemCodeOnTest.hasScrewdriver,
+        MetalValue = 22.0,
+        ConditionMax = 50,
+        StaticModel = 1PN93_4,
+        WorldStaticModel = 1PN93_4,
+        HitChanceModifier = 9,
+    }
+    model 1PN93_4
+    {
+        		mesh = Scope/Scopes|1PN93_4,
+        	    texture = GunTexture/1PN93_4_tex,
+        	    cullFace = None,
+    }
+
+    item EKP_kobra
+    {
+        DisplayCategory = WeaponPart,
+        Type = WeaponPart,
+        ItemType = base:weaponpart,
+        DisplayName = EKP_kobra,
+        Icon = EKP_kobra,
+        PartType = L_Scope,
+        Weight = 0.2,
+        WeightModifier = 0.2,
+        AimingTimeModifier = -2,
+        MaxSightRange = 10,
+        MinSightRange = 8,
+        Tags = optics;GunParts,
+        MountOn = Base.AEK;Base.AK101;Base.AK103;Base.AK12;Base.AK19;Base.AK47;Base.AK74;Base.AK74u;Base.AK74u_long;Base.AK9;Base.AKM;Base.AKU12;Base.AK_minidrako;Base.AMD65;Base.AN94;Base.DVB15;Base.Galil;Base.Groza;Base.MG4;Base.PP_Bizon;Base.RPD;Base.RPK;Base.RPK12;Base.RPK16;Base.Saiga12;Base.Saiga9mm;Base.SKS;Base.SKS_carbine;Base.SKS_carbine_short;Base.SR3M;Base.SVD;Base.SVD12;Base.SVDK;Base.SVDK_short;Base.SVD_short;Base.SVT_40;Base.SVU;Base.Type81;Base.ValmetM82;Base.VEPR;Base.VSK;Base.VSS;Base.VSS_Tactical;Base.VZ58;Base.V_M87;Base.Wieger940;,
+        Tooltip = Tooltip_Scope,
+        CanAttach = ItemCodeOnTest.hasScrewdriver,
+        CanDetach = ItemCodeOnTest.hasScrewdriver,
+        MetalValue = 10,
+        ConditionMax = 25,
+        StaticModel = EKP_kobra,
+        WorldStaticModel = EKP_kobra,
+        HitChanceModifier = 10,
+        MaxRangeModifier = 12,
+    }
+    model EKP_kobra
+    {
+        		mesh = Scope/Scopes|EKP_kobra,
+        	    texture = GunTexture/EKP_kobra_tex,
+        	    cullFace = None,
+    }
+
+    item EKP_kobra_2x
+    {
+        DisplayCategory = WeaponPart,
+        Type = WeaponPart,
+        ItemType = base:weaponpart,
+        DisplayName = EKP_kobra_2x,
+        Icon = EKP_kobra_2x,
+        PartType = L_Scope,
+        Weight = 0.2,
+        WeightModifier = 0.2,
+        AimingTimeModifier = -4,
+        MaxSightRange = 14,
+        MinSightRange = 8,
+        Tags = optics;GunParts,
+        MountOn = Base.AEK;Base.AK101;Base.AK103;Base.AK12;Base.AK19;Base.AK47;Base.AK74;Base.AK74u;Base.AK74u_long;Base.AK9;Base.AKM;Base.AKU12;Base.AK_minidrako;Base.AMD65;Base.AN94;Base.DVB15;Base.Galil;Base.Groza;Base.MG4;Base.PP_Bizon;Base.RPD;Base.RPK;Base.RPK12;Base.RPK16;Base.Saiga12;Base.Saiga9mm;Base.SKS;Base.SKS_carbine;Base.SKS_carbine_short;Base.SR3M;Base.SVD;Base.SVD12;Base.SVDK;Base.SVDK_short;Base.SVD_short;Base.SVT_40;Base.SVU;Base.Type81;Base.ValmetM82;Base.VEPR;Base.VSK;Base.VSS;Base.VSS_Tactical;Base.VZ58;Base.V_M87;Base.Wieger940;,
+        Tooltip = Tooltip_Scope,
+        CanAttach = ItemCodeOnTest.hasScrewdriver,
+        CanDetach = ItemCodeOnTest.hasScrewdriver,
+        MetalValue = 10,
+        ConditionMax = 30,
+        StaticModel = EKP_kobra_2x,
+        WorldStaticModel = EKP_kobra_2x,
+        HitChanceModifier = 8,
+        MaxRangeModifier = 12,
+    }
+    model EKP_kobra_2x
+    {
+        		mesh = Scope/Scopes|EKP_kobra_2x,
+        	    texture = GunTexture/EKP_kobra_2x_tex,
+        	    cullFace = None,
+    }
+
+    item POSP
+    {
+        DisplayCategory = WeaponPart,
+        Type = WeaponPart,
+        ItemType = base:weaponpart,
+        DisplayName = POSP,
+        Icon = POSP,
+        PartType = L_Scope,
+        Weight = 0.4,
+        WeightModifier = 0.4,
+        AimingTimeModifier = 7,
+        MaxSightRange = 12,
+        MinSightRange = 8,
+        Tags = optics;GunParts,
+        MountOn = Base.AEK;Base.AK101;Base.AK103;Base.AK12;Base.AK19;Base.AK47;Base.AK74;Base.AK74u;Base.AK74u_long;Base.AK9;Base.AKM;Base.AKU12;Base.AK_minidrako;Base.AMD65;Base.AN94;Base.DVB15;Base.Galil;Base.Groza;Base.MG4;Base.PP_Bizon;Base.RPD;Base.RPK;Base.RPK12;Base.RPK16;Base.Saiga12;Base.Saiga9mm;Base.SKS;Base.SKS_carbine;Base.SKS_carbine_short;Base.SR3M;Base.SVD;Base.SVD12;Base.SVDK;Base.SVDK_short;Base.SVD_short;Base.SVT_40;Base.SVU;Base.Type81;Base.ValmetM82;Base.VEPR;Base.VSK;Base.VSS;Base.VSS_Tactical;Base.VZ58;Base.V_M87;Base.Wieger940;,
+        Tooltip = Tooltip_Scope,
+        CanAttach = ItemCodeOnTest.hasScrewdriver,
+        CanDetach = ItemCodeOnTest.hasScrewdriver,
+        MetalValue = 20,
+        ConditionMax = 30,
+        StaticModel = POSP,
+        WorldStaticModel = POSP,
+        HitChanceModifier = 14,
+        MaxRangeModifier = 26,
+    }
+    model POSP
+    {
+        		mesh = Scope/Scopes|POSP,
+        	    texture = GunTexture/POSP_tex,
+        	    cullFace = None,
+    }
+
+    item POSP4x24
+    {
+        DisplayCategory = WeaponPart,
+        Type = WeaponPart,
+        ItemType = base:weaponpart,
+        DisplayName = POSP4x24,
+        Icon = POSP4x24,
+        PartType = L_Scope,
+        Weight = 0.4,
+        WeightModifier = 0.4,
+        AimingTimeModifier = 8,
+        MaxSightRange = 12,
+        MinSightRange = 8,
+        Tags = optics;GunParts,
+        MountOn = Base.AEK;Base.AK101;Base.AK103;Base.AK12;Base.AK19;Base.AK47;Base.AK74;Base.AK74u;Base.AK74u_long;Base.AK9;Base.AKM;Base.AKU12;Base.AK_minidrako;Base.AMD65;Base.AN94;Base.DVB15;Base.Galil;Base.Groza;Base.MG4;Base.PP_Bizon;Base.RPD;Base.RPK;Base.RPK12;Base.RPK16;Base.Saiga12;Base.Saiga9mm;Base.SKS;Base.SKS_carbine;Base.SKS_carbine_short;Base.SR3M;Base.SVD;Base.SVD12;Base.SVDK;Base.SVDK_short;Base.SVD_short;Base.SVT_40;Base.SVU;Base.Type81;Base.ValmetM82;Base.VEPR;Base.VSK;Base.VSS;Base.VSS_Tactical;Base.VZ58;Base.V_M87;Base.Wieger940;,
+        Tooltip = Tooltip_Scope,
+        CanAttach = ItemCodeOnTest.hasScrewdriver,
+        CanDetach = ItemCodeOnTest.hasScrewdriver,
+        MetalValue = 10,
+        ConditionMax = 30,
+        StaticModel = POSP4x24,
+        WorldStaticModel = POSP4x24,
+        HitChanceModifier = 12,
+        MaxRangeModifier = 27,
+    }
+    model POSP4x24
+    {
+        		mesh = Scope/Scopes|POSP4x24,
+        	    texture = GunTexture/POSP4x24_tex,
+        	    cullFace = None,
+    }
+
+    item Zeiss4x25
+    {
+        DisplayCategory = WeaponPart,
+        Type = WeaponPart,
+        ItemType = base:weaponpart,
+        DisplayName = Zeiss4x25,
+        Icon = Zeiss4x25,
+        PartType = L_Scope,
+        Weight = 0.4,
+        WeightModifier = 0.4,
+        AimingTimeModifier = 10,
+        MaxSightRange = 16.0,
+        MinSightRange = 8,
+        Tags = optics;GunParts,
+        MountOn = Base.AEK;Base.AK101;Base.AK103;Base.AK12;Base.AK19;Base.AK47;Base.AK74;Base.AK74u;Base.AK74u_long;Base.AK9;Base.AKM;Base.AKU12;Base.AK_minidrako;Base.AMD65;Base.AN94;Base.DVB15;Base.Galil;Base.Groza;Base.MG4;Base.PP_Bizon;Base.RPD;Base.RPK;Base.RPK12;Base.RPK16;Base.Saiga12;Base.Saiga9mm;Base.SKS;Base.SKS_carbine;Base.SKS_carbine_short;Base.SR3M;Base.SVD;Base.SVD12;Base.SVDK;Base.SVDK_short;Base.SVD_short;Base.SVT_40;Base.SVU;Base.Type81;Base.ValmetM82;Base.VEPR;Base.VSK;Base.VSS;Base.VSS_Tactical;Base.VZ58;Base.V_M87;Base.Wieger940;,
+        Tooltip = Tooltip_Scope,
+        CanAttach = ItemCodeOnTest.hasScrewdriver,
+        CanDetach = ItemCodeOnTest.hasScrewdriver,
+        MetalValue = 22.0,
+        ConditionMax = 30,
+        StaticModel = Zeiss4x25,
+        WorldStaticModel = Zeiss4x25,
+        HitChanceModifier = 15,
+        MaxRangeModifier = 30,
+    }
+    model Zeiss4x25
+    {
+        		mesh = Scope/Scopes|Zeiss4x25,
+        	    texture = GunTexture/Zeiss4x25_tex,
+        	    cullFace = None,
+    }
+}

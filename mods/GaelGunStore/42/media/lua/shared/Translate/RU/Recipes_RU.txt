@@ -1,0 +1,9 @@
+Recipes_RU = {
+	PlaceeBullets50_inbox="Загрузить 50 патронов в коробку",
+	craftRecipe_Open_Box_of_9x39Bullets = "Открыть коробку с патронами 9x39",
+	craftRecipe_Open_Box_of_Bullets22LR = "Открыть коробку с патронами .22 LR",
+	Recipe_OpenBoxOfBullets502 = "Открыть коробку (50 патронов)",
+	Recipe_OpenBoxOf9x39Bullets = "Открыть коробку с патронами 9x39",
+	Recipe_OpenBoxOfBullets22LR = "Открыть коробку с патронами .22 LR",
+	Recipe_CraftArrow = "Создать стрелу",
+}

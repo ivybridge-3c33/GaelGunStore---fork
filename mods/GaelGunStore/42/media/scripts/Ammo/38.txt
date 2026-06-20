@@ -1,0 +1,48 @@
+module Base
+{
+/****************************** 86 ******************************/
+    item Bullets38
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        Count	=	5,
+        Weight	=	0.015,
+        Tags = base:ammo,
+        DisplayName = Bullets38,
+        Icon	=	38Bullet,
+        MetalValue = 1,
+        WorldStaticModel = 38SpecialBullets,
+    }
+    item Bullets38Box
+    {
+        ItemType = base:normal,
+        DisplayCategory = Ammo,
+        Weight	=	0.2,
+        
+        DisplayName = Bullets38Box,
+        Icon	=	Bullets38Box,
+        MetalValue = 30,
+        WorldStaticModel = Bullets38Box,
+        PlaceOneSound = BoxOfRoundsPlaceOne,
+        PlaceMultipleSound = BoxOfRoundsPlaceAll,
+        DoubleClickRecipe = OpenBoxofBullets38,
+    }
+    model Bullets38Box{
+        mesh = Ammo/Bullets38Box,
+        texture = GunTexture/Ammo556,
+    }
+    item Bullets38Carton
+    {
+        DisplayCategory = Ammo,
+        ItemType = base:normal,
+        Weight = 7.5,
+        Icon = Parcel_Medium_Ammo,
+        AlwaysWelcomeGift = true,
+        MetalValue = 300.0,
+        PlaceMultipleSound = BoxOfRoundsPlaceAll,
+        PlaceOneSound = BoxOfRoundsPlaceOne,
+        WorldStaticModel = Parcel_Ammo_Medium,
+        Tags = base:hasmetal;base:ignorezombiedensity,
+        DoubleClickRecipe = OpenAmmoCarton12,
+    }
+}

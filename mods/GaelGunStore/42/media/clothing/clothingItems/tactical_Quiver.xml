@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<clothingItem>
+	<m_MaleModel>media\models_X\Skinned\Clothes\tactical_Quiver.fbx</m_MaleModel>
+	<m_FemaleModel>media\models_X\Skinned\Clothes\tactical_Quiver.fbx</m_FemaleModel>
+	<m_GUID>272fd877-7e50-4f8f-8161-f2887a6e4570</m_GUID>
+	<m_Static>false</m_Static>
+	<m_AllowRandomTint>false</m_AllowRandomTint>
+	<m_AttachBone></m_AttachBone>
+	<m_MasksFolder>media/textures/Clothes/Custom_Mask/Ash</m_MasksFolder>
+    <m_UnderlayMasksFolder>media/textures/Body/Masks</m_UnderlayMasksFolder>
+	<textureChoices>Clothes/Armor/tactical_Quiver</textureChoices>
+</clothingItem>
