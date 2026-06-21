@@ -6571,7 +6571,6 @@ module Base
         SoundRadius = 170,
         SoundVolume = 30,
         FireMode = Single,
-        FireModePossibilities = Auto/Single,
         ReloadTime = 25,
         AimingTime = 50,
         AimingPerkCritModifier = 6,
