@@ -44,13 +44,30 @@ local function dump()
     end
     print(line)
 
-    -- current animation state name (probe several possible APIs)
+    -- character state machine (high level)
+    local stateName = "?"
+    pcall(function()
+        local st = p:getCurrentState()
+        if st then stateName = st:getClass():getSimpleName() end
+    end)
+    print("[GGS_ANIM]   charState=" .. stateName
+        .. " recoil=" .. probe(p, "getRecoilDelay")
+        .. " bodyDmg=" .. probe(p, "isOnFire"))
+
+    -- advanced animator: probe many possible methods
     local aa = nil
     pcall(function() aa = p:getAdvancedAnimator() end)
     if aa then
-        print("[GGS_ANIM]   animState=" .. probe(aa, "getCurrentStateName")
-            .. " curAnim=" .. probe(aa, "getCurrentClipName"))
+        print("[GGS_ANIM]   aa: state=" .. probe(aa, "getCurrentStateName")
+            .. " clip=" .. probe(aa, "getCurrentClipName")
+            .. " anim=" .. probe(aa, "getCurrentAnimationName")
+            .. " primary=" .. probe(aa, "getPrimaryStateName"))
     end
+
+    -- attached items (AWCWF renders parts here; a bad one can drag the pose)
+    local n = "?"
+    pcall(function() n = tostring(p:getAttachedItems() and p:getAttachedItems():size()) end)
+    print("[GGS_ANIM]   attachedItems=" .. n)
 end
 
 Events.OnPlayerUpdate.Add(dump)
