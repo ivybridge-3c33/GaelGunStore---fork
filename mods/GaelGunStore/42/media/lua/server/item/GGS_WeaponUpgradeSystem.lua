@@ -1209,9 +1209,7 @@ GGSWeaponUpgrades.ProbByList["stool_scar_gl"] = prob_stool_scar_gl
 
 GGSWeaponUpgrades.Lists["barrel_shroud_bipod"] = {
     "Base.bipod_harris",
-    "Base.bipod_harris_open",
     "Base.scrap_bipod",
-    "Base.scrap_bipod_open",
 }
 
 GGSWeaponUpgrades.Lists["canon_pistol_sup"] = {
@@ -1691,16 +1689,12 @@ GGSWeaponUpgrades.WeaponSlots = GGSWeaponUpgrades.WeaponSlots or {}
 
 GGSWeaponUpgrades.Pools["barrel_shroud"] = {
     { item = "Base.bipod_old", weight = 1, partType = "Barrel_Shroud" },
-    { item = "Base.bipod_old_open", weight = 1, partType = "Barrel_Shroud" },
     { item = "Base.bipod_simple", weight = 1, partType = "Barrel_Shroud" },
-    { item = "Base.bipod_simple_open", weight = 1, partType = "Barrel_Shroud" },
 }
 
 GGSWeaponUpgrades.Pools["barrel_shroud_bipod"] = {
     { item = "Base.bipod_harris", weight = 1, partType = "Barrel_Shroud" },
-    { item = "Base.bipod_harris_open", weight = 1, partType = "Barrel_Shroud" },
     { item = "Base.scrap_bipod", weight = 1, partType = "Barrel_Shroud" },
-    { item = "Base.scrap_bipod_open", weight = 1, partType = "Barrel_Shroud" },
 }
 
 GGSWeaponUpgrades.Pools["canon_pistol_sup"] = {
