@@ -20,15 +20,23 @@ local function dump()
     local wms = ScriptManager.instance:getModelScript("Base." .. sprite)
     print("[GGS_DBG]   weaponModelScript(Base." .. sprite .. ")=" .. tostring(wms))
 
-    -- 2) the render gate
-    local gmi = nil
-    if AWCWF_AdditionalParts and AWCWF_AdditionalParts.GetWeaponModelInstance then
-        local ok, res = pcall(AWCWF_AdditionalParts.GetWeaponModelInstance, p, w)
-        gmi = ok and res or ("ERR:" .. tostring(res))
+    -- 2) the render gate + WHY it fails: dump mesh comparison
+    local wantMesh = wms and wms:getMeshName() or "?"
+    print("[GGS_DBG]   wantMesh(model:getMeshName)=" .. tostring(wantMesh))
+    local pl = AWCWF_AdditionalParts and AWCWF_AdditionalParts.GetPlayerModelList
+        and AWCWF_AdditionalParts.GetPlayerModelList(p) or nil
+    if not pl then
+        print("[GGS_DBG]   GetPlayerModelList = nil  <-- gate fails here")
     else
-        gmi = "GetWeaponModelInstance MISSING"
+        print("[GGS_DBG]   playerModelList size=" .. tostring(pl:size()))
+        for i = 1, pl:size() do
+            local mi = pl:get(i - 1)
+            local ms = spfunction and spfunction(mi, "m_modelScript") or nil
+            local mesh = ms and ms.getMeshName and ms:getMeshName() or "nil"
+            local match = (tostring(mesh) == tostring(wantMesh))
+            print(string.format("[GGS_DBG]     instance[%d] mesh=%s match=%s", i, tostring(mesh), tostring(match)))
+        end
     end
-    print("[GGS_DBG]   GetWeaponModelInstance=" .. tostring(gmi) .. "  <-- nil/false => NOTHING renders")
 
     -- 3) modData parts the renderer iterates
     local md = w:getModData().weaponpart
