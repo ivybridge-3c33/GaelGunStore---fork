@@ -6617,7 +6617,7 @@ module Base
         MinimumSwingTime = 0.5,
         MinSightRange = 2,
         MultipleHitConditionAffected = FALSE,
-        MuzzleFlashModelKey = muzzle_flash_assault_rifle02,
+        MuzzleFlashModelKey = muzzle_flash_assault_rifle,
         PiercingBullets = TRUE,
         ProjectileCount = 1,
         PushBackMod = 0.3,
