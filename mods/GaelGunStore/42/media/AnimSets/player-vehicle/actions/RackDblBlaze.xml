@@ -3,7 +3,7 @@
 	<m_Name>RackDblBlaze</m_Name>
 	<m_Conditions />
 	<m_Conditions>
-		<m_Value>blazereload</m_Value>
+		<m_StringValue>blazereload</m_StringValue>
 	</m_Conditions>
 	<m_Conditions />
 	<m_Events />

@@ -845,7 +845,7 @@ module Base
     }
 	model QBS09_Short
     {
-    		mesh = Shotgun/Shotgun|QBS09,
+    		mesh = Shotgun/Shotgun|QBS09_Short,
     		texture = GunTexture/QBS09_tex,
     		cullFace = None,
     

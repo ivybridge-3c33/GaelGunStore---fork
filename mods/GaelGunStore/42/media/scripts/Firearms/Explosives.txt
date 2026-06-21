@@ -648,7 +648,6 @@ module Base
     }
 	item M67
     {
-        DisplayName = M67 Grenade,
         DisplayCategory = Explosives,
         ItemType = base:weapon,
         Weight = 0.5,
@@ -695,7 +694,6 @@ module Base
     }
 	item f1
     {
-        DisplayName = F1 Grenade,
         DisplayCategory = Explosives,
         ItemType = base:weapon,
         Weight = 0.6,
@@ -742,7 +740,6 @@ module Base
     }
 	item RGD5
     {
-        DisplayName = RGD-5 Grenade,
         DisplayCategory = Explosives,
         ItemType = base:weapon,
         Weight = 0.45,
@@ -789,7 +786,6 @@ module Base
     }
 	item stielhandgranate
     {
-        DisplayName = Stielhandgranate,
         DisplayCategory = Explosives,
         ItemType = base:weapon,
         Weight = 0.65,
@@ -836,7 +832,6 @@ module Base
     }
 	item u108
     {
-        DisplayName = U108 Incendiary Grenade,
         DisplayCategory = Explosives,
         ItemType = base:weapon,
         Weight = 0.5,
@@ -1049,7 +1044,7 @@ module Base
     }
 	model M202A1_open
     {
-        mesh = Explosives/Boom|M202A1,
+        mesh = Explosives/Boom|M202A1_open,
         texture = GunTexture/M202A1_tex,
         cullFace = None,
 

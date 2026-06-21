@@ -11,17 +11,17 @@
 	<m_Conditions>
 		<m_Name>PerformingAction</m_Name>
 		<m_Type>STRING</m_Type>
-		<m_Value>Reload</m_Value>
+		<m_StringValue>Reload</m_StringValue>
 	</m_Conditions>
 	<m_Conditions>
 		<m_Name>WeaponReloadType</m_Name>
 		<m_Type>STRING</m_Type>
-		<m_Value>ggs_gl_launcher</m_Value>
+		<m_StringValue>ggs_gl_launcher</m_StringValue>
 	</m_Conditions>
 	<m_Conditions>
 		<m_Name>isLoading</m_Name>
 		<m_Type>BOOL</m_Type>
-		<m_Value>true</m_Value>
+		<m_BoolValue>true</m_BoolValue>
 	</m_Conditions>
 	<m_Events>
 		<m_EventName>loadFinished</m_EventName>
