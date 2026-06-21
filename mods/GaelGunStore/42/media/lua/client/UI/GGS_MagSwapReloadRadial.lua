@@ -185,3 +185,22 @@ end
 if Events and Events.OnGameStart and Events.OnGameStart.Add then
     Events.OnGameStart.Add(patchFirearmRadialFill)
 end
+
+-- GGS: direct hotkey (default B) to fold/deploy the installed bipod, so it can
+-- be toggled without opening the firearm radial menu.
+local function onToggleBipodKey(key)
+    if not (getCore and getSpecificPlayer) then return end
+    local ok, bound = pcall(function() return getCore():getKey("ToggleBipod") end)
+    if not ok or not bound or key ~= bound then return end
+    local playerObj = getSpecificPlayer(0)
+    if not playerObj then return end
+    local weapon = playerObj:getPrimaryHandItem()
+    if not weapon or not instanceof(weapon, "HandWeapon") then return end
+    local part = getInstalledBipod(weapon)
+    if part then
+        toggleBipod(playerObj, weapon)
+    end
+end
+if Events and Events.OnKeyPressed and Events.OnKeyPressed.Add then
+    Events.OnKeyPressed.Add(onToggleBipodKey)
+end

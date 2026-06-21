@@ -21,3 +21,8 @@ bind = {};
 bind.value = "SwtichLightSet";
 bind.key = Keyboard.KEY_F;
 table.insert(keyBinding, bind);
+
+bind = {};
+bind.value = "ToggleBipod";
+bind.key = Keyboard.KEY_B;
+table.insert(keyBinding, bind);

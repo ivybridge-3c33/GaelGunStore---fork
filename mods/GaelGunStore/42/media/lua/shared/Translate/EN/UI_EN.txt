@@ -5,4 +5,5 @@
     UI_optionscreen_binding_OpenWindownCat = "Open Weapon Panel"
     UI_optionscreen_binding_GunLineDown = "Switch Tactical Stance"
     UI_optionscreen_binding_SwtichLightSet = "Switch Light Mode"
+    UI_optionscreen_binding_ToggleBipod = "Fold/Deploy Bipod"
 }
