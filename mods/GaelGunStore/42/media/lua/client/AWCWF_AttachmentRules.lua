@@ -309,10 +309,10 @@ function AttachmentRules.getBlockingChildren(weapon, part)
 end
 
 function AttachmentRules.canRemovePart(weapon, part)
-    local blocking = AttachmentRules.getBlockingChildren(weapon, part)
-    if blocking and #blocking > 0 then
-        return false, blocking
-    end
+    -- GGS: always allow removing any attachment. The original logic blocked
+    -- removing a part while a child part was mounted on it (e.g. can't take off
+    -- the handguard while a grip/bipod/light is attached), which made guns feel
+    -- like their attachments were stuck. Allow direct removal of any part.
     return true
 end
 
