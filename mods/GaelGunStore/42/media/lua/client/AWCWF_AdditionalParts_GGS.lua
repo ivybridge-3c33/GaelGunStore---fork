@@ -1,5 +1,29 @@
 AWCWF_AdditionalParts = AWCWF_AdditionalParts or {}  -- additive: keep framework funcs (GetWeaponModelInstance etc.)
 
+-- B42 render-gate fix.
+-- AWCWF_RenderPart.lua:221 bails (no parts drawn -> magazine/attachments never
+-- render) unless AWCWF_AdditionalParts.GetWeaponModelInstance() returns truthy.
+-- The framework's version matches the held weapon by comparing
+-- spfunction(instance,"m_modelScript"):getMeshName() against the weapon model's
+-- mesh name. In this B42 build spfunction(...,"m_modelScript") returns nil for
+-- every player sub-model (verified: all instance meshes = nil), so the match
+-- never succeeds and it always returns nil. It is used ONLY as a boolean gate
+-- (RenderPart.lua:221), so return truthy whenever the player actually has model
+-- instances (i.e. the weapon is being rendered).
+local function ggsGetWeaponModelInstance(player, weapon)
+    if not player or not weapon then return nil end
+    if not instanceof(weapon, "HandWeapon") then return nil end
+    local list = AWCWF_AdditionalParts.GetPlayerModelList and AWCWF_AdditionalParts.GetPlayerModelList(player)
+    if list and list:size() > 0 then
+        return weapon
+    end
+    return nil
+end
+AWCWF_AdditionalParts.GetWeaponModelInstance = ggsGetWeaponModelInstance
+if Events and Events.OnGameStart and Events.OnGameStart.Add then
+    Events.OnGameStart.Add(function() AWCWF_AdditionalParts.GetWeaponModelInstance = ggsGetWeaponModelInstance end)
+end
+
 local DEBUG_ATTACH = false
 local function debugAttach(fmt, ...)
     if DEBUG_ATTACH then
