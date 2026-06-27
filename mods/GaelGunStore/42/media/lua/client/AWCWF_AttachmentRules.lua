@@ -309,14 +309,10 @@ function AttachmentRules.getBlockingChildren(weapon, part)
 end
 
 function AttachmentRules.canRemovePart(weapon, part)
-    -- Block removing a part while child parts are still mounted on it (e.g. a
-    -- grip/bipod/light on the handguard). Removing the parent first orphaned the
-    -- children and crashed the game to the main menu. The UI shows a "remove X
-    -- first" message so each part can still be removed, just children-first.
-    local blocking = AttachmentRules.getBlockingChildren(weapon, part)
-    if blocking and #blocking > 0 then
-        return false, blocking
-    end
+    -- GGS: always allow removing any attachment. The original logic blocked
+    -- removing a part while a child part was mounted on it (e.g. can't take off
+    -- the handguard while a grip/bipod/light is attached), which made guns feel
+    -- like their attachments were stuck. Allow direct removal of any part.
     return true
 end
 
