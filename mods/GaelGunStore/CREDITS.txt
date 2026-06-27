@@ -1,6 +1,14 @@
 GaelGunStore-Firearms (Fork)
 ============================
 
+STATUS: TEMPORARY / INTERIM
+---------------------------
+This is an unofficial, temporary B42 bug-fix fork. I am trying to contact the
+original author (Pen-Pen Pirulin) to send these fixes so they can be merged
+into the official mod. This fork is only a stopgap until the official mod is
+updated for Build 42 -- please switch back to the official version once that
+happens.
+
 ORIGINAL MOD
 ------------
 GaelGunStore-Firearms — created by Pen-Pen Pirulin.
