@@ -1,11 +1,11 @@
 name=GaelGunStore-Firearms (Fork)
 id=GaelGunStore_B42_fork
 require=AWCWF_42
-author=AI
-credit=GaelGunStore-Firearms by Pen-Pen Pirulin
+author=Pen-Pen Pirulin (original) | B42 fixes: fork
+credit=Original mod "GaelGunStore-Firearms", all weapons, models and assets by Pen-Pen Pirulin. Framework: AWCWF (Advanced Warfare Community Weapons FrameWork). This fork only applies B42 bug fixes; all original content belongs to its respective authors.
 modversion=1.1
 versionMin=42.17
 poster=poster.png
 icon=logo.png
 
-description=Local fork with B42 fixes (reload anim, model placeholders, Base.xxx item names).
+description=B42 bug-fix fork of GaelGunStore-Firearms.\n\nOriginal mod, all weapons, models and assets: Pen-Pen Pirulin.\nFramework: AWCWF (Advanced Warfare Community Weapons FrameWork).\n\nThis fork ONLY fixes B42 bugs:\n- reload "surrender" animation\n- item names showing as Base.xxx\n- magazine not rendering on the gun\n- lever / MK18 fire contortion\n- attachment removal\n\nFull credit to the original author. All original content belongs to its respective authors.

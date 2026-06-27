@@ -1,0 +1,29 @@
+GaelGunStore-Firearms (Fork)
+============================
+
+ORIGINAL MOD
+------------
+GaelGunStore-Firearms — created by Pen-Pen Pirulin.
+All weapons, 3D models, textures, sounds, scripts and overall design are the
+work of the original author. This fork claims NO ownership of that content and
+exists only to fix Build 42 bugs. Please support the original mod.
+
+FRAMEWORK / DEPENDENCY
+----------------------
+AWCWF — Advanced Warfare: Community Weapons FrameWork (the attachment system
+this mod is built on). Credit to the AWCWF team.
+
+THIS FORK (B42 bug fixes only)
+------------------------------
+- Reload "surrender" animation (incomplete B41->B42 anim format migration)
+- Item names showing as "Base.xxx" (regenerated .txt translations: EN/ES/AR)
+- Lever-action guns contorting on fire/reload (WeaponReloadType -> GGSLeverAction)
+- Grenades showing no name (added DisplayName) + missing Minigun translation
+- Placeholder weapon models (M202A1 / QBS09 mesh nodes)
+- Magazine not rendering on the gun (AWCWF GetWeaponModelInstance B42 fix)
+- Magazine compatibility per gun (rebuilt clip MountOn)
+- MK18 / deployed-bipod contortion on fire (no auto-installed deployed bipods)
+- Added a fold/deploy bipod hotkey (default B)
+
+All credit for the mod itself goes to Pen-Pen Pirulin.
+Original content remains the property of its respective authors.
