@@ -544,7 +544,30 @@ function attachmentButton:onMouseDoubleClick()
         end
         self.removalBlocked = false
         self.blockingParts = nil
-        ISTimedActionQueue.add(ISRemoveWeaponUpgrade:new(player, self.attachingTo, self.slotItem:getPartType(), 1))
+        -- Remove child parts first (deepest first) so removing a parent never
+        -- leaves an orphaned child pointing at a gone attachment point, which
+        -- previously made parts un-removable / crashed the game to the menu.
+        local weapon = self.attachingTo
+        local seen = {}
+        local function queueRemoval(part)
+            if not part then return end
+            local pt = part:getPartType()
+            if not pt or seen[pt] then return end
+            seen[pt] = true
+            local kids = nil
+            pcall(function()
+                if AttachmentRules and AttachmentRules.getBlockingChildren then
+                    kids = AttachmentRules.getBlockingChildren(weapon, part)
+                end
+            end)
+            if kids then
+                for _, c in ipairs(kids) do
+                    if c and c.part then queueRemoval(c.part) end
+                end
+            end
+            ISTimedActionQueue.add(ISRemoveWeaponUpgrade:new(player, weapon, pt, 1))
+        end
+        queueRemoval(self.slotItem)
         if player then
             getSoundManager():PlayWorldSound("WeaponPartInsertSound", player:getSquare(), 0, 0, 0, false);
         end
