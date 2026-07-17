@@ -601,7 +601,15 @@ function attachmentButton:onMouseUp()
     end
 end
 local function getJavaFieldNum(object, fieldName)
-    for i = 0, getNumClassFields(object) - 1 do
+    if not object then return nil end
+    -- getNumClassFields() is debug-only reflection; outside of -debug it throws
+    -- "Not in debug". Guard it so clicking an attachment button degrades gracefully
+    -- instead of crashing (same root issue as AWCWF getNumClassFields).
+    local ok, count = pcall(getNumClassFields, object)
+    if not ok or type(count) ~= "number" then
+        return nil
+    end
+    for i = 0, count - 1 do
         local javaField = getClassField(object, i)
         if luautils.stringEnds(tostring(javaField), '.' .. fieldName) then
             return i
@@ -618,8 +626,12 @@ function attachmentButton:onMouseDown(x, y)
 
         local item = ScriptManager.instance:getItem(self.slotItem:getFullType())
         if item then
-            local wTransformFieldNum = getJavaFieldNum(item, "worldStaticModel")
-            local worldmodel = getClassFieldVal(item, getClassField(item, wTransformFieldNum))
+            -- Prefer the proper API (works without -debug); fall back to reflection.
+            local worldmodel = (item.getWorldStaticModel and item:getWorldStaticModel()) or nil
+            if not worldmodel then
+                local wTransformFieldNum = getJavaFieldNum(item, "worldStaticModel")
+                worldmodel = wTransformFieldNum and getClassFieldVal(item, getClassField(item, wTransformFieldNum)) or nil
+            end
 
             local modelscript = "Base." .. getPlayer():getPrimaryHandItem():getWeaponSprite()
             local model = ScriptManager.instance:getModelScript(modelscript)

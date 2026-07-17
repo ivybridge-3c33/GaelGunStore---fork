@@ -572,7 +572,15 @@ function riskyUI:prerender()
     end
 end
 local function getJavaFieldNum(object, fieldName)
-    for i = 0, getNumClassFields(object) - 1 do
+    if not object then return nil end
+    -- getNumClassFields() is debug-only reflection; outside of -debug it throws
+    -- "Not in debug". Guard it so the inspect UI degrades gracefully instead of
+    -- crashing to the main menu (same root issue as AWCWF getNumClassFields).
+    local ok, count = pcall(getNumClassFields, object)
+    if not ok or type(count) ~= "number" then
+        return nil
+    end
+    for i = 0, count - 1 do
         local javaField = getClassField(object, i)
         if luautils.stringEnds(tostring(javaField), '.' .. fieldName) then
             return i
