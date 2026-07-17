@@ -560,7 +560,7 @@ module Base
         StaticModel = magpul_afg,
         WorldStaticModel = magpul_afg,
         HitChanceModifier = 5,
-        RecoilDelayModifier = -85,
+        RecoilDelayModifier = -8,
     }
     model magpul_afg
     {
