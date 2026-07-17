@@ -13,11 +13,15 @@ AWCWF_AdditionalParts = AWCWF_AdditionalParts or {}  -- additive: keep framework
 local function ggsGetWeaponModelInstance(player, weapon)
     if not player or not weapon then return nil end
     if not instanceof(weapon, "HandWeapon") then return nil end
-    local list = AWCWF_AdditionalParts.GetPlayerModelList and AWCWF_AdditionalParts.GetPlayerModelList(player)
-    if list and list:size() > 0 then
-        return weapon
-    end
-    return nil
+    -- Boolean render-gate for AWCWF_RenderPart.lua:221 ONLY.
+    -- Do NOT call AWCWF_AdditionalParts.GetPlayerModelList(player) here: in this B42
+    -- build it routes into the framework's spfunction -> getJavaFieldNum, which calls
+    -- the debug-only Java API getNumClassFields(). Outside of -debug that throws
+    -- "Not in debug" EVERY frame, which aborts Apply_Effect so NO attachment or
+    -- magazine models render at all (this is the "แต่ง/แม็ก ไม่ขึ้น model" bug).
+    -- The return value is used only as a truthy gate, so the HandWeapon itself
+    -- (the thing being rendered) is all that is needed.
+    return weapon
 end
 AWCWF_AdditionalParts.GetWeaponModelInstance = ggsGetWeaponModelInstance
 if Events and Events.OnGameStart and Events.OnGameStart.Add then
