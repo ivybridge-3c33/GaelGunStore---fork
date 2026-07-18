@@ -648,6 +648,7 @@ module Base
     }
 	item M67
     {
+        DisplayName = M67,
         DisplayCategory = Explosives,
         ItemType = base:weapon,
         Weight = 0.5,
@@ -694,6 +695,7 @@ module Base
     }
 	item f1
     {
+        DisplayName = f1,
         DisplayCategory = Explosives,
         ItemType = base:weapon,
         Weight = 0.6,
@@ -740,6 +742,7 @@ module Base
     }
 	item RGD5
     {
+        DisplayName = RGD5,
         DisplayCategory = Explosives,
         ItemType = base:weapon,
         Weight = 0.45,
@@ -786,6 +789,7 @@ module Base
     }
 	item stielhandgranate
     {
+        DisplayName = stielhandgranate,
         DisplayCategory = Explosives,
         ItemType = base:weapon,
         Weight = 0.65,
@@ -832,6 +836,7 @@ module Base
     }
 	item u108
     {
+        DisplayName = u108,
         DisplayCategory = Explosives,
         ItemType = base:weapon,
         Weight = 0.5,

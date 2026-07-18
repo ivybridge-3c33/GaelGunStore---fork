@@ -23,6 +23,11 @@ Fixed:
   which has no model definition, so the weapon could not equip/render (and an
   unequippable gun will not fire); repointed to "ShotgunSawnoff_new"
   (IthacaM37_short mesh). Firing stats were already correct.
+- Several items displayed as "Base.xxx" instead of their proper names because
+  the item was missing the DisplayName field (translations already existed).
+  Added DisplayName to: throwable grenades M67, F1, RGD-5, Stielhandgranate,
+  U108; and tools Bullet Press, Gun Cleaning Tools, Gun Disassembly & Attachment
+  Tools (GunToolsKit), Oil Filter.
 
 ------------------------------------------------------------------------
 Earlier B42 fixes (pre-1.2)

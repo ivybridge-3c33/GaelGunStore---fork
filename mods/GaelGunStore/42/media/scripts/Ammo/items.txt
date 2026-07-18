@@ -2,6 +2,7 @@ module Base
 {
     item BulletPressTool
     {
+        DisplayName = BulletPressTool,
         ItemType = base:normal,
         DisplayCategory = Tool,
         Weight = 10.0,
@@ -20,6 +21,7 @@ module Base
     }
     item GunCleaningTools
     {
+        DisplayName = GunCleaningTools,
         ItemType = base:drainable,
         DisplayCategory = Material,
         Type = Drainable,
@@ -38,6 +40,7 @@ module Base
     }
     item GunToolsKit
     {
+        DisplayName = GunToolsKit,
         ItemType = base:drainable,
         DisplayCategory = Material,
         Type = Drainable,
@@ -210,6 +213,7 @@ module Base
     }
     item OilFilter
     {
+        DisplayName = OilFilter,
         ItemType = base:normal,
         DisplayCategory = VehicleMaintenance,
         Weight = 1.0,
