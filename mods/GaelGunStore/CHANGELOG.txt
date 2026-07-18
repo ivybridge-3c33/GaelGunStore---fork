@@ -36,6 +36,10 @@ Fixed:
   animation (added to the forced reload-type list, like the IZH58); removed the
   suppressor slot (a sawn-off can't mount one); copied the scope/mount/laser/
   light positions from the full Condor (same receiver).
+- Removed the suppressor (Canon) slot from all sawn-off / short-barrel shotguns
+  (Becker, Beretta A400, Browning Auto, M1887, MTS-255, QBS09, Remington 1100,
+  Remington 870 shorts, Shorty, Sjorgen, and the double-barrel sawn-offs) --
+  a sawn-off has no threaded muzzle to mount one.
 
 ------------------------------------------------------------------------
 Earlier B42 fixes (pre-1.2)
