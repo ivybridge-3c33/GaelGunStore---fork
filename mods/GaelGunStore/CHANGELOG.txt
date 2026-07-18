@@ -1,0 +1,34 @@
+GaelGunStore B42 Fork - Changelog
+(Fork by ivybridge-3c33. Original mod by Pen-Pen Pirulin. Framework: AWCWF.)
+
+------------------------------------------------------------------------
+v1.2 - 2026-07-18
+------------------------------------------------------------------------
+Fixed:
+- Attachment and magazine models not showing on weapons. The weapon-part
+  render pass crashed every frame (getNumClassFields "Not in debug"), so no
+  attachment/magazine models drew on ANY gun. Now renders correctly.
+- Inspect / attach UI could crash to the main menu when playing without
+  -debug (same getNumClassFields cause). Now guarded.
+- Fire rate: "Single" fire mode firing full-auto and faster than the Auto
+  mode. Caused by weapon RecoilDelay reaching zero/negative:
+    * Grip "magpul_afg" recoil bonus -85 -> -8 (was driving RecoilDelay
+      negative on any gun it was attached to).
+    * XM8, SR47, VZ58, Wieger940 base RecoilDelay 3 -> 12 (went negative
+      with any recoil-reducing attachment).
+    * Added a safety clamp so no attachment combination can push a weapon's
+      RecoilDelay low enough to break single-fire again.
+- Ithaca M37 / JS-2000 sawn-off shotgun (ShotgunSawnoff) showed no model and
+  could not fire. The item pointed at StaticModel/WeaponSprite "ShotgunSawnoff"
+  which has no model definition, so the weapon could not equip/render (and an
+  unequippable gun will not fire); repointed to "ShotgunSawnoff_new"
+  (IthacaM37_short mesh). Firing stats were already correct.
+
+------------------------------------------------------------------------
+Earlier B42 fixes (pre-1.2)
+------------------------------------------------------------------------
+- Reload "surrender" animation / base-pose bugs (B41 animset condition format)
+- Lever-action rifles use vanilla leveraction reload (fixes reload + rack)
+- Crash-to-menu when firing .357 guns on 42.19 (AmmoType/tracer conflict)
+- Attachment removal fixes incl. broken-screwdriver vanilla bug
+- Item names showing as Base.xxx, magazine rendering, MK18 fire pose
