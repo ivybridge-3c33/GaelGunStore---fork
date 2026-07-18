@@ -146,13 +146,13 @@ module Base
     
     		attachment Canon
     		{
-    			offset = 0.0000 0.0025 -0.0015,
+    			offset = 0.0000 0.4654 0.0257,
     			rotate = 0.0000 0.0000 0.0000,
     		}
     
     		attachment Scope
     		{
-    			offset = 0.0000 0.0835 -0.0122,
+    			offset = 0.0000 0.1236 0.0404,
     			rotate = 0.0000 0.0000 0.0000,
     		}
     
@@ -164,24 +164,24 @@ module Base
     
     		attachment Mount
     		{
-    			offset = 0.0000 0.0000 0.0000,
+    			offset = 0.0000 0.1663 0.0189,
     			rotate = 0.0000 0.0000 0.0000,
     		}
     
     		attachment Laser
     		{
-    			offset = 0.0073 0.0546 -0.0071,
+    			offset = -0.0175 0.3844 0.0140,
     			rotate = 0.0000 0.0000 0.0000,
     		}
     		attachment Hide_Beam
     		{
-    			offset = 0.0073 0.0546 -0.0071,
+    			offset = -0.0175 0.3844 0.0140,
     			rotate = 0.0000 0.0000 0.0000,
     		}
     
     		attachment Light
     		{
-    			offset = -0.0095 0.0453 -0.0050,
+    			offset = 0.0172 0.3850 0.0139,
     			rotate = 0.0000 0.0000 0.0000,
     		}
     
@@ -193,7 +193,7 @@ module Base
     
     		attachment Grip
     		{
-    			offset = 0.0000 0.0000 -0.0112,
+    			offset = 0.0000 0.3013 -0.0066,
     			rotate = 0.0000 0.0000 0.0000,
     		}
     

@@ -28,6 +28,10 @@ Fixed:
   Added DisplayName to: throwable grenades M67, F1, RGD-5, Stielhandgranate,
   U108; and tools Bullet Press, Gun Cleaning Tools, Gun Disassembly & Attachment
   Tools (GunToolsKit), Oil Filter.
+- M1887 shotgun: attachments (suppressor, sight, light, laser, grip) rendered
+  clumped at the receiver instead of along the barrel. The M1887 model's
+  attachment offsets were untuned (near origin); copied the tuned offsets from
+  the sibling Remington870 model (same shared shotgun FBX / coordinate space).
 
 ------------------------------------------------------------------------
 Earlier B42 fixes (pre-1.2)
