@@ -32,6 +32,10 @@ Fixed:
   clumped at the receiver instead of along the barrel. The M1887 model's
   attachment offsets were untuned (near origin); copied the tuned offsets from
   the sibling Remington870 model (same shared shotgun FBX / coordinate space).
+- Condor sawn-off shotgun (DB_Condor_sawn): fixed reload "surrender"/hands-up
+  animation (added to the forced reload-type list, like the IZH58); removed the
+  suppressor slot (a sawn-off can't mount one); copied the scope/mount/laser/
+  light positions from the full Condor (same receiver).
 
 ------------------------------------------------------------------------
 Earlier B42 fixes (pre-1.2)

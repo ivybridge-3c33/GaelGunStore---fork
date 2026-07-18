@@ -8,6 +8,8 @@ local FORCED_RELOAD_TYPES = {
     ["Base.M202A1"] = "rpgreload",
     ["Base.DoubleBarrelShotgun"] = "doublebarrelizh58",
     ["Base.DoubleBarrelShotgunSawnoff"] = "doublebarrelizh58sawn",
+    ["Base.DB_Condor"] = "doublebarrelcondor",
+    ["Base.DB_Condor_sawn"] = "doublebarrelcondorsawn",
 }
 
 local DOUBLE_BARREL_LIKE_TYPES = {
