@@ -158,7 +158,7 @@ module Base
 
         attachment Grip
         {
-            offset = 0.0000 0.2017 0.0256,
+            offset = 0.0000 0.1800 0.0256,
             rotate = 0.0000 0.0000 0.0000,
         }
 
@@ -4548,7 +4548,7 @@ module Base
 
         attachment Barrel_Shroud
         {
-            offset = 0.0000 0.2437 0.0250,
+            offset = 0.0000 0.2437 0.0180,
             rotate = 0.0000 0.0000 0.0000,
         }
     }

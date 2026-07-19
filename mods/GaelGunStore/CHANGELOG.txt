@@ -28,6 +28,9 @@ Fixed (weapon attachment positions & availability):
 - QBS-09 (full & short): removed the buttstock slot (shouldn't take one).
 - Finished the "no suppressor on sawn-offs" pass: dropped the sawn-off
   Becker / Remington 1100 / Sjorgen from the suppressor & choke mount lists.
+- AAC Honey Badger: foregrip (Grip) position adjusted to sit right under the
+  handguard.
+- LVOA: bipod sat too high off the barrel -- lowered it.
 
 ------------------------------------------------------------------------
 v1.2 - 2026-07-18
