@@ -2,6 +2,34 @@ GaelGunStore B42 Fork - Changelog
 (Fork by ivybridge-3c33. Original mod by Pen-Pen Pirulin. Framework: AWCWF.)
 
 ------------------------------------------------------------------------
+v1.3 - 2026-07-19
+------------------------------------------------------------------------
+Fixed (weapon attachment positions & availability):
+- Browning Auto-5 (short / sawn-off): every attachment (scope, suppressor,
+  grip, laser, mount, sling) was badly mispositioned and floating off the
+  gun. Rebuilt the short model's attachment offsets from the correct
+  full-length Browning Auto-5.
+- Browning Auto-5 (full): laser/light attachment points sat back near the
+  receiver; moved them out along the barrel.
+- Becker Shotgun (short): buttstock sat wrong and the foregrip floated at
+  the model origin -- the Grip attachment point was missing entirely. Fixed
+  the stock position and added the Grip point.
+- MTS-255 (short): every attachment mispositioned (scope sunk under the gun,
+  grip/laser/light bunched at the receiver) and the ShellHolder recoil pad
+  had nowhere to mount. Rebuilt from the full-length MTS-255 and added the
+  missing recoil-pad point.
+- Remington Model 8: foregrip floated below the gun, bipod floated under the
+  barrel, scope sat a touch high -- repositioned all three (these older
+  semi-autos shipped with un-tuned placeholder offsets).
+- Remington Model 121: scope sat slightly high -- nudged down.
+- Remington 870 (short): could not mount a buttstock at all -- the short was
+  left out of both the stock allow-list (AWCWF_GunAllowAttachments) and the
+  stock parts' mount list. Now accepts the R870 wood / SPS / Magpul stocks etc.
+- QBS-09 (full & short): removed the buttstock slot (shouldn't take one).
+- Finished the "no suppressor on sawn-offs" pass: dropped the sawn-off
+  Becker / Remington 1100 / Sjorgen from the suppressor & choke mount lists.
+
+------------------------------------------------------------------------
 v1.2 - 2026-07-18
 ------------------------------------------------------------------------
 Fixed:
