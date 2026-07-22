@@ -31,6 +31,8 @@ Fixed (weapon attachment positions & availability):
 - AAC Honey Badger: foregrip (Grip) position adjusted to sit right under the
   handguard.
 - LVOA: bipod sat too high off the barrel -- lowered it.
+- HKG28: bipod attachment was pinned at the gun's origin (floated off the
+  weapon) -- positioned it under the barrel.
 
 ------------------------------------------------------------------------
 v1.2 - 2026-07-18

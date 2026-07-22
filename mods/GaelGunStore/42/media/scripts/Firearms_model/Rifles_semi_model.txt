@@ -1178,7 +1178,7 @@ module Base
 
         attachment Barrel_Shroud
         {
-            offset = 0.0000 0.0000 0.0000,
+            offset = 0.0000 0.2200 0.0174,
             rotate = 0.0000 0.0000 0.0000,
         }
     }
