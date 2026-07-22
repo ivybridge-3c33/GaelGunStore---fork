@@ -33,6 +33,11 @@ Fixed (weapon attachment positions & availability):
 - LVOA: bipod sat too high off the barrel -- lowered it.
 - HKG28: bipod attachment was pinned at the gun's origin (floated off the
   weapon) -- positioned it under the barrel.
+- ENARM Pentagun & Jackhammer: are auto shotguns but were set Single-only
+  (no Auto fire mode), so when fully kitted the recoil-reduction stack broke
+  the single-fire gate into an uncontrolled full-auto. Given them a proper
+  Auto/Single fire mode with a throttled cyclic rate (like the AA-12), so
+  auto fire is controlled.
 
 ------------------------------------------------------------------------
 v1.2 - 2026-07-18
