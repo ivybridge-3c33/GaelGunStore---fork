@@ -67,25 +67,79 @@ local function ggsDoRemoval(self)
         return true
     end
 
+    -- Seed the modData mirror before asking AWCWF to detach.
+    --
+    -- This is the whole "fine solo, dead on a server" split, and it is not in our code:
+    -- AWCWF's client/AWCWF_AdditionalParts.lua REPLACES HandWeapon.detachWeaponPart and
+    -- never calls the Java original. Its entire body -- the setWeaponPart(slot, nil) that
+    -- actually removes the part, the stat reversal, onDetach -- sits behind one gate:
+    --     weaponpart:getFullType() == item:getModData().weaponpart[weaponpart:getPartType()]
+    -- so the mirror has to already name this part or nothing happens at all, silently.
+    --
+    -- A part the player attached passes: the attach path writes the mirror. A part a loot
+    -- gun was kitted with does not. GGSWeaponUpgrades' attachPart calls
+    -- weapon:attachWeaponPart(nil, partItem) on the SERVER, and AWCWF's hook lives under
+    -- client/, so it is not loaded there -- Java attaches a real part and no mirror entry
+    -- is ever written. The gate then fails on the client for every one of those parts, the
+    -- detach is skipped without a word, the part stays bolted on, and the AddItem below
+    -- hands the player a duplicate. Offline the same server code runs inside the client's
+    -- Lua state, so the hook DOES write the mirror and removal works -- which is exactly
+    -- why this only ever showed up on a server.
+    --
+    -- Seeding rather than bypassing on purpose: it keeps AWCWF's stat reversal and
+    -- onDetach, which is what the Java method they replaced would have done.
+    local md = self.weapon.getModData and self.weapon:getModData()
+    local okSlot, partSlot = pcall(part.getPartType, part)
+    local okFull, partFull = pcall(part.getFullType, part)
+    if md and okFull and partFull then
+        md.weaponpart = md.weaponpart or {}
+        -- The gate reads the part's own getPartType(); the UI hands us the slot string.
+        -- They are normally the same, but seed both so a mismatch cannot reintroduce the
+        -- silent no-op.
+        if okSlot and partSlot and md.weaponpart[partSlot] ~= partFull then
+            print("[GGS RemoveFix] seeding mirror " .. tostring(partSlot) .. "=" .. tostring(partFull) ..
+                      " (was " .. tostring(md.weaponpart[partSlot]) .. ") so AWCWF's detach gate passes")
+            md.weaponpart[partSlot] = partFull
+        end
+        if md.weaponpart[self.partType] ~= partFull then
+            md.weaponpart[self.partType] = partFull
+        end
+    end
+
     self.weapon:detachWeaponPart(self.character, part)
+
+    -- Verify, because AWCWF's detach reports nothing either way. If the real part is still
+    -- in the slot the gate failed anyway; force it out through setWeaponPart, which routes
+    -- into clearWeaponPart plus our own belt-and-braces removal in
+    -- AWCWF_AdditionalParts_GGS. Loud on purpose: every round of "removal succeeded, part
+    -- still there" came from nothing here checking.
+    local leftover = self.weapon:getWeaponPart(self.partType)
+    if leftover then
+        print("[GGS RemoveFix] detachWeaponPart left slot " .. tostring(self.partType) ..
+                  " occupied, forcing clear")
+        pcall(self.weapon.setWeaponPart, self.weapon, self.partType, nil)
+        if okSlot and partSlot and partSlot ~= self.partType then
+            pcall(self.weapon.setWeaponPart, self.weapon, partSlot, nil)
+        end
+    end
 
     -- detachWeaponPart clears the real part but leaves md.weaponpart holding the entry,
     -- and that mirror is what AWCWF_RenderPart draws from and what the workbench label
     -- falls back to. Without this the part landed in the inventory while the model kept
     -- wearing it and the slot kept showing its name.
-    local md = self.weapon.getModData and self.weapon:getModData()
-    if md and md.weaponpart and md.weaponpart[self.partType] ~= nil then
+    if md and md.weaponpart then
         md.weaponpart[self.partType] = nil
+        if okSlot and partSlot then
+            md.weaponpart[partSlot] = nil
+        end
     end
 
     if md and self.weapon.transmitModData then
         pcall(self.weapon.transmitModData, self.weapon)
     end
-    -- Tell the server too. Its copy still has the part attached, so the next sync -- which
-    -- fires on equip and on workbench open -- would put the entry straight back.
-    -- Log the send. Last round produced no server-side line at all -- neither the success
-    -- nor the "nothing in slot" path -- so it is not yet established that the command is
-    -- even leaving the client.
+    -- Tell the server too, so its own copy of the weapon drops the part instead of holding
+    -- a set the client no longer agrees with. Confirmed arriving: the client's send and the
+    -- server's "command received: detachPart" both show up in the same tick.
     local amClient = isClient and isClient() or false
     if amClient and sendClientCommand then
         local okId, weaponId = pcall(self.weapon.getID, self.weapon)
@@ -94,7 +148,6 @@ local function ggsDoRemoval(self)
         -- while those 4 were exactly the set that came back, Canon included -- so the
         -- part is there and its getPartType() simply does not read back as "Canon" over
         -- there. fullType is unambiguous.
-        local okFull, partFull = pcall(part.getFullType, part)
         local okSend, err = pcall(sendClientCommand, self.character, "GGS", "detachPart", {
             slot = tostring(self.partType),
             full = (okFull and partFull or nil),
@@ -112,7 +165,17 @@ local function ggsDoRemoval(self)
         syncHandWeaponFields(self.character, self.weapon)
     end
 
-    local added = self.character:getInventory():AddItem(part)
+    -- Only hand the part back once the slot is genuinely empty. While AWCWF's gate was
+    -- failing this ran unconditionally, so every attempt on a loot gun gave the player a
+    -- second copy of a part that was still attached. If the slot is somehow still occupied
+    -- after the force-clear above, say so and hand nothing over rather than duplicating it.
+    local stillOccupied = self.weapon:getWeaponPart(self.partType)
+    if stillOccupied then
+        print("[GGS RemoveFix] slot " .. tostring(self.partType) ..
+                  " STILL occupied after forced clear, not handing the part over")
+    end
+
+    local added = not stillOccupied and self.character:getInventory():AddItem(part) or nil
     if added then
         if self.partType == "Laser" then
             added:getModData().LaserBatteryReamin = self.weapon:getModData().LaserBatteryReamin

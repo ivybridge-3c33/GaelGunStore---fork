@@ -135,6 +135,16 @@ local function detachServerPart(playerObj, args)
     if not part then
         print("[GGS ServerDBG] detachPart: no match for slot=" .. tostring(args.slot) .. " full=" ..
                   tostring(wanted) .. "; server sees [" .. table.concat(seen, ", ") .. "]")
+        -- No real part to detach, but the mirror can still be claiming one -- the server's
+        -- entry outlives its part, and gatherUsedPartTypes in GGS_WeaponUpgradeSystem reads
+        -- that mirror. Drop the entry on the way out instead of leaving the server insisting
+        -- on a slot it cannot produce. No transmitModData, for the reason below.
+        local md = weapon.getModData and weapon:getModData()
+        if md and md.weaponpart and md.weaponpart[args.slot] ~= nil then
+            print("[GGS ServerDBG] detachPart: clearing stale mirror entry " .. tostring(args.slot) ..
+                      "=" .. tostring(md.weaponpart[args.slot]))
+            md.weaponpart[args.slot] = nil
+        end
         return
     end
     -- Hand the part back to the player, otherwise detaching destroys it.
