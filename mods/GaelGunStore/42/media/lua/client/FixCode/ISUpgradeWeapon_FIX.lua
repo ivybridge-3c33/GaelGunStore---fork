@@ -127,6 +127,32 @@ function ISUpgradeWeapon:isValid()
             tostring(hasPart), tostring(hasWeapon),
             tostring(self.part and self.part.getFullType and self.part:getFullType()),
             tostring(self.weapon and self.weapon.getFullType and self.weapon:getFullType())))
+        -- hasPart=false with the part visibly listed in the pane means it is one of the
+        -- un-owned "potential attachments" the pane always shows (riskyShowPotentialAttachment
+        -- is hardcoded true), not a lookup failure. Dump both stores anyway: on the runs where
+        -- attach and remove both refuse, the state of the whole weapon is the thing worth
+        -- having, and AWCWF_RenderPart draws from every mirror key -- so a part still on the
+        -- model while every slot reads empty shows up here under whatever key it is filed as.
+        local mirror = {}
+        local md = self.weapon and self.weapon.getModData and self.weapon:getModData()
+        if md and md.weaponpart then
+            for k, v in pairs(md.weaponpart) do
+                mirror[#mirror + 1] = tostring(k) .. "=" .. tostring(v)
+            end
+        end
+        local real = {}
+        local okAll, all = pcall(self.weapon.getAllWeaponParts, self.weapon)
+        if okAll and all then
+            for i = 0, all:size() - 1 do
+                local p = all:get(i)
+                if p then
+                    real[#real + 1] = tostring(p.getPartType and p:getPartType()) .. "=" ..
+                                          tostring(p.getFullType and p:getFullType())
+                end
+            end
+        end
+        print("[GGS PartDBG] attach refused real=[" .. table.concat(real, ", ") .. "] mirror=[" ..
+                  table.concat(mirror, ", ") .. "]")
     end
     return hasPart and hasWeapon
 end

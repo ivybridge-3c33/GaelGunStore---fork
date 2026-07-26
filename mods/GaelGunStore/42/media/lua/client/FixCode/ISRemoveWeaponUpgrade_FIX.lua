@@ -35,6 +35,40 @@ local function ggsMirroredOnly(weapon, partType)
     return nil
 end
 
+-- Both representations of the whole weapon, on one line.
+--
+-- Put it on the refusal paths, not behind a successful operation: the previous exit-state
+-- dump lived at the end of ggsDoRemoval, so it only printed when removal already worked and
+-- said nothing on the runs that mattered. AWCWF_RenderPart iterates EVERY key of
+-- md.weaponpart, so a part still drawn while the slot being removed reads empty in both
+-- stores means the entry is filed under a different key -- this is what names it.
+local function ggsDumpPartState(weapon, label)
+    if not weapon then
+        return
+    end
+    local mirror = {}
+    local md = weapon.getModData and weapon:getModData()
+    if md and md.weaponpart then
+        for k, v in pairs(md.weaponpart) do
+            mirror[#mirror + 1] = tostring(k) .. "=" .. tostring(v)
+        end
+    end
+    local real = {}
+    local okAll, all = pcall(weapon.getAllWeaponParts, weapon)
+    if okAll and all then
+        for i = 0, all:size() - 1 do
+            local p = all:get(i)
+            if p then
+                real[#real + 1] = tostring(p.getPartType and p:getPartType()) .. "=" ..
+                                      tostring(p.getFullType and p:getFullType())
+            end
+        end
+    end
+    print("[GGS PartDBG] " .. tostring(label) .. " weapon=" ..
+              tostring(weapon.getFullType and weapon:getFullType()) .. " real=[" ..
+              table.concat(real, ", ") .. "] mirror=[" .. table.concat(mirror, ", ") .. "]")
+end
+
 function ISRemoveWeaponUpgrade:isValid()
     -- Nothing in the slot means nothing to remove -- checked on every branch now.
     if not self.weapon or
@@ -44,6 +78,7 @@ function ISRemoveWeaponUpgrade:isValid()
         -- removed during cleanup. One line per attempt.
         print("[GGS RemoveFix] isValid false: nothing in slot " .. tostring(self.partType) ..
                   " (no real part, no mirror entry)")
+        ggsDumpPartState(self.weapon, "remove refused slot=" .. tostring(self.partType))
         return self.partType == "Hide_Beam"
     end
     if isClient() then
