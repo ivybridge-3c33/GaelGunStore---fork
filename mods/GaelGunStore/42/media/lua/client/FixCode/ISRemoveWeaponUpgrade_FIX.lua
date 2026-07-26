@@ -17,13 +17,33 @@
 -- Fix: require the part on MP too, and nil-guard perform/complete. Everything else is
 -- AWCWF's code, kept as-is since overriding their file replaces all of it.
 
+-- Is the slot holding a mirror entry with no real part behind it? That is a phantom, and
+-- it needs removing just as much as a real part does -- more, since nothing else can shift
+-- it. Guns kitted before the attach fix in AWCWF_AdditionalParts_GGS carry these: the part
+-- draws on the character (the renderer reads the mirror) but no reader Java-side can see
+-- it, so the suppressor stays loud and the old "no real part in slot" isValid refused to
+-- remove it forever.
+local function ggsMirroredOnly(weapon, partType)
+    if not weapon or weapon:getWeaponPart(partType) then
+        return nil
+    end
+    local md = weapon.getModData and weapon:getModData()
+    local mirrored = md and md.weaponpart and md.weaponpart[partType]
+    if mirrored and mirrored ~= "" then
+        return tostring(mirrored)
+    end
+    return nil
+end
+
 function ISRemoveWeaponUpgrade:isValid()
     -- Nothing in the slot means nothing to remove -- checked on every branch now.
-    if not self.weapon or not self.weapon:getWeaponPart(self.partType) then
+    if not self.weapon or
+        (not self.weapon:getWeaponPart(self.partType) and not ggsMirroredOnly(self.weapon, self.partType)) then
         -- Visibility on the removal path: the queue discards an action whose isValid is
         -- false without a word, and the ActionDBG wrapper that used to show this was
         -- removed during cleanup. One line per attempt.
-        print("[GGS RemoveFix] isValid false: no real part in slot " .. tostring(self.partType))
+        print("[GGS RemoveFix] isValid false: nothing in slot " .. tostring(self.partType) ..
+                  " (no real part, no mirror entry)")
         return self.partType == "Hide_Beam"
     end
     if isClient() then
@@ -63,6 +83,29 @@ local function ggsDoRemoval(self)
 
     local part = self.weapon:getWeaponPart(self.partType)
     if not part then
+        -- Phantom: a mirror entry with no real part. Drop the entry, which is what the
+        -- renderer reads, and ask the server to hand over its real copy if it has one --
+        -- deliberately not instanceItem() here, since a client-made item is a ghost the
+        -- server never learns about, and that is its own family of bugs.
+        local mirrored = ggsMirroredOnly(self.weapon, self.partType)
+        if mirrored then
+            print("[GGS RemoveFix] mirror-only part in slot " .. tostring(self.partType) .. " (" ..
+                      mirrored .. "), clearing the entry and asking the server for the real one")
+            local md = self.weapon:getModData()
+            md.weaponpart[self.partType] = nil
+            if self.weapon.transmitModData then
+                pcall(self.weapon.transmitModData, self.weapon)
+            end
+            if isClient and isClient() and sendClientCommand then
+                local okId, weaponId = pcall(self.weapon.getID, self.weapon)
+                pcall(sendClientCommand, self.character, "GGS", "detachPart", {
+                    slot = tostring(self.partType),
+                    full = mirrored,
+                    weaponId = (okId and weaponId or nil),
+                })
+            end
+            return true
+        end
         print("[GGS RemoveFix] no part in slot " .. tostring(self.partType) .. ", nothing to remove")
         return true
     end
