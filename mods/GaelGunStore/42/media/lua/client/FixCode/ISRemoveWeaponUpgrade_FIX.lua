@@ -17,22 +17,52 @@
 -- Fix: require the part on MP too, and nil-guard perform/complete. Everything else is
 -- AWCWF's code, kept as-is since overriding their file replaces all of it.
 
--- Is the slot holding a mirror entry with no real part behind it? That is a phantom, and
--- it needs removing just as much as a real part does -- more, since nothing else can shift
--- it. Guns kitted before the attach fix in AWCWF_AdditionalParts_GGS carry these: the part
--- draws on the character (the renderer reads the mirror) but no reader Java-side can see
--- it, so the suppressor stays loud and the old "no real part in slot" isValid refused to
--- remove it forever.
+-- What slot does this mirror value's part really belong to? Resolved from the item
+-- script, so it does not matter what key the entry was filed under.
+local function ggsResolvePartType(fullType)
+    if not fullType or fullType == "" then
+        return nil
+    end
+    local full = tostring(fullType)
+    if not full:find("%.") then
+        full = "Base." .. full
+    end
+    local ok, resolved = pcall(instanceItem, full)
+    if not ok or not resolved or not instanceof(resolved, "WeaponPart") then
+        return nil
+    end
+    local ok2, partType = pcall(resolved.getPartType, resolved)
+    return ok2 and partType or nil
+end
+
+-- Every mirror entry that claims this slot, with no real part behind it. Phantoms, and
+-- they need removing just as much as a real part does -- more, since nothing else can
+-- shift them. Guns kitted before the attach fix in AWCWF_AdditionalParts_GGS carry these:
+-- the part draws on the character (the renderer reads the mirror) but no reader Java-side
+-- can see it, and the old "no real part in slot" isValid refused to remove it forever.
+--
+-- Matched by KEY OR BY VALUE, not key alone. Proven necessary in game: a gun still
+-- visibly wearing its suppressor answered "nothing in slot Canon (no real part, no mirror
+-- entry)" -- both stores empty under the Canon key -- while AWCWF_RenderPart draws every
+-- key of md.weaponpart, so the surviving entry is simply filed under some other key, where
+-- every key-based clear misses it and the ghost outlives all of them. Resolving each
+-- value's real PartType catches it wherever it sits.
 local function ggsMirroredOnly(weapon, partType)
     if not weapon or weapon:getWeaponPart(partType) then
         return nil
     end
     local md = weapon.getModData and weapon:getModData()
-    local mirrored = md and md.weaponpart and md.weaponpart[partType]
-    if mirrored and mirrored ~= "" then
-        return tostring(mirrored)
+    if not md or not md.weaponpart then
+        return nil
     end
-    return nil
+    local hits = nil
+    for k, v in pairs(md.weaponpart) do
+        if v and v ~= "" and (k == partType or ggsResolvePartType(v) == partType) then
+            hits = hits or {}
+            hits[k] = tostring(v)
+        end
+    end
+    return hits
 end
 
 -- Both representations of the whole weapon, on one line.
@@ -118,26 +148,31 @@ local function ggsDoRemoval(self)
 
     local part = self.weapon:getWeaponPart(self.partType)
     if not part then
-        -- Phantom: a mirror entry with no real part. Drop the entry, which is what the
-        -- renderer reads, and ask the server to hand over its real copy if it has one --
-        -- deliberately not instanceItem() here, since a client-made item is a ghost the
-        -- server never learns about, and that is its own family of bugs.
-        local mirrored = ggsMirroredOnly(self.weapon, self.partType)
-        if mirrored then
-            print("[GGS RemoveFix] mirror-only part in slot " .. tostring(self.partType) .. " (" ..
-                      mirrored .. "), clearing the entry and asking the server for the real one")
+        -- Phantom: mirror entries with no real part. Drop every entry claiming this slot,
+        -- under whatever key it sits -- the mirror is what the renderer reads, so this is
+        -- what actually takes the model off the character -- and ask the server to hand
+        -- over its real copy if it has one. Deliberately not instanceItem() here, since a
+        -- client-made item is a ghost the server never learns about, and that is its own
+        -- family of bugs.
+        local mirrorHits = ggsMirroredOnly(self.weapon, self.partType)
+        if mirrorHits then
             local md = self.weapon:getModData()
-            md.weaponpart[self.partType] = nil
+            local okId, weaponId = pcall(self.weapon.getID, self.weapon)
+            for k, full in pairs(mirrorHits) do
+                print("[GGS RemoveFix] mirror-only entry " .. tostring(k) .. "=" .. full ..
+                          " claims slot " .. tostring(self.partType) ..
+                          ", clearing it and asking the server for the real one")
+                md.weaponpart[k] = nil
+                if isClient and isClient() and sendClientCommand then
+                    pcall(sendClientCommand, self.character, "GGS", "detachPart", {
+                        slot = tostring(k),
+                        full = full,
+                        weaponId = (okId and weaponId or nil),
+                    })
+                end
+            end
             if self.weapon.transmitModData then
                 pcall(self.weapon.transmitModData, self.weapon)
-            end
-            if isClient and isClient() and sendClientCommand then
-                local okId, weaponId = pcall(self.weapon.getID, self.weapon)
-                pcall(sendClientCommand, self.character, "GGS", "detachPart", {
-                    slot = tostring(self.partType),
-                    full = mirrored,
-                    weaponId = (okId and weaponId or nil),
-                })
             end
             return true
         end
@@ -209,6 +244,17 @@ local function ggsDoRemoval(self)
         md.weaponpart[self.partType] = nil
         if okSlot and partSlot then
             md.weaponpart[partSlot] = nil
+        end
+        -- And any entry for the same slot filed under a different key. That is the ghost:
+        -- the renderer draws every mirror key, so an entry the key-based clears above miss
+        -- keeps the part on the character's model forever, with both stores reading empty
+        -- under the slot's own name.
+        local strays = ggsMirroredOnly(self.weapon, self.partType)
+        if strays then
+            for k, v in pairs(strays) do
+                print("[GGS RemoveFix] clearing stray mirror entry " .. tostring(k) .. "=" .. v)
+                md.weaponpart[k] = nil
+            end
         end
     end
 
