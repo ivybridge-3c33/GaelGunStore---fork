@@ -64,6 +64,24 @@ local function buildWeaponPartStateToken(weapon)
         end
     end
 
+    -- Fold the modData mirror in as well. This token is what riskyUI:update compares to
+    -- decide whether to rebuild the window, and it used to read getAllWeaponParts only --
+    -- real parts. On MP an attachment can appear or disappear purely in md.weaponpart
+    -- (that is how GGS_PartSyncClient receives the server's list, and how a mirror-only
+    -- removal clears it), so those changes never moved the token and the window kept
+    -- showing whatever it had drawn first. That is the "UI does not update" symptom.
+    local mirror = {}
+    local okMd, md = pcall(weapon.getModData, weapon)
+    if okMd and md and md.weaponpart then
+        for slot, full in pairs(md.weaponpart) do
+            mirror[#mirror + 1] = tostring(slot) .. "=" .. tostring(full)
+        end
+    end
+    table.sort(mirror)
+    for _, entry in ipairs(mirror) do
+        parts[#parts + 1] = "m:" .. entry
+    end
+
     table.sort(parts)
     parts[#parts + 1] = "containsClip=" .. tostring(weapon.isContainsClip and weapon:isContainsClip() or false)
     parts[#parts + 1] = "magType=" .. tostring(weapon.getMagazineType and weapon:getMagazineType() or "nil")
@@ -850,7 +868,8 @@ function GGS_dumpWeaponPartState(weapon)
     -- two dumps side by side settle whether the parts exist and are simply not reaching
     -- this client. Server output lands in coop-console.txt as [GGS ServerDBG].
     if isClient and isClient() and sendClientCommand then
-        pcall(sendClientCommand, getPlayer(), "GGS", "dumpParts", {})
+        local okWid, wid = pcall(weapon.getID, weapon)
+        pcall(sendClientCommand, getPlayer(), "GGS", "dumpParts", { weaponId = (okWid and wid or nil) })
     end
 end
 

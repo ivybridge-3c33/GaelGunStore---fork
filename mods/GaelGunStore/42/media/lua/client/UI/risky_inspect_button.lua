@@ -516,9 +516,45 @@ function attachmentButton:render()
 end
 
 function attachmentButton:onMouseDoubleClick()
+    -- Entry log: tells us the double-click reached the slot at all, and whether it has a
+    -- real part (removable through the normal action) or only a mirrored one (needs the
+    -- server). Without it a slot that silently refuses looks identical to a missed click.
+    print(string.format("[GGS SlotDBG] doubleClick slot=%s slotItem=%s",
+        tostring(self.attachmentType),
+        tostring(self.slotItem and self.slotItem.getFullType and self.slotItem:getFullType() or self.slotItem)))
     if READ_ONLY_UI then
         sayReadOnly()
         return
+    end
+    -- A slot can legitimately show a part that this client has no real InventoryItem for:
+    -- the server owns the attachment and only its name reaches us, through the
+    -- md.weaponpart mirror that GGS_PartSyncClient writes. slotItem comes from
+    -- weapon:getWeaponPart(), which is real-parts-only, so those slots looked populated
+    -- and refused to do anything on double-click. There is nothing local to hand to
+    -- ISRemoveWeaponUpgrade in that case, so ask the server to detach by slot name and
+    -- drop the mirror entry here; the part lands in the inventory server-side and the
+    -- next sync confirms the slot is empty.
+    if not self.slotItem and self.attachingTo and self.attachmentType then
+        local md = self.attachingTo.getModData and self.attachingTo:getModData()
+        local mirrored = md and md.weaponpart and md.weaponpart[self.attachmentType]
+        if mirrored then
+            if isClient and isClient() and sendClientCommand then
+                local okId, weaponId = pcall(self.attachingTo.getID, self.attachingTo)
+                pcall(sendClientCommand, getPlayer(), "GGS", "detachPart", {
+                    slot = tostring(self.attachmentType),
+                    weaponId = (okId and weaponId or nil),
+                })
+                md.weaponpart[self.attachmentType] = nil
+                if self.attachingTo.transmitModData then
+                    pcall(self.attachingTo.transmitModData, self.attachingTo)
+                end
+                print("[GGS ClickDBG] server-side detach requested for slot " ..
+                          tostring(self.attachmentType))
+            else
+                sayReadOnly()
+            end
+            return
+        end
     end
     if self.slotItem and self.ClipType ~= "ClipType" and self.AttackModeType ~= "WeaponAttackType" and self.SkinType ~=
         "Skin" then
@@ -526,6 +562,20 @@ function attachmentButton:onMouseDoubleClick()
         if AttachmentRules then
             local canRemove, blocking = AttachmentRules.canRemovePart(self.attachingTo, self.slotItem)
             if not canRemove then
+                -- The last silent gate on the removal path. [GGS SlotDBG] showed the
+                -- double-click arriving with a real part in the slot, yet
+                -- ISRemoveWeaponUpgrade never ran -- neither its isValid nor its complete
+                -- printed -- so the action was never queued, and this branch only ever
+                -- spoke in-game.
+                local names = {}
+                if blocking then
+                    for _, entry in ipairs(blocking) do
+                        local p = entry and entry.part
+                        names[#names + 1] = tostring(p and p.getFullType and p:getFullType() or "?")
+                    end
+                end
+                print("[GGS SlotDBG] stop: canRemovePart = false, blocked by [" ..
+                          table.concat(names, ", ") .. "]")
                 self.removalBlocked = true
                 self.blockingParts = blocking
                 local message = nil

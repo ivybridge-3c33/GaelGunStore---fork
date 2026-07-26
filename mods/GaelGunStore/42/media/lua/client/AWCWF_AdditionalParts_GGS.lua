@@ -97,6 +97,19 @@ local function syncWeaponPartModData(item, partType, fullType)
         return
     end
     md.weaponpart[partType] = fullType
+    -- Attaching something clears the tombstone left by a removal (see
+    -- ISRemoveWeaponUpgrade_FIX.lua), so the slot is allowed to sync again.
+    if fullType and md.ggsRemovedSlots then
+        md.ggsRemovedSlots[partType] = nil
+    end
+    -- Who puts a part back? After a removal the mirror was seen holding Canon again
+    -- before the next sync even arrived ("partList received (6), mirror already current"),
+    -- so the re-add happens on this client, through here. Magazine traffic is constant and
+    -- uninteresting, so only real attachment slots are reported.
+    if partType ~= "Clip" and partType ~= "ClipUI" then
+        print("[GGS MirrorDBG] " .. tostring(partType) .. " -> " .. tostring(fullType) ..
+                  " on " .. tostring(item.getFullType and item:getFullType() or "?"))
+    end
     if item.transmitModData then
         item:transmitModData()
     end

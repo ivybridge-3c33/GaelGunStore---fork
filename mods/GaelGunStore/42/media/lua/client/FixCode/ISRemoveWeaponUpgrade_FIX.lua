@@ -20,6 +20,10 @@
 function ISRemoveWeaponUpgrade:isValid()
     -- Nothing in the slot means nothing to remove -- checked on every branch now.
     if not self.weapon or not self.weapon:getWeaponPart(self.partType) then
+        -- Visibility on the removal path: the queue discards an action whose isValid is
+        -- false without a word, and the ActionDBG wrapper that used to show this was
+        -- removed during cleanup. One line per attempt.
+        print("[GGS RemoveFix] isValid false: no real part in slot " .. tostring(self.partType))
         return self.partType == "Hide_Beam"
     end
     if isClient() then
@@ -39,28 +43,92 @@ function ISRemoveWeaponUpgrade:isValid()
     return true
 end
 
-local old_ISRemoveWeaponUpgrade_perform = ISRemoveWeaponUpgrade.perform
-function ISRemoveWeaponUpgrade:perform()
-    old_ISRemoveWeaponUpgrade_perform(self)
-    local part = self.weapon:getWeaponPart(self.partType)
-    -- The nil guard AWCWF is missing. Their version calls part:getType() straight away.
-    if part and AWCWF_LaserAndGunLightSet and AWCWF_LaserAndGunLightSet[part:getType()] then
-        if self.weapon:getWeaponPart("Hide_Beam") then
-            self.weapon:setWeaponPart("Hide_Beam", nil)
-        end
-    end
-end
-
-function ISRemoveWeaponUpgrade:complete()
-    local part = self.weapon:getWeaponPart(self.partType)
-    if not part then
-        -- Nothing attached: bail out instead of handing nil to detachWeaponPart/AddItem.
-        print("[GGS RemoveFix] complete: no part in slot " .. tostring(self.partType) .. ", nothing to remove")
+-- All the removal work lives here, and BOTH perform and complete route into it.
+--
+-- Vanilla puts the detach in complete() and its perform() only does queue bookkeeping;
+-- nothing in ISBaseTimedAction ever calls complete(), so the engine does -- and on MP it
+-- does not. Traced with [GGS ActionDBG]: isValid returns true every frame, perform runs,
+-- and complete never fires, so the action "succeeded" while the part stayed bolted on.
+-- Offline the engine does call complete(), which is exactly why removal works there and
+-- nowhere else. Doing the work in perform(), which demonstrably runs, fixes it; the flag
+-- keeps it from happening twice where complete() is called as well.
+local function ggsDoRemoval(self)
+    if self.__ggsRemovalDone then
         return true
     end
+    self.__ggsRemovalDone = true
+
+    print("[GGS RemoveFix] removing slot=" .. tostring(self.partType) .. " from " ..
+              tostring(self.weapon and self.weapon.getFullType and self.weapon:getFullType()))
+
+    local part = self.weapon:getWeaponPart(self.partType)
+    if not part then
+        print("[GGS RemoveFix] no part in slot " .. tostring(self.partType) .. ", nothing to remove")
+        return true
+    end
+
     self.weapon:detachWeaponPart(self.character, part)
-    syncHandWeaponFields(self.character, self.weapon)
-    local added = self.character:getInventory():AddItem(part);
+
+    -- detachWeaponPart clears the real part but leaves md.weaponpart holding the entry,
+    -- and that mirror is what AWCWF_RenderPart draws from and what the workbench label
+    -- falls back to. Without this the part landed in the inventory while the model kept
+    -- wearing it and the slot kept showing its name.
+    local md = self.weapon.getModData and self.weapon:getModData()
+    if md and md.weaponpart and md.weaponpart[self.partType] ~= nil then
+        md.weaponpart[self.partType] = nil
+    end
+
+    -- Tombstone the slot so the sync cannot put the part back.
+    --
+    -- Making both sides agree turned out to be unwinnable here: at the moment of a removal
+    -- the server's copy of the same weapon id held a different set entirely -- it saw
+    -- [Stock, Scope, Handguard, Clip] while the client got Light, Stool, Canon and Grip
+    -- pushed back as real parts, none of which the server had. So rather than keep chasing
+    -- consistency, record what the player deliberately took off and treat that as final:
+    -- GGS_PartSyncClient skips any slot listed here. Re-attaching clears the entry (see
+    -- syncWeaponPartModData in AWCWF_AdditionalParts_GGS.lua), so this only ever suppresses
+    -- a slot the player emptied and has not refilled.
+    if md then
+        md.ggsRemovedSlots = md.ggsRemovedSlots or {}
+        md.ggsRemovedSlots[tostring(self.partType)] = true
+        print("[GGS RemoveFix] tombstoned slot " .. tostring(self.partType) ..
+                  " (sync will not restore it)")
+    end
+    if md and self.weapon.transmitModData then
+        pcall(self.weapon.transmitModData, self.weapon)
+    end
+    -- Tell the server too. Its copy still has the part attached, so the next sync -- which
+    -- fires on equip and on workbench open -- would put the entry straight back.
+    -- Log the send. Last round produced no server-side line at all -- neither the success
+    -- nor the "nothing in slot" path -- so it is not yet established that the command is
+    -- even leaving the client.
+    local amClient = isClient and isClient() or false
+    if amClient and sendClientCommand then
+        local okId, weaponId = pcall(self.weapon.getID, self.weapon)
+        -- Send the part's fullType as well as the slot name. Matching on the slot alone
+        -- failed server-side -- "nothing in slot Canon (getAllWeaponParts had 4 parts)"
+        -- while those 4 were exactly the set that came back, Canon included -- so the
+        -- part is there and its getPartType() simply does not read back as "Canon" over
+        -- there. fullType is unambiguous.
+        local okFull, partFull = pcall(part.getFullType, part)
+        local okSend, err = pcall(sendClientCommand, self.character, "GGS", "detachPart", {
+            slot = tostring(self.partType),
+            full = (okFull and partFull or nil),
+            weaponId = (okId and weaponId or nil),
+        })
+        print("[GGS RemoveFix] sent detachPart slot=" .. tostring(self.partType) .. " weaponId=" ..
+                  tostring(okId and weaponId or "nil") .. " ok=" .. tostring(okSend) ..
+                  (okSend and "" or (" err=" .. tostring(err))))
+    else
+        print("[GGS RemoveFix] NOT sending detachPart: isClient=" .. tostring(amClient) ..
+                  " sendClientCommand=" .. tostring(sendClientCommand ~= nil))
+    end
+
+    if syncHandWeaponFields then
+        syncHandWeaponFields(self.character, self.weapon)
+    end
+
+    local added = self.character:getInventory():AddItem(part)
     if added then
         if self.partType == "Laser" then
             added:getModData().LaserBatteryReamin = self.weapon:getModData().LaserBatteryReamin
@@ -70,9 +138,32 @@ function ISRemoveWeaponUpgrade:complete()
             added:getModData().LightBatteryReamin = self.weapon:getModData().LightBatteryReamin
             self.weapon:getModData().LightBatteryReamin = nil
         end
-        sendAddItemToContainer(self.character:getInventory(), added);
+        if sendAddItemToContainer then
+            sendAddItemToContainer(self.character:getInventory(), added)
+        end
     end
+
+    -- AWCWF's own follow-up, with the nil guard their version lacks.
+    local stillThere = self.weapon:getWeaponPart(self.partType)
+    if stillThere and AWCWF_LaserAndGunLightSet and AWCWF_LaserAndGunLightSet[stillThere:getType()] then
+        if self.weapon:getWeaponPart("Hide_Beam") then
+            self.weapon:setWeaponPart("Hide_Beam", nil)
+        end
+    end
+
     return true
+end
+
+local old_ISRemoveWeaponUpgrade_perform = ISRemoveWeaponUpgrade.perform
+function ISRemoveWeaponUpgrade:perform()
+    ggsDoRemoval(self)
+    old_ISRemoveWeaponUpgrade_perform(self)
+end
+
+-- Kept so any path that does call complete() still works, and so it stays idempotent
+-- with perform() thanks to the flag.
+function ISRemoveWeaponUpgrade:complete()
+    return ggsDoRemoval(self)
 end
 
 function ISRemoveWeaponUpgrade:new(character, weapon, partType, maxTime)
