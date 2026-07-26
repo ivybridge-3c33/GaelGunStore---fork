@@ -28,17 +28,21 @@ if Events and Events.OnGameStart and Events.OnGameStart.Add then
     Events.OnGameStart.Add(function() AWCWF_AdditionalParts.GetWeaponModelInstance = ggsGetWeaponModelInstance end)
 end
 
--- On for one more round. AWCWF_RenderPart reads getModData().weaponpart, so the model
--- showing a part proves the mirror got written; inspect and the suppressor read the
--- real vanilla part and see nothing. The suspect is the "skip non-WeaponPart" branch
--- in setWeaponPart below, which skips orig() but still writes the mirror -- exactly
--- that split. Its debugAttach line will say so. Costs ~5000 lines a session because
--- something clears Hide_Beam every frame; turn off once confirmed.
+-- Verbose attach/detach tracing. Off by default; turn on to see every setWeaponPart,
+-- attachWeaponPart and detachWeaponPart call on a HandWeapon.
 local DEBUG_ATTACH = false
+
+-- The Hide_Beam clear fires every single frame and buried ~5000 lines a session, making the
+-- log unreadable. It is never the answer, so it is filtered out rather than turned off.
 local function debugAttach(fmt, ...)
-    if DEBUG_ATTACH then
-        print(string.format(fmt, ...))
+    if not DEBUG_ATTACH then
+        return
     end
+    local line = string.format(fmt, ...)
+    if line:find("type=Hide_Beam part=nil", 1, true) then
+        return
+    end
+    print(line)
 end
 
 -- Every bail-out here used to be silent, so a patch that never installed looked
@@ -97,19 +101,6 @@ local function syncWeaponPartModData(item, partType, fullType)
         return
     end
     md.weaponpart[partType] = fullType
-    -- Attaching something clears the tombstone left by a removal (see
-    -- ISRemoveWeaponUpgrade_FIX.lua), so the slot is allowed to sync again.
-    if fullType and md.ggsRemovedSlots then
-        md.ggsRemovedSlots[partType] = nil
-    end
-    -- Who puts a part back? After a removal the mirror was seen holding Canon again
-    -- before the next sync even arrived ("partList received (6), mirror already current"),
-    -- so the re-add happens on this client, through here. Magazine traffic is constant and
-    -- uninteresting, so only real attachment slots are reported.
-    if partType ~= "Clip" and partType ~= "ClipUI" then
-        print("[GGS MirrorDBG] " .. tostring(partType) .. " -> " .. tostring(fullType) ..
-                  " on " .. tostring(item.getFullType and item:getFullType() or "?"))
-    end
     if item.transmitModData then
         item:transmitModData()
     end

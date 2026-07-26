@@ -78,22 +78,6 @@ local function ggsDoRemoval(self)
         md.weaponpart[self.partType] = nil
     end
 
-    -- Tombstone the slot so the sync cannot put the part back.
-    --
-    -- Making both sides agree turned out to be unwinnable here: at the moment of a removal
-    -- the server's copy of the same weapon id held a different set entirely -- it saw
-    -- [Stock, Scope, Handguard, Clip] while the client got Light, Stool, Canon and Grip
-    -- pushed back as real parts, none of which the server had. So rather than keep chasing
-    -- consistency, record what the player deliberately took off and treat that as final:
-    -- GGS_PartSyncClient skips any slot listed here. Re-attaching clears the entry (see
-    -- syncWeaponPartModData in AWCWF_AdditionalParts_GGS.lua), so this only ever suppresses
-    -- a slot the player emptied and has not refilled.
-    if md then
-        md.ggsRemovedSlots = md.ggsRemovedSlots or {}
-        md.ggsRemovedSlots[tostring(self.partType)] = true
-        print("[GGS RemoveFix] tombstoned slot " .. tostring(self.partType) ..
-                  " (sync will not restore it)")
-    end
     if md and self.weapon.transmitModData then
         pcall(self.weapon.transmitModData, self.weapon)
     end

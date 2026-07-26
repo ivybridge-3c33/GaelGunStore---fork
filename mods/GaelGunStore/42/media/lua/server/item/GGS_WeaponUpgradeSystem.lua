@@ -21,7 +21,7 @@ GGSWeaponUpgrades.WeaponSlots = GGSWeaponUpgrades.WeaponSlots or {}
 -- server while the same code fills them correctly offline, so we need to see whether
 -- this file runs server-side at all and whether attachWeaponPart actually sticks.
 -- Set back to false once that is answered.
-GGSWeaponUpgrades.Debug = true
+GGSWeaponUpgrades.Debug = false
 
 
 local prob_barrel_shroud_bipod = SandboxVars.GGSGS.barrel_shroud_bipod * 0.01

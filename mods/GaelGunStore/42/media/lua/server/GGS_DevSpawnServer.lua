@@ -13,7 +13,6 @@
 
 local MODULE = "GGS"
 local COMMAND_SPAWN_PART = "devSpawnPart"
-local COMMAND_DUMP_PARTS = "dumpParts"
 
 local function isSpawnerEnabled()
     local sv = SandboxVars
@@ -23,138 +22,6 @@ local function isSpawnerEnabled()
     return false
 end
 
--- Dumps the SERVER's view of the weapon the player is holding, so it can be compared
--- with the client's [GGS PartDBG] dump of the same item at the same moment.
---
--- Needed because the evidence now points at a split: the gun carries
--- GGS_WeaponAutoUpgraded = true, so applyWeaponSlots really did attach its required
--- Handguard and Stock (and possibly a suppressor) at spawn -- and the character in the
--- world visibly wears them -- yet on the client getAllWeaponParts() and md.weaponpart
--- both report nothing but the magazine. If this prints parts the client cannot see,
--- the parts exist and simply never reach the client, which is exactly why inspect shows
--- None, the suppressor does not quieten the shot, and nothing can be removed.
--- Verbose per-request dump. Off by default: this now runs on every equip as well as on
--- every workbench open, and the interesting line (what got synced) is printed either way.
--- Flip to true to get the full server-side picture of a weapon again.
-local VERBOSE = false
-local function dbg(message)
-    if VERBOSE then
-        print(message)
-    end
-end
-
-local function dumpServerParts(playerObj, args)
-    local weapon = playerObj.getPrimaryHandItem and playerObj:getPrimaryHandItem()
-    if not weapon then
-        dbg("[GGS ServerDBG] no primary hand item")
-        return
-    end
-    -- Both sides resolve "the weapon" independently through getPrimaryHandItem, and they
-    -- can disagree for a moment -- which showed up as the part list flapping between 0
-    -- and 4 entries, so the client alternately pruned a gun's mirror with another item's
-    -- list and then had the parts pushed back. Carry the id and refuse to answer for
-    -- anything else.
-    local okId, weaponId = pcall(weapon.getID, weapon)
-    if args and args.weaponId and okId and weaponId ~= args.weaponId then
-        dbg("[GGS ServerDBG] weapon mismatch: client asked about " .. tostring(args.weaponId) ..
-                ", holding " .. tostring(weaponId))
-        return
-    end
-    local okType, fullType = pcall(weapon.getFullType, weapon)
-    dbg("[GGS ServerDBG] weapon=" .. tostring(okType and fullType or "?"))
-
-    local realList = {}
-    local okAll, all = pcall(weapon.getAllWeaponParts, weapon)
-    if okAll and all then
-        for i = 0, all:size() - 1 do
-            local part = all:get(i)
-            if part then
-                realList[#realList + 1] = tostring(part.getPartType and part:getPartType() or "?") .. "=" ..
-                                              tostring(part.getFullType and part:getFullType() or "?")
-            end
-        end
-    else
-        realList[#realList + 1] = "<getAllWeaponParts unavailable>"
-    end
-    dbg("[GGS ServerDBG] real parts (" .. #realList .. "): " .. table.concat(realList, ", "))
-
-    local mirrorList = {}
-    local okMd, md = pcall(weapon.getModData, weapon)
-    if okMd and md and md.weaponpart then
-        for slot, ft in pairs(md.weaponpart) do
-            mirrorList[#mirrorList + 1] = tostring(slot) .. "=" .. tostring(ft)
-        end
-    end
-    dbg("[GGS ServerDBG] modData mirror (" .. #mirrorList .. "): " .. table.concat(mirrorList, ", "))
-    dbg("[GGS ServerDBG] autoUpgradedFlag=" ..
-              tostring(okMd and md and md.GGS_WeaponAutoUpgraded or "nil"))
-
-    -- Measured on the same weapon at the same tick:
-    --   server real parts (6): Canon=NST_Silencer, Handguard=ar15_hg_reflex_carbon,
-    --                          Stock=ar15_sba3_stock, Light=InsightWMX200,
-    --                          Stool=M203_GL, Clip=Clip_556Clip
-    --   client real parts (1): Clip=Clip_556Clip
-    -- applyWeaponSlots attached all of those at spawn (GGS_WeaponAutoUpgraded = true) and
-    -- they never reached the client, so every client-side reader saw an empty gun: the
-    -- workbench slots drew IGUI_NONE, the suppressor profile found no Canon and left the
-    -- shot at full volume, and removal had nothing to remove. It also made the parts show
-    -- up in the attach list, where clicking them failed with hasPart=false -- they were
-    -- never in the inventory, they were already on the gun.
-    --
-    -- So mirror the real parts into md.weaponpart and transmit. modData does cross the
-    -- wire, and md.weaponpart is what AWCWF_RenderPart and the mirror-aware readers use.
-    if okMd and md then
-        md.weaponpart = md.weaponpart or {}
-        local synced = {}
-        if okAll and all then
-            for i = 0, all:size() - 1 do
-                local part = all:get(i)
-                local partType = part and part.getPartType and part:getPartType()
-                local partFull = part and part.getFullType and part:getFullType()
-                if partType and partFull and md.weaponpart[partType] ~= partFull then
-                    md.weaponpart[partType] = partFull
-                    synced[#synced + 1] = tostring(partType) .. "=" .. tostring(partFull)
-                end
-            end
-        end
-        if #synced > 0 then
-            if weapon.transmitModData then
-                pcall(weapon.transmitModData, weapon)
-            end
-            print("[GGS ServerDBG] synced to client (" .. #synced .. "): " .. table.concat(synced, ", "))
-        else
-            dbg("[GGS ServerDBG] nothing to sync")
-        end
-
-        -- Do not rely on transmitModData reaching the client: send the list explicitly
-        -- and let the client write its own copy (GGS_PartSyncClient.lua). Measured proof
-        -- that this is needed will be in the logs either way -- the previous round showed
-        -- the server syncing 5 parts while the client's own dump, taken 7ms earlier, still
-        -- had one. With an explicit command there is no ambiguity about arrival.
-        local payload = {}
-        if okAll and all then
-            for i = 0, all:size() - 1 do
-                local part = all:get(i)
-                local partType = part and part.getPartType and part:getPartType()
-                local partFull = part and part.getFullType and part:getFullType()
-                if partType and partFull then
-                    payload[#payload + 1] = { slot = tostring(partType), full = tostring(partFull) }
-                end
-            end
-        end
-        -- Always send, even when the list is empty: the client treats this as the whole
-        -- truth and prunes anything not in it, which is how stale entries left behind by
-        -- a removal get cleaned up. Skipping the empty case would leave a gun whose last
-        -- attachment was removed showing ghosts forever.
-        if sendServerCommand then
-            pcall(sendServerCommand, playerObj, MODULE, "partList", { parts = payload, weaponId = (okId and weaponId or nil) })
-            dbg("[GGS ServerDBG] sent partList to client (" .. #payload .. " entries)")
-        end
-    end
-end
-
--- The client detaches on its own copy; without this the server keeps the part attached
--- and the next sync re-adds it to the mirror, so a removed attachment comes back.
 -- Find a weapon by id: hands first, then the whole inventory including nested bags.
 --
 -- Needed because getPrimaryHandItem() comes back nil here at exactly the wrong moment. The
@@ -282,9 +149,10 @@ local function detachServerPart(playerObj, args)
     local md = weapon.getModData and weapon:getModData()
     if md and md.weaponpart then
         md.weaponpart[args.slot] = nil
-        if weapon.transmitModData then
-            pcall(weapon.transmitModData, weapon)
-        end
+        -- No transmitModData: modData crosses as a whole table, so pushing from the server
+        -- overwrites the client's copy wholesale -- ggsRemovedSlots included. That is the
+        -- mechanism that kept undoing removals. The client has already cleared its own
+        -- entry before sending this, and partList carries anything else it needs.
     end
     print("[GGS ServerDBG] detached " .. tostring(args.slot) .. " server-side")
 end
@@ -296,10 +164,6 @@ local function onClientCommand(module, command, playerObj, args)
     -- Entry log. A round went by with no server-side line for detachPart at all, so it was
     -- not clear whether the command was arriving and being filtered here, or never sent.
     print("[GGS ServerDBG] command received: " .. tostring(command))
-    if command == COMMAND_DUMP_PARTS then
-        pcall(dumpServerParts, playerObj, args)
-        return
-    end
     if command == "detachPart" then
         pcall(detachServerPart, playerObj, args)
         return
