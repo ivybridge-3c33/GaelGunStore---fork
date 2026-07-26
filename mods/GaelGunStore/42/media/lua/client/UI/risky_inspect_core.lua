@@ -173,6 +173,14 @@ function riskyUI:update()
         if self.itemCap ~= getPlayer():getInventory():getItems():size() or self.itemWeight ~=
             getPlayer():getInventory():getCapacityWeight() or self.weaponCondition ~= currentWeaponCondition or
             self.weaponStateToken ~= weaponState then
+            -- Dump whenever the part set changes, not just on window open. The
+            -- open-only dump was misleading: attaching happens with the window already
+            -- up, so it only ever recorded the state from before the attach, and the
+            -- log looked like nothing had been attached at all.
+            if self.weaponStateToken ~= weaponState and GGS_dumpWeaponPartState then
+                print("[GGS PartDBG] --- part state changed ---")
+                pcall(GGS_dumpWeaponPartState, currentWeapon)
+            end
             self.itemCap = getPlayer():getInventory():getItems():size()
             self.itemWeight = getPlayer():getInventory():getCapacityWeight()
             self.weaponCondition = currentWeaponCondition
@@ -239,9 +247,34 @@ local function drawAttachment(self, weapon, type, x, y, visibleSet)
             attachment = resolved
         end
     end
+    -- Label only, and deliberately narrow. AWCWF_RenderPart draws from
+    -- getModData().weaponpart, so on MP a part can be in that mirror -- visible on the
+    -- model -- while the real vanilla part is absent and this label reads IGUI_NONE.
+    -- isReal = false is what makes the getWeaponPart hook consult the mirror.
+    --
+    -- Do NOT push this into the hook's default or into the slot buttons: those take
+    -- their slotItem from getWeaponPart, and a mirror entry comes back as
+    -- instanceItem(cached), a Lua-only instance. With one of those in a button,
+    -- attachmentButton:onMouseDoubleClick queues ISRemoveWeaponUpgrade for a part the
+    -- Java side cannot see, it resolves to null, AWCWF's ISRemoveWeaponUpgrade_FIX
+    -- dies on getType of null, and the whole timed-action queue goes with it. Tried
+    -- that; it took the attach action down too.
+    local fromMirror = false
+    if attachment == nil then
+        local ok, mirrored = pcall(weapon.getWeaponPart, weapon, type, false)
+        if ok and mirrored then
+            attachment = mirrored
+            fromMirror = true
+        end
+    end
     local displayName = getText('IGUI_NONE')
     if attachment ~= nil then
-        displayName = getDisplayNameWithCondition(attachment, attachment:getDisplayName());
+        if fromMirror then
+            -- Fresh instance: its condition is not the attached part's, so name only.
+            displayName = attachment:getDisplayName()
+        else
+            displayName = getDisplayNameWithCondition(attachment, attachment:getDisplayName());
+        end
     end
     self:drawText(displayName, x, y, 1, 1, 1, 1, UIFont.Small);
     self:drawText(getText('IGUI_' .. type), x, y + 20, 1, 1, 1, 1, UIFont.Small);
@@ -735,8 +768,98 @@ function riskyUI:settingbuttona()
     self.settingpanel:initialise()
     self.settingpanel:addToUIManager()
 end
+-- Diagnostic: one dump per window open (NOT per frame) of what this client actually
+-- holds for the inspected weapon -- the real vanilla parts, and the modData mirror
+-- AWCWF_AdditionalParts_GGS keeps. On MP the slots draw IGUI_NONE and suppressors do
+-- not engage even though the 3D model shows the parts, and these two lists say which
+-- of the three stores the attachment really lives in. Remove once that is settled.
+-- Global on purpose: riskyUI:update sits earlier in this file and a local declared
+-- down here would not be in its scope.
+function GGS_dumpWeaponPartState(weapon)
+    if not weapon then
+        print("[GGS PartDBG] no weapon")
+        return
+    end
+    local okType, fullType = pcall(weapon.getFullType, weapon)
+    print("[GGS PartDBG] weapon=" .. tostring(okType and fullType or "?"))
+
+    local realList = {}
+    local okAll, all = pcall(weapon.getAllWeaponParts, weapon)
+    if okAll and all then
+        for i = 0, all:size() - 1 do
+            local part = all:get(i)
+            if part then
+                local pt = part.getPartType and part:getPartType() or "?"
+                local ft = part.getFullType and part:getFullType() or "?"
+                realList[#realList + 1] = tostring(pt) .. "=" .. tostring(ft)
+            end
+        end
+    else
+        realList[#realList + 1] = "<getAllWeaponParts unavailable>"
+    end
+    print("[GGS PartDBG] real parts (" .. #realList .. "): " .. table.concat(realList, ", "))
+
+    local mirrorList = {}
+    local okMd, md = pcall(weapon.getModData, weapon)
+    if okMd and md and md.weaponpart then
+        for slot, ft in pairs(md.weaponpart) do
+            mirrorList[#mirrorList + 1] = tostring(slot) .. "=" .. tostring(ft)
+        end
+    end
+    print("[GGS PartDBG] modData mirror (" .. #mirrorList .. "): " .. table.concat(mirrorList, ", "))
+
+    -- The one fact still unexplained: the character in the world visibly carries a
+    -- suppressor and a handguard while getAllWeaponParts and md.weaponpart both report
+    -- nothing but the magazine. Something else is driving that render. Printing only
+    -- md.weaponpart was too narrow -- any other modData key holding part state would
+    -- have been invisible this whole time. So dump every top-level key, plus the sprite
+    -- and model the renderer actually resolves.
+    local keyList = {}
+    if okMd and md then
+        for key, value in pairs(md) do
+            local shown = type(value)
+            if type(value) == "string" or type(value) == "number" or type(value) == "boolean" then
+                shown = tostring(value)
+            elseif type(value) == "table" then
+                local n = 0
+                for _ in pairs(value) do
+                    n = n + 1
+                end
+                shown = "table(" .. n .. ")"
+            end
+            keyList[#keyList + 1] = tostring(key) .. "=" .. shown
+        end
+    end
+    table.sort(keyList)
+    print("[GGS PartDBG] all modData keys (" .. #keyList .. "): " .. table.concat(keyList, ", "))
+
+    local sprite, staticModel, worldModel
+    pcall(function()
+        sprite = weapon.getWeaponSprite and weapon:getWeaponSprite()
+    end)
+    pcall(function()
+        staticModel = weapon.getStaticModel and weapon:getStaticModel()
+    end)
+    pcall(function()
+        worldModel = weapon.getWorldStaticModel and weapon:getWorldStaticModel()
+    end)
+    print(string.format("[GGS PartDBG] sprite=%s staticModel=%s worldStaticModel=%s",
+        tostring(sprite), tostring(staticModel), tostring(worldModel)))
+
+    -- Ask the server to dump its view of the same weapon (GGS_DevSpawnServer.lua). The
+    -- two dumps side by side settle whether the parts exist and are simply not reaching
+    -- this client. Server output lands in coop-console.txt as [GGS ServerDBG].
+    if isClient and isClient() and sendClientCommand then
+        pcall(sendClientCommand, getPlayer(), "GGS", "dumpParts", {})
+    end
+end
+
 function riskyUI:createChildren()
     ISPanel.createChildren(self)
+    -- Same source the slot drawing uses: the inspected gun is the primary hand item.
+    pcall(function()
+        GGS_dumpWeaponPartState(self.currentPrimaryItem or getPlayer():getPrimaryHandItem())
+    end)
     self.scene = Carshopscenetk:new(self.width / 10, self.height / 8, self.width * 8 / 10, self.height * 6 / 8)
     self.scene:initialise()
     self.scene:instantiate()

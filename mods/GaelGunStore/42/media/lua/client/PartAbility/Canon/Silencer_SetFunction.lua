@@ -164,6 +164,19 @@ local function SoundChange(playerObj, weapon)
 
     for slotName, slotConfig in pairs(AWCWF_SilencerSet or {}) do
         local part = weapon:getWeaponPart(slotName)
+        if part == nil then
+            -- On MP a suppressor can exist only in getModData().weaponpart, the mirror
+            -- AWCWF_RenderPart renders from -- which is why the can is visible on the
+            -- gun while the shot stays at full volume: this lookup, and the
+            -- getAllWeaponParts sweep below, both only see real vanilla parts. isReal =
+            -- false makes the getWeaponPart hook check the mirror. A mirrored part is a
+            -- fresh instanceItem, which is fine here: resolveConfiguredProfile and
+            -- isSuppressorPart read its identity and tags, never its condition.
+            local ok, mirrored = pcall(weapon.getWeaponPart, weapon, slotName, false)
+            if ok and mirrored then
+                part = mirrored
+            end
+        end
         if part then
             local configured = resolveConfiguredProfile(slotConfig, part)
             if configured then

@@ -17,7 +17,11 @@ GGSWeaponUpgrades.Lists = GGSWeaponUpgrades.Lists or {}
 GGSWeaponUpgrades.Logic = GGSWeaponUpgrades.Logic or {}
 GGSWeaponUpgrades.Pools = GGSWeaponUpgrades.Pools or {}
 GGSWeaponUpgrades.WeaponSlots = GGSWeaponUpgrades.WeaponSlots or {}
-GGSWeaponUpgrades.Debug = GGSWeaponUpgrades.Debug == true
+-- Diagnostic round: loot-spawned guns come out with every slot empty on a co-op
+-- server while the same code fills them correctly offline, so we need to see whether
+-- this file runs server-side at all and whether attachWeaponPart actually sticks.
+-- Set back to false once that is answered.
+GGSWeaponUpgrades.Debug = false
 
 
 local prob_barrel_shroud_bipod = SandboxVars.GGSGS.barrel_shroud_bipod * 0.01
@@ -644,6 +648,20 @@ local function attachPart(weapon, candidate, usedPartTypes)
     weapon:attachWeaponPart(nil, partItem)
     usedPartTypes[candidate.partType] = true
     logDebug(("Adjuntado %s a %s (%s)"):format(candidate.fullType, weapon:getFullType(), candidate.partType))
+    -- Read the part straight back out. Offline these guns come out fully kitted; on a
+    -- co-op server every slot reads empty on the client, and the two candidate
+    -- explanations need separating: either the attach never takes effect here, or it
+    -- does and the parts simply never reach the client. Logging the post-attach state
+    -- server-side answers that without guessing. Also records which host this ran on,
+    -- since applyToContainer is wired to OnFillContainer.
+    local okBack, back = pcall(weapon.getWeaponPart, weapon, candidate.partType)
+    local okAll, all = pcall(weapon.getAllWeaponParts, weapon)
+    logDebug(("verify %s: readback=%s totalParts=%s isServer=%s isClient=%s"):format(
+        tostring(candidate.partType),
+        tostring(okBack and back and back:getFullType() or "nil"),
+        tostring(okAll and all and all:size() or "?"),
+        tostring(isServer and isServer() or "?"),
+        tostring(isClient and isClient() or "?")))
     return true
 end
 
@@ -1129,8 +1147,29 @@ local function getInventoryItemsFromEventArgs(...)
     return nil, nil
 end
 
+-- Diagnostic counter: OnFillContainer fires for every container the world streams in,
+-- so this logs only the first calls and then goes quiet.
+local ggsFillLogBudget = 40
+
 local function applyToContainer(roomName, containerType, ...)
     local items = getInventoryItemsFromEventArgs(...)
+    -- Separates the three ways loot upgrades can come out empty on a co-op server:
+    -- this handler never firing at all, firing but with the container arriving in an
+    -- argument position getInventoryItemsFromEventArgs does not scan (it only looks at
+    -- the varargs, i.e. argument 3 onward), or firing fine with no guns in range. The
+    -- silent `if not items then return` above hid the middle case completely.
+    if ggsFillLogBudget > 0 then
+        ggsFillLogBudget = ggsFillLogBudget - 1
+        local argTypes = {}
+        for i = 1, select("#", ...) do
+            local a = select(i, ...)
+            argTypes[#argTypes + 1] = tostring(type(a)) .. "/" .. tostring(a)
+        end
+        logDebug(("OnFillContainer room=%s type=%s items=%s varargs=%d [%s]"):format(
+            tostring(roomName), tostring(containerType),
+            items and tostring(items:size()) or "NIL",
+            select("#", ...), table.concat(argTypes, " | ")))
+    end
     if not items then
         return
     end

@@ -86,6 +86,7 @@
     IGUI_GGS_AttachmentChangesOnly = "Only attachment part changes are enabled"
     IGUI_GGS_DevAttachmentSpawnerDisabled = "GGS dev attachment spawner disabled"
     IGUI_GGS_CouldNotSpawnAttachment = "Could not spawn attachment"
+    IGUI_GGS_DevAttachmentRequested = "Requesting part from the server - click again in a moment"
     IGUI_GGS_ChangeMagazine = "Change magazine"
     IGUI_GGS_RetractBipod = "Retract bipod"
     IGUI_GGS_DeployBipod = "Deploy bipod"

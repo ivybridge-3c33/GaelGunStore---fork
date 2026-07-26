@@ -28,6 +28,12 @@ if Events and Events.OnGameStart and Events.OnGameStart.Add then
     Events.OnGameStart.Add(function() AWCWF_AdditionalParts.GetWeaponModelInstance = ggsGetWeaponModelInstance end)
 end
 
+-- On for one more round. AWCWF_RenderPart reads getModData().weaponpart, so the model
+-- showing a part proves the mirror got written; inspect and the suppressor read the
+-- real vanilla part and see nothing. The suspect is the "skip non-WeaponPart" branch
+-- in setWeaponPart below, which skips orig() but still writes the mirror -- exactly
+-- that split. Its debugAttach line will say so. Costs ~5000 lines a session because
+-- something clears Hide_Beam every frame; turn off once confirmed.
 local DEBUG_ATTACH = false
 local function debugAttach(fmt, ...)
     if DEBUG_ATTACH then
@@ -35,19 +41,28 @@ local function debugAttach(fmt, ...)
     end
 end
 
+-- Every bail-out here used to be silent, so a patch that never installed looked
+-- exactly like a patch that installed and did nothing -- which cost a whole
+-- debugging round. These prints fire once at load, not per call, so they are cheap
+-- to keep. If a "FAILED" line shows up in console.txt, the modData mirror below is
+-- not wired in at all and getWeaponPart is plain vanilla.
 local function patchClassMetaMethod(class, methodName, createPatch)
     if not __classmetatables then
+        print("[GGS Patch] FAILED " .. tostring(methodName) .. ": __classmetatables is nil")
         return
     end
     local metatable = __classmetatables[class]
     if not metatable or not metatable.__index then
+        print("[GGS Patch] FAILED " .. tostring(methodName) .. ": no metatable/__index for class")
         return
     end
     local originalMethod = metatable.__index[methodName]
     if not originalMethod then
+        print("[GGS Patch] FAILED " .. tostring(methodName) .. ": method not found on class")
         return
     end
     metatable.__index[methodName] = createPatch(originalMethod)
+    print("[GGS Patch] installed " .. tostring(methodName))
 end
 
 AWCWF_AdditionalParts.partlist = {"Scope", "Mount", "Canon", "Stock", "Handguard", "Hanguard", "Grip", "Laser", "Light",
@@ -159,6 +174,17 @@ AWCWF_AdditionalParts.getWeaponPart = function(orig)
         if real then
             return real
         end
+        -- Keep this opt-IN. Making the mirror the default (isReal ~= true) was tried
+        -- and had to be reverted: it hands callers instanceItem(cached), a fresh
+        -- instance that only exists in Lua. The workbench slot buttons take their
+        -- slotItem straight from getWeaponPart, so with a phantom in there
+        -- attachmentButton:onMouseDoubleClick stopped early-returning and queued
+        -- ISRemoveWeaponUpgrade for a part that was never really attached. The Java
+        -- side cannot see this Lua mirror, so the action's part resolved to null and
+        -- AWCWF's ISRemoveWeaponUpgrade_FIX.perform died on getType of null -- which
+        -- killed the whole timed-action queue, including any attach queued behind it.
+        -- Diagnostics also showed the premise was wrong: on MP this mirror only ever
+        -- held Clip, never a suppressor, so there was nothing for a fallback to find.
         if isReal == false then
             local md = item:getModData()
             md.weaponpart = md.weaponpart or {}
@@ -177,8 +203,41 @@ AWCWF_AdditionalParts.RemoveAllRealPart = function(orig)
     end
 end
 
+-- Pure logger, no behaviour change: calls through to the original and returns whatever
+-- it returns. Only setWeaponPart/getWeaponPart/RemoveAllRealPart were ever hooked, so
+-- an attach that goes through attachWeaponPart -- which is what vanilla's
+-- ISUpgradeWeapon timed action uses -- left no trace at all AND never reached
+-- syncWeaponPartModData, meaning no mirror entry either. That would explain a session
+-- log showing only Clip while the player had just attached something.
+local function ggsLogPassthrough(label)
+    return function(orig)
+        return function(item, ...)
+            if DEBUG_ATTACH then
+                local described = {}
+                for i = 1, select("#", ...) do
+                    local a = select(i, ...)
+                    local shown = type(a)
+                    if a ~= nil and type(a) ~= "string" and type(a) ~= "number" then
+                        local ok, ft = pcall(function() return a.getFullType and a:getFullType() end)
+                        if ok and ft then
+                            shown = tostring(ft)
+                        end
+                    end
+                    described[#described + 1] = tostring(shown)
+                end
+                debugAttach("[GGS AttachDBG] %s item=%s args=[%s]", label,
+                    tostring(item and item.getFullType and item:getFullType() or "?"),
+                    table.concat(described, ", "))
+            end
+            return orig(item, ...)
+        end
+    end
+end
+
 patchClassMetaMethod(zombie.inventory.types.HandWeapon.class, "setWeaponPart", AWCWF_AdditionalParts.setWeaponPart)
 patchClassMetaMethod(zombie.inventory.types.HandWeapon.class, "getWeaponPart", AWCWF_AdditionalParts.getWeaponPart)
 patchClassMetaMethod(zombie.inventory.types.HandWeapon.class, "RemoveAllRealPart", AWCWF_AdditionalParts.RemoveAllRealPart)
+patchClassMetaMethod(zombie.inventory.types.HandWeapon.class, "attachWeaponPart", ggsLogPassthrough("attachWeaponPart"))
+patchClassMetaMethod(zombie.inventory.types.HandWeapon.class, "detachWeaponPart", ggsLogPassthrough("detachWeaponPart"))
 
 debugAttach("[GGS AttachDBG] AWCWF_AdditionalParts simplificado cargado (modData sync, sin limpieza de partes).")

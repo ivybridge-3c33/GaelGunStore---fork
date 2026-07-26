@@ -576,12 +576,22 @@ function attachmentButton:onMouseDoubleClick()
 end
 
 function attachmentButton:onMouseUp()
+    -- This is the step that opens the part list, and it was the last one with no
+    -- visibility at all. [GGS ClickDBG] only covers buttons INSIDE the list, so a list
+    -- that never opens looks identical to a user who never clicked: zero log lines
+    -- either way. Both silent returns below are candidates.
+    print(string.format("[GGS PaneDBG] slot onMouseUp type=%s slotItem=%s window=%s",
+        tostring(self.attachmentType),
+        tostring(self.slotItem and self.slotItem.getFullType and self.slotItem:getFullType() or self.slotItem),
+        tostring(riskyInspectWindow ~= nil)))
     if self.slotItem ~= nil and self.ClipType ~= "ClipType" and self.AttackModeType ~= "WeaponAttackType" and
         self.SkinType ~= "Skin" then
+        print("[GGS PaneDBG] stop: slot already occupied")
         return
     end
 
     if not riskyInspectWindow then
+        print("[GGS PaneDBG] stop: riskyInspectWindow is nil")
         return
     end
 
@@ -591,13 +601,24 @@ function attachmentButton:onMouseUp()
         return
     end
 
-    local pane = paneClass:new(riskyInspectWindow:getX() + self:getX() + ATTACHMENT_PANE_OFFSET_X,
+    local okPane, pane = pcall(paneClass.new, paneClass,
+        riskyInspectWindow:getX() + self:getX() + ATTACHMENT_PANE_OFFSET_X,
         riskyInspectWindow:getY() + self:getY() - 3, self.attachmentType, self.ClipType, self.AttackModeType,
         self.SkinType)
+    if not okPane then
+        -- Previously an unprotected call: anything thrown in the pane constructor took
+        -- the whole click with it and never showed up anywhere.
+        print("[GGS PaneDBG] pane constructor ERRORED: " .. tostring(pane))
+        return
+    end
 
     if pane then
         pane:addToUIManager()
         pane:bringToTop()
+        local count = pane.elements and #pane.elements or -1
+        print("[GGS PaneDBG] pane opened, listed parts = " .. tostring(count))
+    else
+        print("[GGS PaneDBG] stop: pane constructor returned nil")
     end
 end
 local function getJavaFieldNum(object, fieldName)
@@ -793,12 +814,42 @@ function addAttachmentButton:render()
 end
 
 function addAttachmentButton:onMouseDown()
+    -- Last unobserved link. Three sessions of logs now agree that on MP nothing is ever
+    -- attached: attachWeaponPart is never called, setWeaponPart only ever sees Clip, and
+    -- the part-state token never changes -- even with GGSGS.DevAttachmentSpawner = true
+    -- confirmed loaded by the server. So the question is no longer which storage the
+    -- part lands in, it is whether this click runs at all and which guard it stops on.
+    -- Every one of the returns below is silent or only speaks in-game, so the log has
+    -- never shown any of this. Prints unconditionally: one line per click is nothing.
+    print(string.format(
+        "[GGS ClickDBG] onMouseDown type=%s slotItem=%s enabled=%s devSpawnMissing=%s readOnly=%s",
+        tostring(self.type),
+        tostring(self.slotItem and self.slotItem.getFullType and self.slotItem:getFullType() or self.slotItem),
+        tostring(self.enabled), tostring(self.devSpawnMissing), tostring(READ_ONLY_UI)))
     if READ_ONLY_UI then
+        print("[GGS ClickDBG] stop: READ_ONLY_UI")
         sayReadOnly()
         return
     end
+    -- Say why nothing happens. riskyShowPotentialAttachment is hardcoded true, so the
+    -- pane always lists parts the player does not own, but it builds those buttons
+    -- with enabled = devAttachmentSpawner (selectAttachmentPane.lua:412). Offline that
+    -- is usually on via -debug, so clicking one spawns the part and attaches it and
+    -- everything looks fine; on a server with GGSGS.DevAttachmentSpawner = false it is
+    -- off, and this used to fall through to a silent return -- part visible in the
+    -- list, click does nothing, no message, no log line. That silence is what made
+    -- "attachments do not work online" look like a broken attach system.
+    if self.slotItem and not self.enabled then
+        print("[GGS ClickDBG] stop: button disabled (enabled=false)")
+        sayReadOnly("IGUI_GGS_DevAttachmentSpawnerDisabled")
+        return
+    end
+    if not self.slotItem then
+        print("[GGS ClickDBG] stop: slotItem is nil")
+    end
     if self.slotItem and self.enabled then
         if self.type ~= "WeaponPart" and self.type ~= "ClipType" then
+            print("[GGS ClickDBG] stop: type not attachable (" .. tostring(self.type) .. ")")
             sayReadOnly(LIMITED_ACTION_MSG_KEY)
             return
         end
@@ -806,6 +857,7 @@ function addAttachmentButton:onMouseDown()
         local didAction = false
         if self.type == "WeaponPart" then
             if AttachmentRules and not AttachmentRules.canInstallOnWeapon(self.attachingTo, self.slotItem) then
+                print("[GGS ClickDBG] stop: canInstallOnWeapon = false")
                 local player = getPlayer()
                 local message = getText("IGUI_AWCWF_AttachmentLocked")
                 if player and message and message ~= "" then
@@ -815,14 +867,30 @@ function addAttachmentButton:onMouseDown()
             end
             local player = getPlayer()
             if not player then
+                print("[GGS ClickDBG] stop: no player")
                 return
             end
+            print("[GGS ClickDBG] passed guards, proceeding to stage+queue")
             if self.devSpawnMissing then
                 if not isDevAttachmentSpawnerEnabled() then
                     player:Say(ggsText("IGUI_GGS_DevAttachmentSpawnerDisabled"))
                     return
                 end
                 local fullType = self.devSpawnFullType or (self.slotItem and self.slotItem.getFullType and self.slotItem:getFullType())
+                -- On MP the part has to be created by the server. Spawning it here with
+                -- inventory:AddItem produces an item only this client knows about; the
+                -- code below then stages that ghost and queues vanilla's ISUpgradeWeapon,
+                -- which validates against server state and silently never performs. That
+                -- is the whole "attachments do not work online" symptom: click fires,
+                -- guards pass, spawn reports success, attachWeaponPart is never reached.
+                -- So ask the server (GGS_DevSpawnServer.lua) and stop here -- the item
+                -- arrives a moment later, the pane refreshes on the inventory-size
+                -- change, and the part is then a real one in the owned list.
+                if isClient and isClient() then
+                    sendClientCommand(player, "GGS", "devSpawnPart", { fullType = fullType })
+                    player:Say(ggsText("IGUI_GGS_DevAttachmentRequested"))
+                    return
+                end
                 local spawnedPart = spawnDevAttachmentIntoInventory(player, fullType)
                 if not spawnedPart then
                     player:Say(ggsText("IGUI_GGS_CouldNotSpawnAttachment"))
