@@ -190,6 +190,21 @@ local function ggsDoRemoval(self)
         end
     end
 
+    -- Exit state, both representations, one line. AWCWF_RenderPart:186 builds the held
+    -- weapon's models from md.weaponpart alone and runs on OnPlayerUpdate, so a part still
+    -- drawn on the character after this can only mean a mirror entry survived -- and this
+    -- says which key it survived under. Real vs mirror is the distinction that matters on
+    -- every one of these bugs, so print both rather than guessing later.
+    local mirrorLeft = {}
+    if md and md.weaponpart then
+        for k, v in pairs(md.weaponpart) do
+            mirrorLeft[#mirrorLeft + 1] = tostring(k) .. "=" .. tostring(v)
+        end
+    end
+    print("[GGS RemoveFix] done slot=" .. tostring(self.partType) .. " real=" ..
+              tostring(self.weapon:getWeaponPart(self.partType)) .. " mirror=[" ..
+              table.concat(mirrorLeft, ", ") .. "]")
+
     -- AWCWF's own follow-up, with the nil guard their version lacks.
     local stillThere = self.weapon:getWeaponPart(self.partType)
     if stillThere and AWCWF_LaserAndGunLightSet and AWCWF_LaserAndGunLightSet[stillThere:getType()] then

@@ -159,9 +159,36 @@ AWCWF_AdditionalParts.setWeaponPart = function(orig)
                         weaponpart = resolved
                     end
                 end
+                -- Clip stays mirror-only on purpose: the whole magazine system (GGS_MagSync,
+                -- ShowMagazine, ChangeMagazineType) is built on md.weaponpart["Clip"] and on
+                -- isContainsClip, not on a real WeaponPart in the slot.
                 orig(item, partType, weaponpart)
             else
-                orig(item, partType, weaponpart)
+                -- Ask for a REAL part, which AWCWF only does when isReal is truthy:
+                --     if isReal then setWeaponPart(item, type, weaponpart) end
+                -- Their own attachWeaponPart calls setWeaponPart with three arguments, so
+                -- isReal arrives nil and the Java setter is never reached -- every
+                -- client-side attach wrote the mirror and nothing else. The part rendered
+                -- (AWCWF_RenderPart draws from the mirror) while everything Java-side saw an
+                -- empty slot: a re-fitted suppressor left the shot at full volume, and
+                -- getAllWeaponParts could not find it either.
+                --
+                -- That is the exact mirror image of the loot-gun case, where the server
+                -- attaches through raw Java and writes no mirror (see the detach gate note
+                -- in ISRemoveWeaponUpgrade_FIX). Both representations have to be populated
+                -- or some reader is always looking at the wrong one. Offline nothing showed
+                -- it, because there the same mirror-only state is all any reader ever sees.
+                --
+                -- isReal == false is still honoured, for callers that deliberately want a
+                -- mirror-only entry.
+                local wantReal = isReal ~= false
+                orig(item, partType, weaponpart, wantReal)
+                if wantReal and AWCWF_AdditionalParts._origGetWeaponPart and
+                    not AWCWF_AdditionalParts._origGetWeaponPart(item, partType) then
+                    print(string.format(
+                        "[GGS AttachFix] real part did NOT land in slot %s for %s (mirror-only, sound/stats will miss it)",
+                        tostring(partType), tostring(fullType)))
+                end
             end
         end
         syncWeaponPartModData(item, partType, fullType)
