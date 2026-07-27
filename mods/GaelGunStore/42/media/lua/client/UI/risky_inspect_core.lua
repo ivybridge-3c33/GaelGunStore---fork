@@ -708,7 +708,15 @@ local function getpartmodel(weapon, scene)
                     scene.javaObject:fromLua2("createModel", modelName, modelName)
                     scene.partlist = scene.partlist or {}
                     scene.partlist[modelName] = true
+                    print("[GGS SceneDBG] createModel slot=" .. tostring(v) .. " model=" .. tostring(modelName))
+                else
+                    -- The silent half of "part missing from the workbench 3D view": the
+                    -- part exists, the pane labels it, and no scene object is ever made.
+                    print("[GGS SceneDBG] NO scene model for slot=" .. tostring(v) .. " part=" ..
+                              tostring(partFullType) .. " resolved=" .. tostring(modelName))
                 end
+            else
+                print("[GGS SceneDBG] NO script item for slot=" .. tostring(v))
             end
         end
     end
@@ -1033,6 +1041,19 @@ function riskyUI:renderInventory()
                 local model = ScriptManager.instance:getModelScript(modelscript)
                 if model and worldmodel then
                     local attachment0 = model:getAttachmentById(ur)
+                    -- Placement trace, one line per part per workbench open: which scene
+                    -- object, whether the GUN model has an attachment point for the slot,
+                    -- and where it lands. A part visible on the character but absent here
+                    -- must show its failure on this line (no attachment -> never placed;
+                    -- absurd offset -> placed out of view).
+                    if attachment0 then
+                        local o = attachment0:getOffset()
+                        print("[GGS SceneDBG] place slot=" .. tostring(ur) .. " obj=" .. tostring(worldmodel) ..
+                                  " offset=" .. tostring(o:x()) .. "," .. tostring(o:y()) .. "," .. tostring(o:z()))
+                    else
+                        print("[GGS SceneDBG] NO attachment '" .. tostring(ur) .. "' on gun model " ..
+                                  tostring(modelscript) .. " -> part never placed: " .. tostring(worldmodel))
+                    end
                     if attachment0 and not string.find(worldmodel, "nil") and not string.find(worldmodel, "null") and
                         worldmodel ~= "Base.Gun_Magazine_Ground" then
                         local offset = attachment0:getOffset()
