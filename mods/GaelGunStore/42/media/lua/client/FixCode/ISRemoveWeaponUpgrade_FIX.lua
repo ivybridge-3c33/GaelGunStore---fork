@@ -327,17 +327,14 @@ local function ggsDoRemoval(self)
     -- back NST#837542428@55, and the player ended up with both (the engine-made one a
     -- server-unknown ghost: unusable, undroppable). When the debt marker is present the
     -- original item still exists, so the correct hand-back is NO hand-back.
+    -- The ledger lives in a local table (GGS_AttachDebts, keyed by weapon id), NOT in
+    -- modData: the modData version evaporated the moment the server pushed its copy of
+    -- the table, so removal handed the part back debt-free and the duplicate returned.
     local debtSettled = false
-    if md and md.ggsPendingConsume and okFull and partFull and md.ggsPendingConsume[partFull] ~= nil then
-        md.ggsPendingConsume[partFull] = nil
-        local empty = true
-        for _ in pairs(md.ggsPendingConsume) do
-            empty = false
-            break
-        end
-        if empty then
-            md.ggsPendingConsume = nil
-        end
+    local okWid, wid = pcall(self.weapon.getID, self.weapon)
+    if okWid and wid and GGS_AttachDebts and GGS_AttachDebts[wid] and okFull and partFull and
+        GGS_AttachDebts[wid][partFull] ~= nil then
+        GGS_AttachDebts[wid][partFull] = nil
         debtSettled = true
         print("[GGS RemoveFix] attach debt settled: NOT handing this part back (the original " ..
                   tostring(partFull) .. " was never consumed and is still owned)")

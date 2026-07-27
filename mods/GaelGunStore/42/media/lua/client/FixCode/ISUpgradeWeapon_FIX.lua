@@ -176,15 +176,30 @@ function ISUpgradeWeapon:isValid()
         -- The part can be IN THE PLAYER'S HANDS: vanilla's context-menu flow
         -- (ISInventoryPaneContextMenu.onUpgradeWeapon) equips the part into a hand before
         -- queueing this action, and an in-hand / mid-transfer item has no container -- so
-        -- every container walk above misses it. This was the whole "invisible phase":
-        -- the census saw the item before the click and not after, because from the click
-        -- onward it sat in the hand, and the fallback then attached for free (the mint).
-        local okHand, inHand = pcall(function()
-            return self.character:getSecondaryHandItem() == self.part or
-                       self.character:getPrimaryHandItem() == self.part
+        -- every container walk above misses it. This was the whole "invisible phase".
+        --
+        -- Match by FULLTYPE, not identity: the census caught the item sitting in the hand
+        -- while the identity check still failed, because the action's self.part is a
+        -- pre-resync object -- a different Lua/Java instance of the same item. Adopting
+        -- the hand object also gives ggsDoUpgrade the right thing to consume.
+        local okHand, handItem = pcall(function()
+            local full = self.part:getFullType()
+            local secondary = self.character:getSecondaryHandItem()
+            if secondary and secondary.getFullType and secondary:getFullType() == full and
+                secondary ~= self.weapon then
+                return secondary
+            end
+            local primary = self.character:getPrimaryHandItem()
+            if primary and primary.getFullType and primary:getFullType() == full and
+                primary ~= self.weapon then
+                return primary
+            end
+            return nil
         end)
-        if okHand and inHand then
-            print("[GGS UpgradeFix] part is in hand (vanilla equips it before attaching); accepting")
+        if okHand and handItem then
+            print("[GGS UpgradeFix] part is in hand (vanilla equips it before attaching); adopting id=" ..
+                      tostring(handItem.getID and handItem:getID()))
+            self.part = handItem
             hasPart = true
         end
     end
@@ -236,19 +251,23 @@ function ISUpgradeWeapon:isValid()
                 mdW.weaponpart = mdW.weaponpart or {}
                 mdW.weaponpart[slot] = wantedFull
             end
-            -- Record the unpaid debt. This path is otherwise a FREE attach: at this
-            -- moment the player's item is in the invisible phase of the inventory
-            -- oscillation, so neither side can find it to consume -- proven by the
-            -- id census: the original (#53661400@55) survived the attach untouched,
-            -- the gun's part came back as a NEW engine-made object (#837542428@55),
-            -- and removal left the player with both. The scanner in
-            -- GGS_GhostAttachmentPurge consumes one matching item the moment it
-            -- resurfaces and then clears the entry.
-            if mdW then
-                mdW.ggsPendingConsume = mdW.ggsPendingConsume or {}
-                mdW.ggsPendingConsume[wantedFull] = (okC and wantCond) or -1
-                print("[GGS UpgradeFix] pending consume recorded: " .. tostring(wantedFull) ..
-                          " @" .. tostring((okC and wantCond) or "any"))
+            -- Record the unpaid debt. This path is otherwise a FREE attach: the player's
+            -- item could not be found to consume, so a later step must charge it or the
+            -- attach mints a duplicate (proven by id census: #945119186@16 survived while
+            -- the gun later handed out #51147939@40).
+            --
+            -- In a LOCAL table, deliberately NOT modData: the first debt implementation
+            -- lived in md.ggsPendingConsume and evaporated the moment the server's
+            -- attachPart handler pushed its modData -- the wholesale-overwrite mechanism
+            -- this project keeps meeting -- so removal handed the part back debt-free and
+            -- the duplicate returned. Replication cannot touch this table.
+            if okId and weaponId then
+                GGS_AttachDebts = GGS_AttachDebts or {}
+                GGS_AttachDebts[weaponId] = GGS_AttachDebts[weaponId] or {}
+                GGS_AttachDebts[weaponId][wantedFull] = (okC and wantCond) or -1
+                print("[GGS UpgradeFix] attach debt recorded (local ledger): weapon=" ..
+                          tostring(weaponId) .. " " .. tostring(wantedFull) .. " @" ..
+                          tostring((okC and wantCond) or "any"))
             end
             if self.character and self.character.Say then
                 pcall(self.character.Say, self.character, getText("IGUI_GGS_DevAttachmentRequested"))
@@ -350,18 +369,10 @@ local function ggsDoUpgrade(self)
     -- the server fallback; if the transfer then completes and this clean path runs too,
     -- leaving the debt in place would make the scanner (or the next removal) consume a
     -- SECOND item -- the player pays twice for one attach.
-    local mdDebt = self.weapon.getModData and self.weapon:getModData()
-    if mdDebt and mdDebt.ggsPendingConsume and okFull and partFull and
-        mdDebt.ggsPendingConsume[partFull] ~= nil then
-        mdDebt.ggsPendingConsume[partFull] = nil
-        local empty = true
-        for _ in pairs(mdDebt.ggsPendingConsume) do
-            empty = false
-            break
-        end
-        if empty then
-            mdDebt.ggsPendingConsume = nil
-        end
+    local okWid, wid = pcall(self.weapon.getID, self.weapon)
+    if okWid and wid and GGS_AttachDebts and GGS_AttachDebts[wid] and okFull and partFull and
+        GGS_AttachDebts[wid][partFull] ~= nil then
+        GGS_AttachDebts[wid][partFull] = nil
         print("[GGS UpgradeFix] provisional debt for " .. tostring(partFull) ..
                   " voided: the clean attach is consuming the real item")
     end

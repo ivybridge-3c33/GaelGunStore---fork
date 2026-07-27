@@ -138,8 +138,11 @@ local function settlePendingConsume(playerObj)
     if not weapon or not instanceof(weapon, "HandWeapon") then
         return
     end
-    local md = weapon.getModData and weapon:getModData()
-    local pending = md and md.ggsPendingConsume
+    -- The ledger is the LOCAL GGS_AttachDebts table (keyed by weapon id), not modData:
+    -- modData-stored debts got wiped by the server's wholesale modData push before anyone
+    -- could settle them.
+    local okWid, wid = pcall(weapon.getID, weapon)
+    local pending = okWid and wid and GGS_AttachDebts and GGS_AttachDebts[wid] or nil
     if not pending then
         return
     end
@@ -191,7 +194,7 @@ local function settlePendingConsume(playerObj)
         break
     end
     if empty then
-        md.ggsPendingConsume = nil
+        GGS_AttachDebts[wid] = nil
     end
 end
 
