@@ -145,6 +145,17 @@ function ISUpgradeWeapon:isValid()
     if self.weapon:getWeaponPart(self.part:getPartType()) then
         return false
     end
+    -- Mirror-occupied counts too: after a server-side attach this client holds no real
+    -- part, only the pushed md.weaponpart entry, and re-queuing an attach into that slot
+    -- just loops the server request. Hide_Beam is exempt -- AWCWF toggles it through
+    -- setWeaponPart every frame, so its mirror entry is transient by design.
+    if self.part:getPartType() ~= "Hide_Beam" then
+        local mdOcc = self.weapon.getModData and self.weapon:getModData()
+        local mirrorOcc = mdOcc and mdOcc.weaponpart and mdOcc.weaponpart[self.part:getPartType()]
+        if mirrorOcc and mirrorOcc ~= "" then
+            return false
+        end
+    end
     -- AWCWF exempts Hide_Beam from the inventory checks entirely; preserved.
     if self.part:getPartType() == "Hide_Beam" then
         return true

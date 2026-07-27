@@ -950,6 +950,22 @@ function addAttachmentButton:onMouseDown()
                 print("[GGS ClickDBG] stop: no player")
                 return
             end
+            -- Occupied means occupied in EITHER store. After a server-side attach the part
+            -- exists as the server's real part plus the pushed mirror entry, while this
+            -- client's own real map stays empty -- clicking the pane's entry again then
+            -- re-sent the server request forever, one toast per click. Check the mirror
+            -- too and say what is actually going on.
+            local occSlot = self.slotItem.getPartType and self.slotItem:getPartType()
+            local occReal = occSlot and self.attachingTo and self.attachingTo:getWeaponPart(occSlot) or nil
+            local occMd = self.attachingTo and self.attachingTo.getModData and self.attachingTo:getModData()
+            local occMirror = occSlot and occMd and occMd.weaponpart and occMd.weaponpart[occSlot]
+            if occReal or (occMirror and occMirror ~= "") then
+                print("[GGS ClickDBG] stop: slot " .. tostring(occSlot) .. " already occupied (real=" ..
+                          tostring(occReal and occReal.getFullType and occReal:getFullType() or occReal) ..
+                          " mirror=" .. tostring(occMirror) .. ")")
+                player:Say(ggsText("IGUI_GGS_SlotOccupied"))
+                return
+            end
             print("[GGS ClickDBG] passed guards, proceeding to stage+queue")
             if self.devSpawnMissing then
                 if not isDevAttachmentSpawnerEnabled() then
