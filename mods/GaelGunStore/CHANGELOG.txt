@@ -2,6 +2,34 @@ GaelGunStore B42 Fork - Changelog
 (Fork by ivybridge-3c33. Original mod by Pen-Pen Pirulin. Framework: AWCWF.)
 
 ------------------------------------------------------------------------
+v1.4.1 - 2026-07-28
+------------------------------------------------------------------------
+Fixed (multiplayer, follow-ups to v1.4 -- all user-verified on a co-op
+server):
+- Duplicate weapon parts: attaching through the game's own right-click
+  menu could complete without consuming the part item (vanilla equips the
+  part into a hand first, and an in-hand item was invisible to every
+  ownership check), so removing later yielded two -- the original plus a
+  server-unknown ghost that could be neither used nor dropped. Ownership
+  checks now see in-hand items, so the normal attach consumes the part
+  correctly.
+- Both sides handing back "their" copy of the same part on removal
+  (another duplicate source): the client now tells the server whether the
+  player already received the item, and the server discards its copy.
+- The server's "already attached" answer now also consumes the loose
+  inventory copy, instead of leaving it to resurrect next to the attached
+  part.
+- A server-side attach that has to create the part item fresh now carries
+  the original condition -- a worn part no longer comes back at 100%.
+- First shot fired right after a server-assisted attach was still loud:
+  the suppressor state is now applied immediately instead of waiting for
+  the server's sync.
+- Safety nets for the rare unfindable-item case: an attach that could not
+  consume the part records a debt that is settled exactly once (either
+  the removal keeps the gun's copy, or a scanner consumes the loose item
+  when it reappears).
+
+------------------------------------------------------------------------
 v1.4 - 2026-07-28
 ------------------------------------------------------------------------
 Fixed (weapon attachments in MULTIPLAYER -- attach, removal, suppressors.
