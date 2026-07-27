@@ -225,6 +225,36 @@ local function findItemAndContainerByIdRecursive(container, itemId)
     return nil, nil
 end
 
+-- A LIVE item of the given fullType anywhere in the inventory tree: one that still has a
+-- container. Exists because the MP inventory resync kills old item objects (container and
+-- ID both die) while the real item lives on as a new object -- matching by fullType is
+-- the only handle that survives the swap.
+local function ggsFindLiveItemByFullType(container, fullType, depth)
+    if not container or not fullType or depth > 6 then
+        return nil
+    end
+    local items = container.getItems and container:getItems()
+    if not items then
+        return nil
+    end
+    for i = 0, items:size() - 1 do
+        local candidate = items:get(i)
+        if candidate then
+            if candidate.getFullType and candidate:getFullType() == fullType and
+                candidate.getContainer and candidate:getContainer() ~= nil then
+                return candidate
+            end
+            if instanceof(candidate, "InventoryContainer") and candidate.getInventory then
+                local found = ggsFindLiveItemByFullType(candidate:getInventory(), fullType, depth + 1)
+                if found then
+                    return found
+                end
+            end
+        end
+    end
+    return nil
+end
+
 local function stageItemToRootInventory(playerObj, item)
     if not playerObj or not item then
         return item, nil
@@ -958,26 +988,35 @@ function addAttachmentButton:onMouseDown()
                 return
             end
 
-            -- A reference with no container and no world item is a stale ghost: the pane
-            -- listed the item while it existed, the real item has since been deleted
-            -- (server reconciliation, or a leftover from the pre-fix attach bug that
-            -- consumed parts server-side), and the button still holds the dead Lua
-            -- object. stageItemToRootInventory returns it as-is, containerNow comes back
-            -- nil so no transfer is queued, and ISUpgradeWeapon then refuses with
-            -- hasPart=false -- silent from the player's chair, observed as
-            --   [GGS PartDBG] part location: container=nil worldItem=false
-            -- Say so instead, and refresh the pane so the dead entry disappears.
+            -- A reference with no container and no world item is a DEAD reference, not a
+            -- missing item. Proven from the server save itself: JustNON's player blob
+            -- holds the suppressor (customName "SodaCan Silencer", Tooltip_Canon) while
+            -- the clicked reference reads container=nil worldItem=false and every lookup
+            -- on it fails -- the MP inventory resync replaces item objects wholesale, the
+            -- pane's button keeps pointing at the pre-resync object, and even its ID dies
+            -- with it. So re-resolve by fullType against the live inventory and continue
+            -- with the real object; only give up when no live item of that type exists.
             local stagedContainer = stagedPart.getContainer and stagedPart:getContainer() or nil
             local okWorld, inWorld = pcall(function() return stagedPart:getWorldItem() ~= nil end)
             if not stagedContainer and not (okWorld and inWorld) then
-                print(string.format(
-                    "[GGS PartTx] refusing stale item reference %s: no container, no world item (the real item is gone)",
-                    tostring(stagedPart.getFullType and stagedPart:getFullType() or "?")))
-                player:Say(ggsText("IGUI_GGS_CouldNotSpawnAttachment"))
-                if riskyInspectWindow and riskyInspectWindow.renderInventory then
-                    riskyInspectWindow:renderInventory()
+                local wantedFull = stagedPart.getFullType and stagedPart:getFullType() or nil
+                local replacement = wantedFull and
+                                        ggsFindLiveItemByFullType(player:getInventory(), wantedFull, 0) or nil
+                if replacement then
+                    print(string.format("[GGS PartTx] re-resolved stale reference %s to live item id=%s",
+                        tostring(wantedFull), tostring(replacement.getID and replacement:getID())))
+                    stagedPart = replacement
+                    sourceContainer = replacement.getContainer and replacement:getContainer() or sourceContainer
+                else
+                    print(string.format(
+                        "[GGS PartTx] refusing stale item reference %s: no container, no world item, no live twin",
+                        tostring(wantedFull or "?")))
+                    player:Say(ggsText("IGUI_GGS_CouldNotSpawnAttachment"))
+                    if riskyInspectWindow and riskyInspectWindow.renderInventory then
+                        riskyInspectWindow:renderInventory()
+                    end
+                    return
                 end
-                return
             end
 
             self.slotItem = stagedPart

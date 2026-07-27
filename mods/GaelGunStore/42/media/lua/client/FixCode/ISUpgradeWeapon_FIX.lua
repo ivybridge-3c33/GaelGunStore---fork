@@ -99,6 +99,37 @@ local function ggsInventoryHas(character, inventory, item)
     return ok and result == true
 end
 
+-- A LIVE item of the given fullType anywhere in the inventory tree: one that still has a
+-- container. The MP inventory resync replaces item objects wholesale -- container and ID
+-- both die on the old reference -- so an action holding a pre-resync reference can only
+-- recover by fullType. Proven necessary from the server save: the player blob held the
+-- suppressor while every lookup on the clicked reference failed.
+local function ggsFindLiveItemByFullType(container, fullType, depth)
+    if not container or not fullType or depth > 6 then
+        return nil
+    end
+    local items = container.getItems and container:getItems()
+    if not items then
+        return nil
+    end
+    for i = 0, items:size() - 1 do
+        local candidate = items:get(i)
+        if candidate then
+            if candidate.getFullType and candidate:getFullType() == fullType and
+                candidate.getContainer and candidate:getContainer() ~= nil then
+                return candidate
+            end
+            if instanceof(candidate, "InventoryContainer") and candidate.getInventory then
+                local found = ggsFindLiveItemByFullType(candidate:getInventory(), fullType, depth + 1)
+                if found then
+                    return found
+                end
+            end
+        end
+    end
+    return nil
+end
+
 local function ggsCharacterHoldsWeapon(character, weapon)
     if not character or not weapon then
         return false
@@ -120,6 +151,18 @@ function ISUpgradeWeapon:isValid()
     end
     local inventory = self.character:getInventory()
     local hasPart = ggsInventoryHas(self.character, inventory, self.part)
+    if not hasPart then
+        -- Dead reference recovery, at the action level so every queue path heals (the
+        -- workbench button has its own copy of this, vanilla's context menu does not).
+        local okF, wantedFull = pcall(function() return self.part:getFullType() end)
+        local live = okF and wantedFull and ggsFindLiveItemByFullType(inventory, wantedFull, 0) or nil
+        if live then
+            print("[GGS UpgradeFix] re-resolved dead part reference " .. tostring(wantedFull) ..
+                      " to live item id=" .. tostring(live.getID and live:getID()))
+            self.part = live
+            hasPart = true
+        end
+    end
     local hasWeapon = ggsInventoryHas(self.character, inventory, self.weapon) or
                           ggsCharacterHoldsWeapon(self.character, self.weapon)
     if not hasPart or not hasWeapon then
