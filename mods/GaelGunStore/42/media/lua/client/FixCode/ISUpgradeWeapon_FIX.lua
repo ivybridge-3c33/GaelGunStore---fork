@@ -161,6 +161,29 @@ function ISUpgradeWeapon:isValid()
                       " to live item id=" .. tostring(live.getID and live:getID()))
             self.part = live
             hasPart = true
+        elseif isClient and isClient() and sendClientCommand and okF and wantedFull and
+            not self.__ggsServerAttachRequested then
+            -- No live twin either: the item oscillates with the inventory resync -- it was
+            -- staged WITH a container and became unfindable within a second, session after
+            -- session -- while the server verifiably holds it (players.db blob). Stop
+            -- fighting the resync on this side: ask the server to do the attach with its
+            -- own copy. It consumes its real item, attaches through raw Java, and writes
+            -- md.weaponpart[slot]; the modData push then feeds the renderer, the sound
+            -- profile (mirror fallback) and the workbench label on this side, so the
+            -- attach is functional even if the client never gets its own real part.
+            self.__ggsServerAttachRequested = true
+            local okId, weaponId = pcall(self.weapon.getID, self.weapon)
+            local okSlot, slot = pcall(function() return self.part:getPartType() end)
+            local okSend = pcall(sendClientCommand, self.character, "GGS", "attachPart", {
+                weaponId = (okId and weaponId or nil),
+                full = wantedFull,
+                slot = (okSlot and slot or nil),
+            })
+            print("[GGS UpgradeFix] no live item client-side; asked the SERVER to attach " ..
+                      tostring(wantedFull) .. " (sent=" .. tostring(okSend) .. ")")
+            if self.character and self.character.Say then
+                pcall(self.character.Say, self.character, getText("IGUI_GGS_DevAttachmentRequested"))
+            end
         end
     end
     local hasWeapon = ggsInventoryHas(self.character, inventory, self.weapon) or

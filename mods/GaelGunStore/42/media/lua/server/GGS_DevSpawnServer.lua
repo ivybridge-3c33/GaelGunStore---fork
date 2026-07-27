@@ -235,13 +235,48 @@ local function attachServerPart(playerObj, args)
         end
     end
 
-    -- Prefer the player's own item (by the id the client sent), so the part is consumed
-    -- rather than duplicated. Falling back to a fresh instance is correct when the item
-    -- never existed server-side; the client has already consumed its copy.
+    -- Prefer the player's own item, so the part is consumed rather than duplicated:
+    -- first by the id the client sent, then by fullType -- the client's references
+    -- oscillate with the inventory resync (staged with a container, unfindable one
+    -- second later), so the id it captured is often already dead while this side
+    -- verifiably holds the item (seen directly in the players.db blob). Falling back
+    -- to a fresh instance is the last resort, for an item that never existed here.
     local partItem = findItemById(playerObj, args.partId)
     local okPF, partFull = pcall(function() return partItem and partItem:getFullType() end)
     if partItem and not (okPF and partFull == tostring(args.full)) then
         partItem = nil
+    end
+    if not partItem then
+        local wantedFullType = tostring(args.full)
+        local function searchByFull(container, depth)
+            if not container or depth > 6 then
+                return nil
+            end
+            local items = container.getItems and container:getItems()
+            if not items then
+                return nil
+            end
+            for i = 0, items:size() - 1 do
+                local item = items:get(i)
+                if item then
+                    local okT, t = pcall(function() return item:getFullType() end)
+                    if okT and t == wantedFullType then
+                        return item
+                    end
+                    if instanceof(item, "InventoryContainer") and item.getInventory then
+                        local found = searchByFull(item:getInventory(), depth + 1)
+                        if found then
+                            return found
+                        end
+                    end
+                end
+            end
+            return nil
+        end
+        partItem = searchByFull(playerObj.getInventory and playerObj:getInventory(), 0)
+        if partItem then
+            print("[GGS ServerDBG] attachPart: found " .. wantedFullType .. " by fullType server-side")
+        end
     end
     local consumed = partItem ~= nil
     if not partItem then
@@ -274,6 +309,13 @@ local function attachServerPart(playerObj, args)
         local key = slot or (partItem.getPartType and partItem:getPartType())
         if key then
             md.weaponpart[key] = tostring(args.full)
+        end
+        -- Push it now. For a detach the wholesale overwrite was the enemy; for an attach
+        -- it is the delivery: the client's renderer, sound profile and workbench label all
+        -- read this table, and this is what makes a server-side attach visible without
+        -- waiting for a passive sync.
+        if weapon.transmitModData then
+            pcall(weapon.transmitModData, weapon)
         end
     end
 
