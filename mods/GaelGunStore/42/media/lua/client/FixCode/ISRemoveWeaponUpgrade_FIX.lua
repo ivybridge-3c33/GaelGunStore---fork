@@ -319,8 +319,19 @@ local function ggsDoRemoval(self)
                   " STILL occupied after forced clear, not handing the part over")
     end
 
+    -- Identity of the object leaving the gun and of the object landing in the bag: the
+    -- "extra 100% part" investigation needs to know whether these are the same item, and
+    -- what condition the gun-side object really carried.
+    local okPC, partCond = pcall(function() return part:getCondition() end)
+    print("[GGS RemoveFix] handing back part id=" .. tostring(part.getID and part:getID()) ..
+              " cond=" .. tostring(okPC and partCond))
+
     local added = not stillOccupied and self.character:getInventory():AddItem(part) or nil
     if added then
+        local okAC, addedCond = pcall(function() return added:getCondition() end)
+        print("[GGS RemoveFix] added to bag id=" .. tostring(added.getID and added:getID()) ..
+                  " cond=" .. tostring(okAC and addedCond) ..
+                  (added == part and " (same object)" or " (DIFFERENT object!)"))
         if self.partType == "Laser" then
             added:getModData().LaserBatteryReamin = self.weapon:getModData().LaserBatteryReamin
             self.weapon:getModData().LaserBatteryReamin = nil

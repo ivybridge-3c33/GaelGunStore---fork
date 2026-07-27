@@ -170,6 +170,39 @@ local function dumpHeldWeaponState(playerObj, label)
               " id=" .. tostring(weapon.getID and weapon:getID()) ..
               " real=[" .. table.concat(real, ", ") .. "] mirror=[" .. table.concat(mirror, ", ") ..
               "] sprite=" .. tostring(okS and sprite))
+
+    -- Census of loose muzzle parts: every Canon-type WeaponPart in the inventory tree,
+    -- with id and condition. A "part from nowhere" (the 100% twins) is convicted by this
+    -- line: a fresh id pins its creation to whatever ran between two equips; a known id
+    -- means resurrection, not creation. One line per equip, muzzle parts only.
+    local census = {}
+    local function walk(container, depth)
+        if not container or depth > 6 then
+            return
+        end
+        local items = container.getItems and container:getItems()
+        if not items then
+            return
+        end
+        for i = 0, items:size() - 1 do
+            local it = items:get(i)
+            if it then
+                local okPT, pt = pcall(function() return instanceof(it, "WeaponPart") and it:getPartType() or nil end)
+                if okPT and pt == "Canon" then
+                    local okC, cond = pcall(function() return it:getCondition() end)
+                    census[#census + 1] = tostring(it:getFullType()) .. "#" ..
+                                              tostring(it.getID and it:getID()) .. "@" .. tostring(okC and cond)
+                end
+                if instanceof(it, "InventoryContainer") and it.getInventory then
+                    walk(it:getInventory(), depth + 1)
+                end
+            end
+        end
+    end
+    pcall(walk, playerObj:getInventory(), 0)
+    if #census > 0 then
+        print("[GGS EquipDBG] muzzle parts in bag: [" .. table.concat(census, ", ") .. "]")
+    end
 end
 
 if Events and Events.OnEquipPrimary and Events.OnEquipPrimary.Add then
