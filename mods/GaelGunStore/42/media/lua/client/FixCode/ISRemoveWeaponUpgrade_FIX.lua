@@ -100,15 +100,28 @@ local function ggsDumpPartState(weapon, label)
 end
 
 function ISRemoveWeaponUpgrade:isValid()
-    -- Nothing in the slot means nothing to remove -- checked on every branch now.
-    if not self.weapon or
-        (not self.weapon:getWeaponPart(self.partType) and not ggsMirroredOnly(self.weapon, self.partType)) then
-        -- Visibility on the removal path: the queue discards an action whose isValid is
-        -- false without a word, and the ActionDBG wrapper that used to show this was
-        -- removed during cleanup. One line per attempt.
+    if not self.weapon then
+        return false
+    end
+    if not self.weapon:getWeaponPart(self.partType) and not ggsMirroredOnly(self.weapon, self.partType) then
+        -- Locally empty is NOT the same as empty on MP. The G17 saga proved it: every
+        -- local store read clean (real=[Clip], mirror=[Clip], props clean) while the gun
+        -- visibly wore a suppressor and something kept queueing Canon removals with a
+        -- part our own workbench button never saw -- a real part the engine replicates
+        -- back from the server in bursts, caught by whoever reads at the right moment.
+        -- Refusing here is what kept the detach request from EVER reaching the server,
+        -- so the divergence could never heal. Accept on MP and let ggsDoRemoval ask the
+        -- side that actually holds the part.
+        if not self.__ggsDumpedEmpty then
+            self.__ggsDumpedEmpty = true
+            ggsDumpPartState(self.weapon, "slot empty locally, slot=" .. tostring(self.partType))
+        end
+        if isClient and isClient() then
+            return true
+        end
+        -- Offline there is no second side to ask; empty really is empty.
         print("[GGS RemoveFix] isValid false: nothing in slot " .. tostring(self.partType) ..
                   " (no real part, no mirror entry)")
-        ggsDumpPartState(self.weapon, "remove refused slot=" .. tostring(self.partType))
         return self.partType == "Hide_Beam"
     end
     if isClient() then
@@ -173,6 +186,26 @@ local function ggsDoRemoval(self)
             end
             if self.weapon.transmitModData then
                 pcall(self.weapon.transmitModData, self.weapon)
+            end
+            return true
+        end
+        -- Local stores empty, no mirror phantom either. On MP the server's copy can still
+        -- hold a real part this client cannot see -- that is exactly the replication
+        -- tug-of-war state -- so send the detach anyway. The server hands the part item
+        -- back if it has one, clears its own mirror entry, and once its copy is clean the
+        -- replication stops pushing the model back. Its reply line also finally shows us
+        -- what that side actually holds ("detached ... server-side" or "no match; server
+        -- sees [...]").
+        if isClient and isClient() and sendClientCommand then
+            local okId, weaponId = pcall(self.weapon.getID, self.weapon)
+            local okSend = pcall(sendClientCommand, self.character, "GGS", "detachPart", {
+                slot = tostring(self.partType),
+                weaponId = (okId and weaponId or nil),
+            })
+            print("[GGS RemoveFix] local stores empty; asked the server to detach slot " ..
+                      tostring(self.partType) .. " (sent=" .. tostring(okSend) .. ")")
+            if self.character and self.character.resetModelNextFrame then
+                pcall(self.character.resetModelNextFrame, self.character)
             end
             return true
         end
