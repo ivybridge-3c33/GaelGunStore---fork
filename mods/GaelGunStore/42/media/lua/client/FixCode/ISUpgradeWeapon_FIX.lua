@@ -104,30 +104,40 @@ end
 -- both die on the old reference -- so an action holding a pre-resync reference can only
 -- recover by fullType. Proven necessary from the server save: the player blob held the
 -- suppressor while every lookup on the clicked reference failed.
-local function ggsFindLiveItemByFullType(container, fullType, depth)
+local function ggsFindLiveItemByFullType(container, fullType, depth, wantedCondition)
     if not container or not fullType or depth > 6 then
-        return nil
+        return nil, nil
     end
     local items = container.getItems and container:getItems()
     if not items then
-        return nil
+        return nil, nil
     end
+    local fallback = nil
     for i = 0, items:size() - 1 do
         local candidate = items:get(i)
         if candidate then
             if candidate.getFullType and candidate:getFullType() == fullType and
                 candidate.getContainer and candidate:getContainer() ~= nil then
-                return candidate
+                if wantedCondition == nil then
+                    return candidate, candidate
+                end
+                local okC, cond = pcall(function() return candidate:getCondition() end)
+                if okC and cond == wantedCondition then
+                    return candidate, candidate
+                end
+                fallback = fallback or candidate
             end
             if instanceof(candidate, "InventoryContainer") and candidate.getInventory then
-                local found = ggsFindLiveItemByFullType(candidate:getInventory(), fullType, depth + 1)
-                if found then
-                    return found
+                local exact, fb = ggsFindLiveItemByFullType(candidate:getInventory(), fullType, depth + 1,
+                    wantedCondition)
+                if exact then
+                    return exact, exact
                 end
+                fallback = fallback or fb
             end
         end
     end
-    return nil
+    return nil, fallback
 end
 
 local function ggsCharacterHoldsWeapon(character, weapon)
@@ -166,7 +176,14 @@ function ISUpgradeWeapon:isValid()
         -- Dead reference recovery, at the action level so every queue path heals (the
         -- workbench button has its own copy of this, vanilla's context menu does not).
         local okF, wantedFull = pcall(function() return self.part:getFullType() end)
-        local live = okF and wantedFull and ggsFindLiveItemByFullType(inventory, wantedFull, 0) or nil
+        -- Prefer the twin whose condition matches the dead reference, so a phantom
+        -- fresh-condition entry cannot be picked over the player's real worn part.
+        local okC, wantCond = pcall(function() return self.part:getCondition() end)
+        local live = nil
+        if okF and wantedFull then
+            local exact, fallback = ggsFindLiveItemByFullType(inventory, wantedFull, 0, (okC and wantCond) or nil)
+            live = exact or fallback
+        end
         if live then
             print("[GGS UpgradeFix] re-resolved dead part reference " .. tostring(wantedFull) ..
                       " to live item id=" .. tostring(live.getID and live:getID()))

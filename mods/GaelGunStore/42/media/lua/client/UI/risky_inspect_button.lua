@@ -229,30 +229,40 @@ end
 -- container. Exists because the MP inventory resync kills old item objects (container and
 -- ID both die) while the real item lives on as a new object -- matching by fullType is
 -- the only handle that survives the swap.
-local function ggsFindLiveItemByFullType(container, fullType, depth)
+local function ggsFindLiveItemByFullType(container, fullType, depth, wantedCondition)
     if not container or not fullType or depth > 6 then
-        return nil
+        return nil, nil
     end
     local items = container.getItems and container:getItems()
     if not items then
-        return nil
+        return nil, nil
     end
+    local fallback = nil
     for i = 0, items:size() - 1 do
         local candidate = items:get(i)
         if candidate then
             if candidate.getFullType and candidate:getFullType() == fullType and
                 candidate.getContainer and candidate:getContainer() ~= nil then
-                return candidate
+                if wantedCondition == nil then
+                    return candidate, candidate
+                end
+                local okC, cond = pcall(function() return candidate:getCondition() end)
+                if okC and cond == wantedCondition then
+                    return candidate, candidate
+                end
+                fallback = fallback or candidate
             end
             if instanceof(candidate, "InventoryContainer") and candidate.getInventory then
-                local found = ggsFindLiveItemByFullType(candidate:getInventory(), fullType, depth + 1)
-                if found then
-                    return found
+                local exact, fb = ggsFindLiveItemByFullType(candidate:getInventory(), fullType, depth + 1,
+                    wantedCondition)
+                if exact then
+                    return exact, exact
                 end
+                fallback = fallback or fb
             end
         end
     end
-    return nil
+    return nil, fallback
 end
 
 local function stageItemToRootInventory(playerObj, item)
@@ -1016,8 +1026,17 @@ function addAttachmentButton:onMouseDown()
             local okWorld, inWorld = pcall(function() return stagedPart:getWorldItem() ~= nil end)
             if not stagedContainer and not (okWorld and inWorld) then
                 local wantedFull = stagedPart.getFullType and stagedPart:getFullType() or nil
-                local replacement = wantedFull and
-                                        ggsFindLiveItemByFullType(player:getInventory(), wantedFull, 0) or nil
+                -- Prefer the twin whose condition matches the clicked one: with a stale
+                -- ghost entry still in view, first-by-fullType could pick the wrong item
+                -- (e.g. a phantom 100% over the player's real worn part), and a later
+                -- removal would then mint the phantom into a real item.
+                local okCond, wantCond = pcall(function() return stagedPart:getCondition() end)
+                local replacement = nil
+                if wantedFull then
+                    local exact, fallback = ggsFindLiveItemByFullType(player:getInventory(), wantedFull, 0,
+                        (okCond and wantCond) or nil)
+                    replacement = exact or fallback
+                end
                 if replacement then
                     print(string.format("[GGS PartTx] re-resolved stale reference %s to live item id=%s",
                         tostring(wantedFull), tostring(replacement.getID and replacement:getID())))
