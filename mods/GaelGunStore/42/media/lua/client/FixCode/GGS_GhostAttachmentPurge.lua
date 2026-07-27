@@ -191,3 +191,25 @@ end
 if Events and Events.OnTick and Events.OnTick.Add then
     Events.OnTick.Add(onTick)
 end
+
+-- State at the trigger pull. Every dump so far measured at equip time and read clean
+-- while the shot stayed loud and the can stayed visible -- but the burst replication this
+-- fork has documented (real parts appearing on the client between one read and the next)
+-- means equip-time state does not prove fire-time state. One line per ranged shot: the
+-- real map, the mirror, and the sound values actually in effect for that bang.
+if Events and Events.OnWeaponSwing and Events.OnWeaponSwing.Add then
+    Events.OnWeaponSwing.Add(function(character, weapon)
+        if character ~= getPlayer() then
+            return
+        end
+        if not (weapon and instanceof(weapon, "HandWeapon") and weapon.isRanged and weapon:isRanged()) then
+            return
+        end
+        dumpHeldWeaponState(character, "fire")
+        local okV, vol = pcall(function() return weapon:getSoundVolume() end)
+        local okR, rad = pcall(function() return weapon:getSoundRadius() end)
+        local okS, snd = pcall(function() return weapon:getSwingSound() end)
+        print("[GGS FireDBG] soundVolume=" .. tostring(okV and vol) .. " soundRadius=" ..
+                  tostring(okR and rad) .. " swingSound=" .. tostring(okS and snd))
+    end)
+end
