@@ -173,6 +173,22 @@ function ISUpgradeWeapon:isValid()
     local inventory = self.character:getInventory()
     local hasPart = ggsInventoryHas(self.character, inventory, self.part)
     if not hasPart then
+        -- The part can be IN THE PLAYER'S HANDS: vanilla's context-menu flow
+        -- (ISInventoryPaneContextMenu.onUpgradeWeapon) equips the part into a hand before
+        -- queueing this action, and an in-hand / mid-transfer item has no container -- so
+        -- every container walk above misses it. This was the whole "invisible phase":
+        -- the census saw the item before the click and not after, because from the click
+        -- onward it sat in the hand, and the fallback then attached for free (the mint).
+        local okHand, inHand = pcall(function()
+            return self.character:getSecondaryHandItem() == self.part or
+                       self.character:getPrimaryHandItem() == self.part
+        end)
+        if okHand and inHand then
+            print("[GGS UpgradeFix] part is in hand (vanilla equips it before attaching); accepting")
+            hasPart = true
+        end
+    end
+    if not hasPart then
         -- Dead reference recovery, at the action level so every queue path heals (the
         -- workbench button has its own copy of this, vanilla's context menu does not).
         local okF, wantedFull = pcall(function() return self.part:getFullType() end)

@@ -270,6 +270,19 @@ local function dumpHeldWeaponState(playerObj, label)
         end
     end
     pcall(walk, playerObj:getInventory(), 0)
+    -- Hands too. An item equipped into a hand (vanilla's attach flow does that with the
+    -- part!) has no container and is invisible to the container walk -- exactly how the
+    -- census lost track of the item during the "invisible phase".
+    for _, hand in ipairs({ playerObj.getPrimaryHandItem and playerObj:getPrimaryHandItem(),
+                            playerObj.getSecondaryHandItem and playerObj:getSecondaryHandItem() }) do
+        local okPT, pt = pcall(function() return instanceof(hand, "WeaponPart") and hand:getPartType() or nil end)
+        if okPT and pt == "Canon" then
+            local okC, cond = pcall(function() return hand:getCondition() end)
+            census[#census + 1] = tostring(hand:getFullType()) .. "#" ..
+                                      tostring(hand.getID and hand:getID()) .. "@" .. tostring(okC and cond) ..
+                                      "(in hand)"
+        end
+    end
     if #census > 0 then
         print("[GGS EquipDBG] muzzle parts in bag: [" .. table.concat(census, ", ") .. "]")
     end
