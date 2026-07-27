@@ -109,7 +109,18 @@ local function detachServerPart(playerObj, args)
     -- instead of being guessed at.
     local wanted = args.full and tostring(args.full) or nil
     local wantedSlot = tostring(args.slot):lower()
+    -- getWeaponPart FIRST. The two Java reads disagree on the same object: this weapon
+    -- answered "no match; server sees [Clip]" from the getAllWeaponParts sweep while
+    -- getWeaponPart("Canon") on the attach path returned the suppressor seconds later.
+    -- getWeaponPart is the read the renderer and the attach check use, so a part visible
+    -- on the model must be removable through the same map.
     local part, seen = nil, {}
+    local okBySlot, bySlot = pcall(weapon.getWeaponPart, weapon, args.slot)
+    if okBySlot and bySlot then
+        part = bySlot
+        print("[GGS ServerDBG] detachPart: found " .. tostring(bySlot.getFullType and bySlot:getFullType()) ..
+                  " via getWeaponPart(" .. tostring(args.slot) .. ")")
+    end
     local okAll, all = pcall(weapon.getAllWeaponParts, weapon)
     if okAll and all then
         for i = 0, all:size() - 1 do
@@ -118,19 +129,15 @@ local function detachServerPart(playerObj, args)
                 local cType = candidate.getPartType and candidate:getPartType()
                 local cFull = candidate.getFullType and candidate:getFullType()
                 seen[#seen + 1] = tostring(cType) .. "=" .. tostring(cFull)
-                if wanted and cFull and tostring(cFull) == wanted then
-                    part = candidate
-                    break
-                end
-                if cType and tostring(cType):lower() == wantedSlot then
-                    part = candidate
-                    break
+                if not part then
+                    if wanted and cFull and tostring(cFull) == wanted then
+                        part = candidate
+                    elseif cType and tostring(cType):lower() == wantedSlot then
+                        part = candidate
+                    end
                 end
             end
         end
-    end
-    if not part and weapon.getWeaponPart then
-        part = weapon:getWeaponPart(args.slot)
     end
     if not part then
         print("[GGS ServerDBG] detachPart: no match for slot=" .. tostring(args.slot) .. " full=" ..
@@ -223,14 +230,27 @@ local function attachServerPart(playerObj, args)
         return
     end
 
-    -- Idempotent: the slot already holding this exact part means a duplicate command.
+    -- The slot already holding this exact part is NOT a duplicate command to shrug off:
+    -- the client asked precisely because ITS readers cannot see the part (the G17 sat in
+    -- this state for days -- model wearing the can, sound loud, inspect empty). Repair the
+    -- shared state instead: write the mirror entry and push it, so the client's renderer,
+    -- sound profile (mirror fallback) and workbench label all finally agree with the part
+    -- that is really here. No item is consumed.
     local slot = args.slot
     if slot and weapon.getWeaponPart then
         local existing = weapon:getWeaponPart(slot)
         local okE, existingFull = pcall(function() return existing and existing:getFullType() end)
         if okE and existingFull == tostring(args.full) then
+            local md = weapon.getModData and weapon:getModData()
+            if md then
+                md.weaponpart = md.weaponpart or {}
+                md.weaponpart[slot] = tostring(args.full)
+                if weapon.transmitModData then
+                    pcall(weapon.transmitModData, weapon)
+                end
+            end
             print("[GGS ServerDBG] attachPart: slot " .. tostring(slot) .. " already holds " ..
-                      tostring(args.full))
+                      tostring(args.full) .. "; pushed the mirror entry so the client's readers see it")
             return
         end
     end
