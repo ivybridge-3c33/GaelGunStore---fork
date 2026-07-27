@@ -319,8 +319,18 @@ local function getAttacheMentCount(weapon)
         SoundModifier = 0
     }
     for i, v in ipairs(partlist) do
-        if weapon:getWeaponPart(v) and v ~= "Clip" then
-            local item = weapon:getWeaponPart(v)
+        -- Mirror-only parts count too (display-only sums): same reasoning as the scene
+        -- models -- a server-attached part has no real client object, and skipping it
+        -- made the Weapon Data panel disagree with the gun's actual behavior. Inlined
+        -- rather than calling scenePartForSlot because that local is defined later in
+        -- the file and Lua locals do not hoist.
+        local statPart = weapon:getWeaponPart(v)
+        if not statPart then
+            local okM, mirrored = pcall(weapon.getWeaponPart, weapon, v, false)
+            statPart = okM and mirrored or nil
+        end
+        if statPart and v ~= "Clip" then
+            local item = statPart
             if item then
                 if item:getWeightModifier() then
                     ReturnList["WeightModifier"] = ReturnList["WeightModifier"] + item:getWeightModifier()
@@ -697,10 +707,30 @@ local function resolveModelName(item, fullTypeOverride)
     return sm
 end
 
+-- A part for scene-model purposes: the real part first, then the md.weaponpart mirror
+-- (getWeaponPart with isReal=false, the hook's opt-in fallback). A part can be
+-- mirror-only on MP -- attached through the server, its real object never
+-- materializing client-side -- and the character model and the slot label both read the
+-- mirror, so the workbench 3D view was the only reader left showing a bare gun (traced:
+-- six createModel/place lines, no Handguard line at all). Mirror instances are Lua-only
+-- and must never reach a Java action; here they only ever donate a fullType for model
+-- lookup, which is safe.
+local function scenePartForSlot(weapon, slot)
+    local part = weapon:getWeaponPart(slot)
+    if part then
+        return part
+    end
+    local ok, mirrored = pcall(weapon.getWeaponPart, weapon, slot, false)
+    if ok and mirrored then
+        return mirrored
+    end
+    return nil
+end
+
 local function getpartmodel(weapon, scene)
     for i, v in pairs(partlist) do
-        if weapon:getWeaponPart(v) then
-            local part = weapon:getWeaponPart(v)
+        if scenePartForSlot(weapon, v) then
+            local part = scenePartForSlot(weapon, v)
             local item, partFullType = resolvePartScriptItem(part)
             if item then
                 local modelName = resolveModelName(item, partFullType)
@@ -724,8 +754,8 @@ end
 local function getpartmodeldel(weapon, scene)
     local partlistnow = {}
     for i, v in pairs(partlist) do
-        if weapon:getWeaponPart(v) then
-            local part = weapon:getWeaponPart(v)
+        if scenePartForSlot(weapon, v) then
+            local part = scenePartForSlot(weapon, v)
             local item, partFullType = resolvePartScriptItem(part)
             if item then
                 local modelName = resolveModelName(item, partFullType)
@@ -1033,8 +1063,9 @@ function riskyUI:renderInventory()
         },
     }
     for uy, ur in pairs(partlist) do
-        if weapon:getWeaponPart(ur) then
-            local item = ScriptManager.instance:getItem(weapon:getWeaponPart(ur):getFullType())
+        local scenePart = scenePartForSlot(weapon, ur)
+        if scenePart then
+            local item = ScriptManager.instance:getItem(scenePart:getFullType())
             if item then
                 local worldmodel = resolveModelName(item)
                 local modelscript = "Base." .. weapon:getWeaponSprite()
