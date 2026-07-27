@@ -134,9 +134,53 @@ local function onTick()
     purgeGhostAttachments(getPlayer(), "tick")
 end
 
+-- The held weapon's full render-relevant state, one line, fired automatically on equip.
+-- Exists because every earlier round needed a state dump the user had to click something
+-- to produce, and the sessions that mattered never contained one. This catches the exact
+-- moment a ghost is visible in hand: if real/mirror read clean and sprite is stock while
+-- a part still draws on the gun, the drawer is the ENGINE's own ModelWeaponPart overlay
+-- (the weapon scripts map e.g. Base.SodaCan_Silencer onto slot Canon at the item level,
+-- below all Lua) gone stale -- which resetModelNextFrame below forces to rebuild.
+local function dumpHeldWeaponState(playerObj, label)
+    local weapon = playerObj and playerObj.getPrimaryHandItem and playerObj:getPrimaryHandItem()
+    if not weapon or not instanceof(weapon, "HandWeapon") then
+        return
+    end
+    local real, mirror = {}, {}
+    local okAll, all = pcall(weapon.getAllWeaponParts, weapon)
+    if okAll and all then
+        for i = 0, all:size() - 1 do
+            local p = all:get(i)
+            if p then
+                real[#real + 1] = tostring(p.getPartType and p:getPartType()) .. "=" ..
+                                      tostring(p.getFullType and p:getFullType())
+            end
+        end
+    end
+    local md = weapon.getModData and weapon:getModData()
+    if md and md.weaponpart then
+        for k, v in pairs(md.weaponpart) do
+            mirror[#mirror + 1] = tostring(k) .. "=" .. tostring(v)
+        end
+    end
+    local okS, sprite = pcall(function() return weapon:getWeaponSprite() end)
+    print("[GGS EquipDBG] " .. tostring(label) .. " " .. tostring(weapon:getFullType()) ..
+              " id=" .. tostring(weapon.getID and weapon:getID()) ..
+              " real=[" .. table.concat(real, ", ") .. "] mirror=[" .. table.concat(mirror, ", ") ..
+              "] sprite=" .. tostring(okS and sprite))
+end
+
 if Events and Events.OnEquipPrimary and Events.OnEquipPrimary.Add then
     Events.OnEquipPrimary.Add(function(playerObj)
         purgeGhostAttachments(playerObj, "equip")
+        dumpHeldWeaponState(playerObj, "equip")
+        -- Rebuild the character model, equipped weapon included. The engine's
+        -- ModelWeaponPart overlay is the fifth data layer, and a stale one survives every
+        -- store being clean; this is the documented cure used across GGS for model
+        -- desyncs, and it is cheap here (once per equip).
+        if playerObj and playerObj.resetModelNextFrame then
+            pcall(playerObj.resetModelNextFrame, playerObj)
+        end
     end)
 end
 if Events and Events.OnGameStart and Events.OnGameStart.Add then
