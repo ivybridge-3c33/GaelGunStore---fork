@@ -2,6 +2,19 @@ GaelGunStore B42 Fork - Changelog
 (Fork by ivybridge-3c33. Original mod by Pen-Pen Pirulin. Framework: AWCWF.)
 
 ------------------------------------------------------------------------
+v1.4.2 - 2026-07-28
+------------------------------------------------------------------------
+Fixed (multiplayer, final duplicate-parts follow-up -- user-verified):
+- One more duplicate source: the ownership check missed the part while
+  the game held it in the player's hand during attach (it compared exact
+  object identity, which the server resync invalidates), so the attach
+  could still complete without consuming the part. It now matches the
+  in-hand item by type and uses it directly.
+- The anti-duplicate bookkeeping was stored on the weapon's data and got
+  wiped by the server's own sync push before it could act. It now lives
+  in client memory where the sync cannot touch it.
+
+------------------------------------------------------------------------
 v1.4.1 - 2026-07-28
 ------------------------------------------------------------------------
 Fixed (multiplayer, follow-ups to v1.4 -- all user-verified on a co-op
