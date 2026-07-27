@@ -167,6 +167,122 @@ local function detachServerPart(playerObj, args)
     print("[GGS ServerDBG] detached " .. tostring(args.slot) .. " server-side")
 end
 
+-- Find any inventory item by id: hands, then the whole inventory including nested bags.
+-- Same shape as findWeaponById but without the weapon assumptions.
+local function findItemById(playerObj, itemId)
+    if not playerObj or not itemId then
+        return nil
+    end
+    local function idOf(item)
+        if not item or not item.getID then
+            return nil
+        end
+        local ok, id = pcall(item.getID, item)
+        return ok and id or nil
+    end
+    local function search(container, depth)
+        if not container or depth > 6 then
+            return nil
+        end
+        local items = container.getItems and container:getItems()
+        if not items then
+            return nil
+        end
+        for i = 0, items:size() - 1 do
+            local item = items:get(i)
+            if item then
+                if idOf(item) == itemId then
+                    return item
+                end
+                if instanceof(item, "InventoryContainer") and item.getInventory then
+                    local found = search(item:getInventory(), depth + 1)
+                    if found then
+                        return found
+                    end
+                end
+            end
+        end
+        return nil
+    end
+    return search(playerObj.getInventory and playerObj:getInventory(), 0)
+end
+
+-- Server half of an attach. The client's ISUpgradeWeapon (routed through ggsDoUpgrade)
+-- attaches its own real part and mirror entry, then sends this; without it the server's
+-- copy of the weapon never gains the part -- the exact mirror image of the loot-gun kit,
+-- where the server attaches and the client never learns. Every "two sides disagree"
+-- divergence in this saga came from one of those two one-sided writes.
+local function attachServerPart(playerObj, args)
+    if not args or not args.full then
+        print("[GGS ServerDBG] attachPart: no fullType in args")
+        return
+    end
+    local weapon = findWeaponById(playerObj, args.weaponId)
+    if not weapon then
+        print("[GGS ServerDBG] attachPart: weapon " .. tostring(args.weaponId) .. " not found")
+        return
+    end
+
+    -- Idempotent: the slot already holding this exact part means a duplicate command.
+    local slot = args.slot
+    if slot and weapon.getWeaponPart then
+        local existing = weapon:getWeaponPart(slot)
+        local okE, existingFull = pcall(function() return existing and existing:getFullType() end)
+        if okE and existingFull == tostring(args.full) then
+            print("[GGS ServerDBG] attachPart: slot " .. tostring(slot) .. " already holds " ..
+                      tostring(args.full))
+            return
+        end
+    end
+
+    -- Prefer the player's own item (by the id the client sent), so the part is consumed
+    -- rather than duplicated. Falling back to a fresh instance is correct when the item
+    -- never existed server-side; the client has already consumed its copy.
+    local partItem = findItemById(playerObj, args.partId)
+    local okPF, partFull = pcall(function() return partItem and partItem:getFullType() end)
+    if partItem and not (okPF and partFull == tostring(args.full)) then
+        partItem = nil
+    end
+    local consumed = partItem ~= nil
+    if not partItem then
+        local okNew, created = pcall(instanceItem, tostring(args.full))
+        partItem = okNew and created or nil
+        print("[GGS ServerDBG] attachPart: item id=" .. tostring(args.partId) ..
+                  " not found server-side, " .. (partItem and "instanced fresh" or "instanceItem FAILED"))
+    end
+    if not partItem or not instanceof(partItem, "WeaponPart") then
+        print("[GGS ServerDBG] attachPart: no usable part for " .. tostring(args.full))
+        return
+    end
+
+    if consumed then
+        local container = partItem.getContainer and partItem:getContainer()
+        if container then
+            pcall(container.Remove, container, partItem)
+        end
+    end
+    -- Raw Java on this side (no client hooks here): real part plus stat changes.
+    pcall(weapon.attachWeaponPart, weapon, playerObj, partItem)
+
+    -- Mirror entry too, exactly like GGS_MagServerFix does for clips: passive modData
+    -- pushes from the server overwrite the client's table wholesale, so the server's copy
+    -- must contain what the client wrote or the next push erases the client's entry --
+    -- and with it the rendered model.
+    local md = weapon.getModData and weapon:getModData()
+    if md then
+        md.weaponpart = md.weaponpart or {}
+        local key = slot or (partItem.getPartType and partItem:getPartType())
+        if key then
+            md.weaponpart[key] = tostring(args.full)
+        end
+    end
+
+    local okAll, all = pcall(weapon.getAllWeaponParts, weapon)
+    print("[GGS ServerDBG] attached " .. tostring(args.full) .. " to slot " .. tostring(slot) ..
+              " (consumed=" .. tostring(consumed) .. ", totalParts=" ..
+              tostring(okAll and all and all:size() or "?") .. ")")
+end
+
 local function onClientCommand(module, command, playerObj, args)
     if module ~= MODULE then
         return
@@ -176,6 +292,10 @@ local function onClientCommand(module, command, playerObj, args)
     print("[GGS ServerDBG] command received: " .. tostring(command))
     if command == "detachPart" then
         pcall(detachServerPart, playerObj, args)
+        return
+    end
+    if command == "attachPart" then
+        pcall(attachServerPart, playerObj, args)
         return
     end
     if command ~= COMMAND_SPAWN_PART then

@@ -157,8 +157,87 @@ function ISUpgradeWeapon:isValid()
     return hasPart and hasWeapon
 end
 
+-- All the attach work lives here, and BOTH perform and complete route into it.
+--
+-- Same third fault as the removal, on the attach side. Vanilla ISUpgradeWeapon puts the
+-- whole job in complete() -- attachWeaponPart, syncHandWeaponFields, removing the part
+-- from the inventory -- and its perform() only clears job deltas. Nothing in
+-- ISBaseTimedAction calls complete(); the engine does, and on MP it does not. Session
+-- 21:40 showed the result end to end: two clicks, guards passed, action ran, and
+-- [GGS PartDBG] still read real=[Clip] mirror=[Clip] -- attachWeaponPart was never
+-- reached, which is also why [GGS AttachFix] never printed. Offline complete() runs and
+-- attaching works, same split as everything else in this family.
+local function ggsDoUpgrade(self)
+    if self.__ggsUpgradeDone then
+        return true
+    end
+    self.__ggsUpgradeDone = true
+
+    if not self.weapon or not self.part then
+        print("[GGS UpgradeFix] doUpgrade: weapon or part is nil, skipping")
+        return true
+    end
+
+    -- Capture identity before anything consumes the item.
+    local okFull, partFull = pcall(self.part.getFullType, self.part)
+    local okSlot, partSlot = pcall(self.part.getPartType, self.part)
+    local okPid, partId = pcall(self.part.getID, self.part)
+
+    print("[GGS UpgradeFix] attaching " .. tostring(okFull and partFull) .. " to slot " ..
+              tostring(okSlot and partSlot) .. " of " ..
+              tostring(self.weapon.getFullType and self.weapon:getFullType()))
+
+    -- Vanilla complete()'s body. attachWeaponPart routes through AWCWF's wrapper, which
+    -- writes the mirror, and through our setWeaponPart hook, which forces the real part
+    -- (see AWCWF_AdditionalParts_GGS).
+    self.weapon:attachWeaponPart(self.character, self.part)
+    if syncHandWeaponFields then
+        pcall(syncHandWeaponFields, self.character, self.weapon)
+    end
+    -- Remove from the container that actually holds it; vanilla assumes the root
+    -- inventory, which silently no-ops for anything else.
+    local container = (self.part.getContainer and self.part:getContainer()) or self.character:getInventory()
+    if container then
+        pcall(container.Remove, container, self.part)
+        if sendRemoveItemFromContainer then
+            pcall(sendRemoveItemFromContainer, container, self.part)
+        end
+    end
+    if self.character.setSecondaryHandItem and self.character:getSecondaryHandItem() == self.part then
+        self.character:setSecondaryHandItem(nil)
+    end
+
+    -- Tell the server. Its copy of the weapon never sees any of the client-side Lua, so
+    -- without this the attach exists on one side only -- the exact mirror image of the
+    -- loot-gun kit (server-only parts), and the source of every "two sides disagree"
+    -- divergence this family produced. The server attaches its own real part and writes
+    -- its own md.weaponpart entry (GGS_DevSpawnServer, attachPart).
+    if isClient and isClient() and sendClientCommand then
+        local okId, weaponId = pcall(self.weapon.getID, self.weapon)
+        local okSend, err = pcall(sendClientCommand, self.character, "GGS", "attachPart", {
+            weaponId = (okId and weaponId or nil),
+            partId = (okPid and partId or nil),
+            full = (okFull and partFull or nil),
+            slot = (okSlot and partSlot or nil),
+        })
+        print("[GGS UpgradeFix] sent attachPart full=" .. tostring(okFull and partFull) .. " weaponId=" ..
+                  tostring(okId and weaponId or "nil") .. " ok=" .. tostring(okSend) ..
+                  (okSend and "" or (" err=" .. tostring(err))))
+    end
+
+    -- Verify both stores, loudly, in the same shape as the removal's exit line.
+    local realNow = self.weapon:getWeaponPart(okSlot and partSlot or "?")
+    local md = self.weapon.getModData and self.weapon:getModData()
+    local mirrorNow = md and md.weaponpart and okSlot and md.weaponpart[partSlot] or nil
+    print("[GGS UpgradeFix] done slot=" .. tostring(okSlot and partSlot) .. " real=" ..
+              tostring(realNow and realNow.getFullType and realNow:getFullType() or realNow) ..
+              " mirror=" .. tostring(mirrorNow))
+    return true
+end
+
 local old_ISUpgradeWeapon_perform = ISUpgradeWeapon.perform
 function ISUpgradeWeapon:perform()
+    ggsDoUpgrade(self)
     old_ISUpgradeWeapon_perform(self)
     local partType = self.part:getPartType()
     if partType == "Laser" then
@@ -177,6 +256,12 @@ function ISUpgradeWeapon:perform()
             self.weapon:getModData().LightBatteryReamin = 100
         end
     end
+end
+
+-- Kept so any path that does call complete() still works; idempotent with perform()
+-- thanks to the flag. Vanilla's complete() body is fully replaced by ggsDoUpgrade.
+function ISUpgradeWeapon:complete()
+    return ggsDoUpgrade(self)
 end
 
 function ISUpgradeWeapon:new(character, weapon, part, maxtime)
