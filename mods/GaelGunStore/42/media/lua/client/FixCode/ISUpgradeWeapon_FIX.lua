@@ -344,6 +344,28 @@ local function ggsDoUpgrade(self)
               tostring(okSlot and partSlot) .. " of " ..
               tostring(self.weapon.getFullType and self.weapon:getFullType()))
 
+    -- A real consume is about to happen, so any provisional debt for this part type is
+    -- void. The debt gets recorded when an earlier isValid evaluation of THIS SAME action
+    -- catches the part mid-transfer (bag -> hand, the vanilla menu equips it) and fires
+    -- the server fallback; if the transfer then completes and this clean path runs too,
+    -- leaving the debt in place would make the scanner (or the next removal) consume a
+    -- SECOND item -- the player pays twice for one attach.
+    local mdDebt = self.weapon.getModData and self.weapon:getModData()
+    if mdDebt and mdDebt.ggsPendingConsume and okFull and partFull and
+        mdDebt.ggsPendingConsume[partFull] ~= nil then
+        mdDebt.ggsPendingConsume[partFull] = nil
+        local empty = true
+        for _ in pairs(mdDebt.ggsPendingConsume) do
+            empty = false
+            break
+        end
+        if empty then
+            mdDebt.ggsPendingConsume = nil
+        end
+        print("[GGS UpgradeFix] provisional debt for " .. tostring(partFull) ..
+                  " voided: the clean attach is consuming the real item")
+    end
+
     -- Vanilla complete()'s body. attachWeaponPart routes through AWCWF's wrapper, which
     -- writes the mirror, and through our setWeaponPart hook, which forces the real part
     -- (see AWCWF_AdditionalParts_GGS).
