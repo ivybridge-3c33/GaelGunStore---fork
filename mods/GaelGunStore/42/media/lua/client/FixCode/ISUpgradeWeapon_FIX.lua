@@ -215,12 +215,24 @@ function ISUpgradeWeapon:isValid()
             -- client-side until the server's modData push lands, and a shot fired inside
             -- that one-or-two-second window is loud -- the sound profile and the renderer
             -- both read this table. The server's push then confirms (or corrects) it.
-            if okSlot and slot then
-                local mdW = self.weapon.getModData and self.weapon:getModData()
-                if mdW then
-                    mdW.weaponpart = mdW.weaponpart or {}
-                    mdW.weaponpart[slot] = wantedFull
-                end
+            local mdW = self.weapon.getModData and self.weapon:getModData()
+            if okSlot and slot and mdW then
+                mdW.weaponpart = mdW.weaponpart or {}
+                mdW.weaponpart[slot] = wantedFull
+            end
+            -- Record the unpaid debt. This path is otherwise a FREE attach: at this
+            -- moment the player's item is in the invisible phase of the inventory
+            -- oscillation, so neither side can find it to consume -- proven by the
+            -- id census: the original (#53661400@55) survived the attach untouched,
+            -- the gun's part came back as a NEW engine-made object (#837542428@55),
+            -- and removal left the player with both. The scanner in
+            -- GGS_GhostAttachmentPurge consumes one matching item the moment it
+            -- resurfaces and then clears the entry.
+            if mdW then
+                mdW.ggsPendingConsume = mdW.ggsPendingConsume or {}
+                mdW.ggsPendingConsume[wantedFull] = (okC and wantCond) or -1
+                print("[GGS UpgradeFix] pending consume recorded: " .. tostring(wantedFull) ..
+                          " @" .. tostring((okC and wantCond) or "any"))
             end
             if self.character and self.character.Say then
                 pcall(self.character.Say, self.character, getText("IGUI_GGS_DevAttachmentRequested"))

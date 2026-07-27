@@ -126,6 +126,75 @@ local function purgeGhostAttachments(playerObj, label)
     end
 end
 
+-- Collect attach debts. A fallback attach ("Requesting part from the server") cannot
+-- consume the player's item -- it is in the invisible phase of the inventory oscillation
+-- at that moment -- so ISUpgradeWeapon_FIX records the debt in md.ggsPendingConsume and
+-- this settles it the moment a matching loose item resurfaces. Without this the player
+-- keeps both the attached part and the item it came from. The removal path settles the
+-- same debt the other way (by not handing the gun's part back) -- whichever runs first
+-- clears the entry, so the books balance exactly once.
+local function settlePendingConsume(playerObj)
+    local weapon = playerObj and playerObj.getPrimaryHandItem and playerObj:getPrimaryHandItem()
+    if not weapon or not instanceof(weapon, "HandWeapon") then
+        return
+    end
+    local md = weapon.getModData and weapon:getModData()
+    local pending = md and md.ggsPendingConsume
+    if not pending then
+        return
+    end
+    for full, wantCond in pairs(pending) do
+        local exact, fallback = nil, nil
+        local function walk(container, depth)
+            if not container or depth > 6 or exact then
+                return
+            end
+            local items = container.getItems and container:getItems()
+            if not items then
+                return
+            end
+            for i = 0, items:size() - 1 do
+                local it = items:get(i)
+                if it then
+                    if it.getFullType and it:getFullType() == full and it.getContainer and it:getContainer() then
+                        local okC, cond = pcall(function() return it:getCondition() end)
+                        if wantCond == -1 or (okC and cond == wantCond) then
+                            exact = it
+                            return
+                        end
+                        fallback = fallback or it
+                    end
+                    if instanceof(it, "InventoryContainer") and it.getInventory then
+                        walk(it:getInventory(), depth + 1)
+                    end
+                end
+            end
+        end
+        pcall(walk, playerObj:getInventory(), 0)
+        local victim = exact or fallback
+        if victim then
+            local container = victim:getContainer()
+            if container then
+                pcall(container.Remove, container, victim)
+                if sendRemoveItemFromContainer then
+                    pcall(sendRemoveItemFromContainer, container, victim)
+                end
+            end
+            print("[GGS Debt] consumed loose " .. tostring(full) .. " id=" ..
+                      tostring(victim.getID and victim:getID()) .. " (attach debt settled)")
+            pending[full] = nil
+        end
+    end
+    local empty = true
+    for _ in pairs(pending) do
+        empty = false
+        break
+    end
+    if empty then
+        md.ggsPendingConsume = nil
+    end
+end
+
 local tickCounter = 0
 local function onTick()
     tickCounter = tickCounter + 1
@@ -134,6 +203,7 @@ local function onTick()
     end
     tickCounter = 0
     purgeGhostAttachments(getPlayer(), "tick")
+    settlePendingConsume(getPlayer())
 end
 
 -- The held weapon's full render-relevant state, one line, fired automatically on equip.
@@ -208,6 +278,7 @@ end
 if Events and Events.OnEquipPrimary and Events.OnEquipPrimary.Add then
     Events.OnEquipPrimary.Add(function(playerObj)
         purgeGhostAttachments(playerObj, "equip")
+        settlePendingConsume(playerObj)
         dumpHeldWeaponState(playerObj, "equip")
         -- Rebuild the character model, equipped weapon included. The engine's
         -- ModelWeaponPart overlay is the fifth data layer, and a stale one survives every

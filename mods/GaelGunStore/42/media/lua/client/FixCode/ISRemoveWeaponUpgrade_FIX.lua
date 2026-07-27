@@ -319,14 +319,38 @@ local function ggsDoRemoval(self)
                   " STILL occupied after forced clear, not handing the part over")
     end
 
+    -- Settle the attach debt instead of handing back, when there is one. A fallback
+    -- attach ("Requesting part from the server") consumes NOTHING -- the player's item is
+    -- in the invisible phase of the inventory oscillation at that moment, so neither side
+    -- can find it -- and the part that ends up on the gun is a NEW engine-made object.
+    -- Proven by the id census: original NST#53661400@55 survived the attach, the gun gave
+    -- back NST#837542428@55, and the player ended up with both (the engine-made one a
+    -- server-unknown ghost: unusable, undroppable). When the debt marker is present the
+    -- original item still exists, so the correct hand-back is NO hand-back.
+    local debtSettled = false
+    if md and md.ggsPendingConsume and okFull and partFull and md.ggsPendingConsume[partFull] ~= nil then
+        md.ggsPendingConsume[partFull] = nil
+        local empty = true
+        for _ in pairs(md.ggsPendingConsume) do
+            empty = false
+            break
+        end
+        if empty then
+            md.ggsPendingConsume = nil
+        end
+        debtSettled = true
+        print("[GGS RemoveFix] attach debt settled: NOT handing this part back (the original " ..
+                  tostring(partFull) .. " was never consumed and is still owned)")
+    end
+
     -- Identity of the object leaving the gun and of the object landing in the bag: the
     -- "extra 100% part" investigation needs to know whether these are the same item, and
     -- what condition the gun-side object really carried.
     local okPC, partCond = pcall(function() return part:getCondition() end)
     print("[GGS RemoveFix] handing back part id=" .. tostring(part.getID and part:getID()) ..
-              " cond=" .. tostring(okPC and partCond))
+              " cond=" .. tostring(okPC and partCond) .. (debtSettled and " -> SKIPPED (debt)" or ""))
 
-    local added = not stillOccupied and self.character:getInventory():AddItem(part) or nil
+    local added = (not stillOccupied and not debtSettled) and self.character:getInventory():AddItem(part) or nil
     if added then
         local okAC, addedCond = pcall(function() return added:getCondition() end)
         print("[GGS RemoveFix] added to bag id=" .. tostring(added.getID and added:getID()) ..
@@ -356,14 +380,17 @@ local function ggsDoRemoval(self)
         local okId, weaponId = pcall(self.weapon.getID, self.weapon)
         -- Send the part's fullType as well as the slot name: a slot-only match failed
         -- server-side once while the part was demonstrably there under another type string.
+        -- Debt-settled counts as handed back: the player still owns the original item, so
+        -- the server must not hand out its copy either or the books go +1 again.
+        local playerHasItem = (added ~= nil) or debtSettled
         local okSend, err = pcall(sendClientCommand, self.character, "GGS", "detachPart", {
             slot = tostring(self.partType),
             full = (okFull and partFull or nil),
             weaponId = (okId and weaponId or nil),
-            handedBack = (added ~= nil),
+            handedBack = playerHasItem,
         })
         print("[GGS RemoveFix] sent detachPart slot=" .. tostring(self.partType) .. " weaponId=" ..
-                  tostring(okId and weaponId or "nil") .. " handedBack=" .. tostring(added ~= nil) ..
+                  tostring(okId and weaponId or "nil") .. " handedBack=" .. tostring(playerHasItem) ..
                   " ok=" .. tostring(okSend) .. (okSend and "" or (" err=" .. tostring(err))))
     else
         print("[GGS RemoveFix] NOT sending detachPart: isClient=" .. tostring(amClient) ..
