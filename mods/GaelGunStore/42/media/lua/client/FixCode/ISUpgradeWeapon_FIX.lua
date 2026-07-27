@@ -211,6 +211,17 @@ function ISUpgradeWeapon:isValid()
             })
             print("[GGS UpgradeFix] no live item client-side; asked the SERVER to attach " ..
                       tostring(wantedFull) .. " (sent=" .. tostring(okSend) .. ")")
+            -- Optimistic mirror write, immediately. On this path nothing is attached
+            -- client-side until the server's modData push lands, and a shot fired inside
+            -- that one-or-two-second window is loud -- the sound profile and the renderer
+            -- both read this table. The server's push then confirms (or corrects) it.
+            if okSlot and slot then
+                local mdW = self.weapon.getModData and self.weapon:getModData()
+                if mdW then
+                    mdW.weaponpart = mdW.weaponpart or {}
+                    mdW.weaponpart[slot] = wantedFull
+                end
+            end
             if self.character and self.character.Say then
                 pcall(self.character.Say, self.character, getText("IGUI_GGS_DevAttachmentRequested"))
             end
