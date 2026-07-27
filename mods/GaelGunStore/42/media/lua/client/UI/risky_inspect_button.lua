@@ -958,6 +958,28 @@ function addAttachmentButton:onMouseDown()
                 return
             end
 
+            -- A reference with no container and no world item is a stale ghost: the pane
+            -- listed the item while it existed, the real item has since been deleted
+            -- (server reconciliation, or a leftover from the pre-fix attach bug that
+            -- consumed parts server-side), and the button still holds the dead Lua
+            -- object. stageItemToRootInventory returns it as-is, containerNow comes back
+            -- nil so no transfer is queued, and ISUpgradeWeapon then refuses with
+            -- hasPart=false -- silent from the player's chair, observed as
+            --   [GGS PartDBG] part location: container=nil worldItem=false
+            -- Say so instead, and refresh the pane so the dead entry disappears.
+            local stagedContainer = stagedPart.getContainer and stagedPart:getContainer() or nil
+            local okWorld, inWorld = pcall(function() return stagedPart:getWorldItem() ~= nil end)
+            if not stagedContainer and not (okWorld and inWorld) then
+                print(string.format(
+                    "[GGS PartTx] refusing stale item reference %s: no container, no world item (the real item is gone)",
+                    tostring(stagedPart.getFullType and stagedPart:getFullType() or "?")))
+                player:Say(ggsText("IGUI_GGS_CouldNotSpawnAttachment"))
+                if riskyInspectWindow and riskyInspectWindow.renderInventory then
+                    riskyInspectWindow:renderInventory()
+                end
+                return
+            end
+
             self.slotItem = stagedPart
 
             local containerNow = stagedPart.getContainer and stagedPart:getContainer() or sourceContainer
