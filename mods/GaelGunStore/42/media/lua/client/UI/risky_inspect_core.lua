@@ -272,7 +272,18 @@ local function drawAttachment(self, weapon, type, x, y, visibleSet)
     self:drawText(getText('IGUI_' .. type), x, y + 20, 1, 1, 1, 1, UIFont.Small);
 end
 
-local partlist = (AWCWF_AdditionalParts and AWCWF_AdditionalParts.partlist) or {}
+-- Captured lazily, not at file load: this file can load before AWCWF_AdditionalParts_GGS
+-- extends the framework's partlist (which is what adds Handguard/Hanguard/Mount/ClipUI/
+-- AMMO), and a load-time capture would then silently iterate the short list forever.
+-- The fallback mirrors the GGS list for the case where the global never appears at all.
+local PARTLIST_FALLBACK = {"Scope", "Mount", "Canon", "Stock", "Handguard", "Hanguard", "Grip", "Laser", "Light",
+                           "Stool", "R_Scope", "L_Scope", "Skin", "Sling", "RecoilPad", "Misc", "Clip", "ClipUI",
+                           "Hide_Beam", "Barrel", "Barrel_Shroud", "AMMO"}
+-- Plain function on purpose: Kahlua has no __pairs metamethod, so a lazy table would
+-- iterate as empty and silently break every loop below.
+local function currentPartlist()
+    return (AWCWF_AdditionalParts and AWCWF_AdditionalParts.partlist) or PARTLIST_FALLBACK
+end
 local function getAmmoItemKey(ammoType)
     if not ammoType or ammoType == "" then
         return nil
@@ -318,7 +329,7 @@ local function getAttacheMentCount(weapon)
         MaxSightRange = 0,
         SoundModifier = 0
     }
-    for i, v in ipairs(partlist) do
+    for i, v in ipairs(currentPartlist()) do
         -- Mirror-only parts count too (display-only sums): same reasoning as the scene
         -- models -- a server-attached part has no real client object, and skipping it
         -- made the Weapon Data panel disagree with the gun's actual behavior. Inlined
@@ -720,15 +731,36 @@ local function scenePartForSlot(weapon, slot)
     if part then
         return part
     end
-    local ok, mirrored = pcall(weapon.getWeaponPart, weapon, slot, false)
-    if ok and mirrored then
-        return mirrored
+    -- The sweep store. The two Java reads disagree on the CLIENT too, not just the
+    -- server: at equip the sweep listed Handguard and Canon while getWeaponPart returned
+    -- nil for both at workbench open moments later, so the scene drew 5 of 7 parts.
+    -- Same rule as everywhere else in this saga: never trust one store.
+    local okAll, all = pcall(weapon.getAllWeaponParts, weapon)
+    if okAll and all then
+        for i = 0, all:size() - 1 do
+            local candidate = all:get(i)
+            if candidate and candidate.getPartType and candidate:getPartType() == slot then
+                return candidate
+            end
+        end
+    end
+    -- The mirror, read directly off modData rather than through the getWeaponPart hook,
+    -- which depends on load order and can be beaten by a wholesale modData overwrite in
+    -- the same tick. Mirror instances are Lua-only and only ever donate a fullType for
+    -- model lookup here -- they must never reach a Java action.
+    local md = weapon.getModData and weapon:getModData()
+    local cached = md and md.weaponpart and md.weaponpart[slot]
+    if cached and cached ~= "" then
+        local okInst, inst = pcall(instanceItem, tostring(cached))
+        if okInst and inst then
+            return inst
+        end
     end
     return nil
 end
 
 local function getpartmodel(weapon, scene)
-    for i, v in pairs(partlist) do
+    for i, v in pairs(currentPartlist()) do
         if scenePartForSlot(weapon, v) then
             local part = scenePartForSlot(weapon, v)
             local item, partFullType = resolvePartScriptItem(part)
@@ -753,7 +785,7 @@ local function getpartmodel(weapon, scene)
 end
 local function getpartmodeldel(weapon, scene)
     local partlistnow = {}
-    for i, v in pairs(partlist) do
+    for i, v in pairs(currentPartlist()) do
         if scenePartForSlot(weapon, v) then
             local part = scenePartForSlot(weapon, v)
             local item, partFullType = resolvePartScriptItem(part)
@@ -1062,7 +1094,7 @@ function riskyUI:renderInventory()
             Clip = {38.0298, 0.0, 0.0},
         },
     }
-    for uy, ur in pairs(partlist) do
+    for uy, ur in pairs(currentPartlist()) do
         local scenePart = scenePartForSlot(weapon, ur)
         if scenePart then
             local item = ScriptManager.instance:getItem(scenePart:getFullType())
