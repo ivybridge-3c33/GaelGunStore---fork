@@ -2,6 +2,38 @@ GaelGunStore B42 Fork - Changelog
 (Fork by ivybridge-3c33. Original mod by Pen-Pen Pirulin. Framework: AWCWF.)
 
 ------------------------------------------------------------------------
+v1.4 - 2026-07-28
+------------------------------------------------------------------------
+Fixed (weapon attachments in MULTIPLAYER -- attach, removal, suppressors.
+Single-player was never affected; all of these only showed on servers):
+- Attaching a part on a server did nothing: the vanilla attach action does
+  all of its work in complete(), which the engine never calls on MP. The
+  attach now runs in perform() (same fix the removal got earlier) and also
+  notifies the server, which attaches its own copy and syncs back.
+- Removing a part on a server: the framework's detachWeaponPart silently
+  does nothing unless the weapon's modData mirror already names the part --
+  true for player-attached parts, never true for loot guns kitted by the
+  server. Removal now seeds the mirror first, verifies the slot actually
+  emptied, and no longer hands out a duplicate part while the original is
+  still bolted on.
+- Suppressor visibly on the gun but loud shots and an empty inspect UI:
+  the two Java part reads (getAllWeaponParts vs getWeaponPart) can disagree
+  about the same weapon server-side. Both server handlers now use the read
+  the renderer uses, and an "already attached" answer repairs the client's
+  view (mirror push) instead of being ignored.
+- Clicking a part the inventory resync had just replaced failed silently,
+  forever (item listed in the pane, action refused with the item
+  "missing"). The attach path re-resolves the item by type and, when the
+  client cannot produce it at all, asks the server to attach its own copy.
+- Clicking an already-filled slot now says so instead of silently
+  re-requesting the part from the server.
+- Ghost attachment props stuck on the character model (drawn by nothing in
+  any data store) are detected and removed on equip.
+- Vanilla B42 hasScrewdriver test is inverted (carrying a BROKEN screwdriver
+  blocked every attach/detach); shipped the Lua-side override for it
+  (GGS_ScrewdriverFix -- was in the mod, previously missing from the repo).
+
+------------------------------------------------------------------------
 v1.3 - 2026-07-19
 ------------------------------------------------------------------------
 Fixed (weapon attachment positions & availability):

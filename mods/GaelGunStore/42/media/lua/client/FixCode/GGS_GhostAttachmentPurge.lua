@@ -112,9 +112,11 @@ local function purgeGhostAttachments(playerObj, label)
         end
     end
 
-    -- The dump is the point as much as the purge: every earlier round lacked exactly this
-    -- list. One line per scan that found part props at all.
-    if #report > 0 then
+    -- Only speak when something is actually wrong. During the hunt this printed the whole
+    -- attached list on every scan -- every 10 seconds, all session -- which was the right
+    -- call while the ghost was unexplained and pure noise now that it is. The removal
+    -- lines below still say everything that matters.
+    if #doomed > 0 then
         print("[GGS GhostDBG] " .. tostring(label) .. " attached=[" .. table.concat(report, ", ") .. "]")
     end
     for _, d in ipairs(doomed) do
@@ -192,12 +194,13 @@ if Events and Events.OnTick and Events.OnTick.Add then
     Events.OnTick.Add(onTick)
 end
 
--- State at the trigger pull. Every dump so far measured at equip time and read clean
--- while the shot stayed loud and the can stayed visible -- but the burst replication this
--- fork has documented (real parts appearing on the client between one read and the next)
--- means equip-time state does not prove fire-time state. One line per ranged shot: the
--- real map, the mirror, and the sound values actually in effect for that bang.
-if Events and Events.OnWeaponSwing and Events.OnWeaponSwing.Add then
+-- State at the trigger pull: the real map, the mirror, and the sound values in effect
+-- for that bang. This is the probe that separated "suppressor attached but sound path
+-- broken" from "nothing attached, the loud shot is honest" -- equip-time reads cannot,
+-- because part state has been seen changing between equip and fire. TWO LINES PER SHOT,
+-- so it stays off unless a sound/part bug is actively being chased.
+local DEBUG_FIRE = false
+if DEBUG_FIRE and Events and Events.OnWeaponSwing and Events.OnWeaponSwing.Add then
     Events.OnWeaponSwing.Add(function(character, weapon)
         if character ~= getPlayer() then
             return
