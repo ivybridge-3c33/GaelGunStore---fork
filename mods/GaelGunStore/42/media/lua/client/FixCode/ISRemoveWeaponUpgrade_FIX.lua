@@ -94,9 +94,20 @@ local function ggsDumpPartState(weapon, label)
             end
         end
     end
+    -- The weapon's own model names too. With all four part stores proven clean (client
+    -- real, client mirror, character props, server real) while a suppressor still drew on
+    -- the gun, the item's swapped weaponSprite/model is the only drawer left standing --
+    -- and nothing was printing it.
+    local okSprite, sprite = pcall(function() return weapon:getWeaponSprite() end)
+    local okWorld, worldModel = pcall(function()
+        local m = weapon.getWorldStaticModel and weapon:getWorldStaticModel()
+        return m and tostring(m) or nil
+    end)
     print("[GGS PartDBG] " .. tostring(label) .. " weapon=" ..
               tostring(weapon.getFullType and weapon:getFullType()) .. " real=[" ..
-              table.concat(real, ", ") .. "] mirror=[" .. table.concat(mirror, ", ") .. "]")
+              table.concat(real, ", ") .. "] mirror=[" .. table.concat(mirror, ", ") ..
+              "] sprite=" .. tostring(okSprite and sprite) ..
+              " worldModel=" .. tostring(okWorld and worldModel))
 end
 
 function ISRemoveWeaponUpgrade:isValid()

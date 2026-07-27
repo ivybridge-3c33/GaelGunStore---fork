@@ -153,6 +153,28 @@ function ISUpgradeWeapon:isValid()
         end
         print("[GGS PartDBG] attach refused real=[" .. table.concat(real, ", ") .. "] mirror=[" ..
                   table.concat(mirror, ", ") .. "]")
+        -- WHERE the part item actually lives. hasPart=false fired for an item some UI
+        -- could clearly still offer, and four store dumps later that is the one question
+        -- no line answers. getContainer names the holder; a floor/world container or nil
+        -- here is the whole explanation, since ggsInventoryHas only reaches containers
+        -- under the character.
+        local contDesc = "nil"
+        local okC, cont = pcall(function() return self.part and self.part:getContainer() end)
+        if okC and cont then
+            local okT, cType = pcall(function() return cont:getType() end)
+            local okP, parent = pcall(function()
+                local p = cont.getParent and cont:getParent()
+                if p and p.getFullType then
+                    return p:getFullType()
+                end
+                local ch = cont.getCharacter and cont:getCharacter()
+                return ch and tostring(ch.getUsername and ch:getUsername() or "character") or nil
+            end)
+            contDesc = tostring(okT and cType or "?") .. " parent=" .. tostring(okP and parent or "?")
+        end
+        local okW, hasWorld = pcall(function() return self.part and self.part:getWorldItem() ~= nil end)
+        print("[GGS PartDBG] part location: container=" .. contDesc ..
+                  " worldItem=" .. tostring(okW and hasWorld))
     end
     return hasPart and hasWeapon
 end
