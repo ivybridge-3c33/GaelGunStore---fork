@@ -305,30 +305,6 @@ local function ggsDoRemoval(self)
     if md and self.weapon.transmitModData then
         pcall(self.weapon.transmitModData, self.weapon)
     end
-    -- Tell the server too, so its own copy of the weapon drops the part instead of holding
-    -- a set the client no longer agrees with. Confirmed arriving: the client's send and the
-    -- server's "command received: detachPart" both show up in the same tick.
-    local amClient = isClient and isClient() or false
-    if amClient and sendClientCommand then
-        local okId, weaponId = pcall(self.weapon.getID, self.weapon)
-        -- Send the part's fullType as well as the slot name. Matching on the slot alone
-        -- failed server-side -- "nothing in slot Canon (getAllWeaponParts had 4 parts)"
-        -- while those 4 were exactly the set that came back, Canon included -- so the
-        -- part is there and its getPartType() simply does not read back as "Canon" over
-        -- there. fullType is unambiguous.
-        local okSend, err = pcall(sendClientCommand, self.character, "GGS", "detachPart", {
-            slot = tostring(self.partType),
-            full = (okFull and partFull or nil),
-            weaponId = (okId and weaponId or nil),
-        })
-        print("[GGS RemoveFix] sent detachPart slot=" .. tostring(self.partType) .. " weaponId=" ..
-                  tostring(okId and weaponId or "nil") .. " ok=" .. tostring(okSend) ..
-                  (okSend and "" or (" err=" .. tostring(err))))
-    else
-        print("[GGS RemoveFix] NOT sending detachPart: isClient=" .. tostring(amClient) ..
-                  " sendClientCommand=" .. tostring(sendClientCommand ~= nil))
-    end
-
     if syncHandWeaponFields then
         syncHandWeaponFields(self.character, self.weapon)
     end
@@ -356,6 +332,31 @@ local function ggsDoRemoval(self)
         if sendAddItemToContainer then
             sendAddItemToContainer(self.character:getInventory(), added)
         end
+    end
+
+    -- Tell the server too, so its own copy of the weapon drops the part instead of holding
+    -- a set the client no longer agrees with. Sent AFTER the hand-back so handedBack is a
+    -- fact, not a plan: when this side already gave the player the item, the server must
+    -- NOT hand out its own copy as well -- both sides returning "their" part is one of the
+    -- two ways the duplicate-suppressor bug minted free items (the other being the
+    -- already-holds attach path never consuming the server's loose copy).
+    local amClient = isClient and isClient() or false
+    if amClient and sendClientCommand then
+        local okId, weaponId = pcall(self.weapon.getID, self.weapon)
+        -- Send the part's fullType as well as the slot name: a slot-only match failed
+        -- server-side once while the part was demonstrably there under another type string.
+        local okSend, err = pcall(sendClientCommand, self.character, "GGS", "detachPart", {
+            slot = tostring(self.partType),
+            full = (okFull and partFull or nil),
+            weaponId = (okId and weaponId or nil),
+            handedBack = (added ~= nil),
+        })
+        print("[GGS RemoveFix] sent detachPart slot=" .. tostring(self.partType) .. " weaponId=" ..
+                  tostring(okId and weaponId or "nil") .. " handedBack=" .. tostring(added ~= nil) ..
+                  " ok=" .. tostring(okSend) .. (okSend and "" or (" err=" .. tostring(err))))
+    else
+        print("[GGS RemoveFix] NOT sending detachPart: isClient=" .. tostring(amClient) ..
+                  " sendClientCommand=" .. tostring(sendClientCommand ~= nil))
     end
 
     -- Exit state, both representations, one line. AWCWF_RenderPart:186 builds the held

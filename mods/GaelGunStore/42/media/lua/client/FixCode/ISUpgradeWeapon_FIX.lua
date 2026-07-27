@@ -185,10 +185,12 @@ function ISUpgradeWeapon:isValid()
             self.__ggsServerAttachRequested = true
             local okId, weaponId = pcall(self.weapon.getID, self.weapon)
             local okSlot, slot = pcall(function() return self.part:getPartType() end)
+            local okCond, cond = pcall(function() return self.part:getCondition() end)
             local okSend = pcall(sendClientCommand, self.character, "GGS", "attachPart", {
                 weaponId = (okId and weaponId or nil),
                 full = wantedFull,
                 slot = (okSlot and slot or nil),
+                condition = (okCond and cond or nil),
             })
             print("[GGS UpgradeFix] no live item client-side; asked the SERVER to attach " ..
                       tostring(wantedFull) .. " (sent=" .. tostring(okSend) .. ")")
@@ -313,11 +315,15 @@ local function ggsDoUpgrade(self)
     -- its own md.weaponpart entry (GGS_DevSpawnServer, attachPart).
     if isClient and isClient() and sendClientCommand then
         local okId, weaponId = pcall(self.weapon.getID, self.weapon)
+        -- Condition rides along so a server-side instanceItem fallback does not mint a
+        -- factory-fresh 100% twin of a worn part.
+        local okCond, partCond = pcall(function() return self.part:getCondition() end)
         local okSend, err = pcall(sendClientCommand, self.character, "GGS", "attachPart", {
             weaponId = (okId and weaponId or nil),
             partId = (okPid and partId or nil),
             full = (okFull and partFull or nil),
             slot = (okSlot and partSlot or nil),
+            condition = (okCond and partCond or nil),
         })
         print("[GGS UpgradeFix] sent attachPart full=" .. tostring(okFull and partFull) .. " weaponId=" ..
                   tostring(okId and weaponId or "nil") .. " ok=" .. tostring(okSend) ..

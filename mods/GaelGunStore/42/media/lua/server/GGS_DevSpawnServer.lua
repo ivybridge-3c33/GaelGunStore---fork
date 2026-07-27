@@ -154,13 +154,20 @@ local function detachServerPart(playerObj, args)
         end
         return
     end
-    -- Hand the part back to the player, otherwise detaching destroys it.
     pcall(weapon.detachWeaponPart, weapon, playerObj, part)
-    local inventory = playerObj.getInventory and playerObj:getInventory()
-    if inventory then
-        local okAdd, added = pcall(inventory.AddItem, inventory, part)
-        if okAdd and added and sendAddItemToContainer then
-            pcall(sendAddItemToContainer, inventory, added)
+    -- Hand the part back to the player -- UNLESS the client already did. Both sides
+    -- returning "their" copy of the same conceptual part is how removal minted duplicate
+    -- suppressors; the client says which case this is (handedBack), and when it has
+    -- already given the player the item, this side's copy is simply dropped.
+    if args.handedBack then
+        print("[GGS ServerDBG] detachPart: client already handed the part back, discarding this side's copy")
+    else
+        local inventory = playerObj.getInventory and playerObj:getInventory()
+        if inventory then
+            local okAdd, added = pcall(inventory.AddItem, inventory, part)
+            if okAdd and added and sendAddItemToContainer then
+                pcall(sendAddItemToContainer, inventory, added)
+            end
         end
     end
     local md = weapon.getModData and weapon:getModData()
@@ -249,8 +256,58 @@ local function attachServerPart(playerObj, args)
                     pcall(weapon.transmitModData, weapon)
                 end
             end
-            print("[GGS ServerDBG] attachPart: slot " .. tostring(slot) .. " already holds " ..
-                      tostring(args.full) .. "; pushed the mirror entry so the client's readers see it")
+            -- Consume this side's loose copy of the part item too. The client consumed its
+            -- own when it attached, and the part reached this weapon via the engine's item
+            -- sync -- but this side's INVENTORY copy was never touched, so the next resync
+            -- resurrected it in the player's bag while the part also sat on the gun.
+            -- Observed as a duplicate suppressor in the upgrade menu (a fresh-condition
+            -- twin of the one really consumed). Prefer the exact item id the client
+            -- consumed; fall back to one item of the same fullType.
+            local loose = findItemById(playerObj, args.partId)
+            local okLF, looseFull = pcall(function() return loose and loose:getFullType() end)
+            if loose and not (okLF and looseFull == tostring(args.full)) then
+                loose = nil
+            end
+            if not loose then
+                local wantedFullType = tostring(args.full)
+                local function searchOneByFull(container, depth)
+                    if not container or depth > 6 then
+                        return nil
+                    end
+                    local items = container.getItems and container:getItems()
+                    if not items then
+                        return nil
+                    end
+                    for i = 0, items:size() - 1 do
+                        local item = items:get(i)
+                        if item then
+                            local okT, t = pcall(function() return item:getFullType() end)
+                            if okT and t == wantedFullType then
+                                return item
+                            end
+                            if instanceof(item, "InventoryContainer") and item.getInventory then
+                                local found = searchOneByFull(item:getInventory(), depth + 1)
+                                if found then
+                                    return found
+                                end
+                            end
+                        end
+                    end
+                    return nil
+                end
+                loose = searchOneByFull(playerObj.getInventory and playerObj:getInventory(), 0)
+            end
+            if loose then
+                local container = loose.getContainer and loose:getContainer()
+                if container then
+                    pcall(container.Remove, container, loose)
+                end
+                print("[GGS ServerDBG] attachPart: slot " .. tostring(slot) .. " already holds " ..
+                          tostring(args.full) .. "; consumed the loose inventory copy and pushed the mirror")
+            else
+                print("[GGS ServerDBG] attachPart: slot " .. tostring(slot) .. " already holds " ..
+                          tostring(args.full) .. "; pushed the mirror entry (no loose copy to consume)")
+            end
             return
         end
     end
@@ -302,8 +359,14 @@ local function attachServerPart(playerObj, args)
     if not partItem then
         local okNew, created = pcall(instanceItem, tostring(args.full))
         partItem = okNew and created or nil
+        -- Carry the client's condition over: a fresh instance is factory-new, and handing
+        -- a worn part back at 100% later (via removal) mints value out of thin air.
+        if partItem and args.condition and partItem.setCondition then
+            pcall(partItem.setCondition, partItem, args.condition)
+        end
         print("[GGS ServerDBG] attachPart: item id=" .. tostring(args.partId) ..
-                  " not found server-side, " .. (partItem and "instanced fresh" or "instanceItem FAILED"))
+                  " not found server-side, " .. (partItem and "instanced fresh" or "instanceItem FAILED") ..
+                  (args.condition and (" (condition=" .. tostring(args.condition) .. ")") or ""))
     end
     if not partItem or not instanceof(partItem, "WeaponPart") then
         print("[GGS ServerDBG] attachPart: no usable part for " .. tostring(args.full))
