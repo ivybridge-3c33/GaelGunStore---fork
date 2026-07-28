@@ -152,23 +152,65 @@ local function detachServerPart(playerObj, args)
                       "=" .. tostring(md.weaponpart[args.slot]))
             md.weaponpart[args.slot] = nil
         end
+        -- The client asked for the item back and no longer creates it itself (that made
+        -- display-echo twins). This side has no detached part to give in this branch --
+        -- the usual case, since the client's detach syncs up before this command lands --
+        -- so create the returned item here, at the condition the part really had.
+        if args.wantItem == true and args.full then
+            local okNew, created = pcall(instanceItem, tostring(args.full))
+            if okNew and created then
+                if args.condition ~= nil and created.setCondition then
+                    pcall(created.setCondition, created, args.condition)
+                end
+                if args.batteryLaser ~= nil then
+                    created:getModData().LaserBatteryReamin = args.batteryLaser
+                end
+                if args.batteryLight ~= nil then
+                    created:getModData().LightBatteryReamin = args.batteryLight
+                end
+                local inventory = playerObj.getInventory and playerObj:getInventory()
+                if inventory then
+                    local okAdd, added = pcall(inventory.AddItem, inventory, created)
+                    if okAdd and added and sendAddItemToContainer then
+                        pcall(sendAddItemToContainer, inventory, added)
+                    end
+                end
+                print("[GGS ServerDBG] detachPart: created hand-back " .. tostring(args.full) ..
+                          " @" .. tostring(args.condition))
+            else
+                print("[GGS ServerDBG] detachPart: FAILED to create hand-back " .. tostring(args.full))
+            end
+        end
         return
     end
     pcall(weapon.detachWeaponPart, weapon, playerObj, part)
-    -- Hand the part back to the player -- UNLESS the client already did. Both sides
-    -- returning "their" copy of the same conceptual part is how removal minted duplicate
-    -- suppressors; the client says which case this is (handedBack), and when it has
-    -- already given the player the item, this side's copy is simply dropped.
-    if args.handedBack then
-        print("[GGS ServerDBG] detachPart: client already handed the part back, discarding this side's copy")
-    else
+    -- The hand-back is now server-owned end to end: the client no longer AddItems its
+    -- copy at all (that produced a display-echo twin in the panel on every removal), it
+    -- just asks with wantItem. Legacy senders (the phantom and locally-empty paths) carry
+    -- no wantItem field and keep the old handedBack semantics.
+    local give = nil
+    if args.wantItem == true then
+        give = part
+    elseif args.wantItem == nil and not args.handedBack then
+        give = part
+    end
+    if give then
+        if args.batteryLaser ~= nil then
+            give:getModData().LaserBatteryReamin = args.batteryLaser
+        end
+        if args.batteryLight ~= nil then
+            give:getModData().LightBatteryReamin = args.batteryLight
+        end
         local inventory = playerObj.getInventory and playerObj:getInventory()
         if inventory then
-            local okAdd, added = pcall(inventory.AddItem, inventory, part)
+            local okAdd, added = pcall(inventory.AddItem, inventory, give)
             if okAdd and added and sendAddItemToContainer then
                 pcall(sendAddItemToContainer, inventory, added)
             end
+            print("[GGS ServerDBG] detachPart: handed this side's part back")
         end
+    else
+        print("[GGS ServerDBG] detachPart: no hand-back wanted, discarding this side's copy")
     end
     local md = weapon.getModData and weapon:getModData()
     if md and md.weaponpart then

@@ -347,51 +347,69 @@ local function ggsDoRemoval(self)
     print("[GGS RemoveFix] handing back part id=" .. tostring(part.getID and part:getID()) ..
               " cond=" .. tostring(okPC and partCond) .. (debtSettled and " -> SKIPPED (debt)" or ""))
 
-    local added = (not stillOccupied and not debtSettled) and self.character:getInventory():AddItem(part) or nil
-    if added then
-        local okAC, addedCond = pcall(function() return added:getCondition() end)
-        print("[GGS RemoveFix] added to bag id=" .. tostring(added.getID and added:getID()) ..
-                  " cond=" .. tostring(okAC and addedCond) ..
-                  (added == part and " (same object)" or " (DIFFERENT object!)"))
-        if self.partType == "Laser" then
-            added:getModData().LaserBatteryReamin = self.weapon:getModData().LaserBatteryReamin
-            self.weapon:getModData().LaserBatteryReamin = nil
-        end
-        if self.partType == "Light" then
-            added:getModData().LightBatteryReamin = self.weapon:getModData().LightBatteryReamin
-            self.weapon:getModData().LightBatteryReamin = nil
-        end
-        if sendAddItemToContainer then
-            sendAddItemToContainer(self.character:getInventory(), added)
+    -- The hand-back has exactly ONE owner per mode. On MP the SERVER creates the returned
+    -- item (in detachServerPart, from the condition and battery values sent below) and it
+    -- syncs down like any loot pickup. The old way -- client AddItem + sendAddItemToContainer
+    -- -- left a display echo next to the real item every removal: the server's broadcast of
+    -- the add came back as a second, server-unknown twin in the panel (unusable,
+    -- undroppable, cleared only by relog). Server truth stayed correct the whole time; the
+    -- echo was pure UI, but the player cannot tell an echo from a dup, so the client-side
+    -- add is gone. Single-player keeps the local AddItem: there is no other side.
+    local amClient = isClient and isClient() or false
+    local wantItem = (not stillOccupied) and (not debtSettled)
+    local added = nil
+    if wantItem and not amClient then
+        added = self.character:getInventory():AddItem(part)
+        if added then
+            if self.partType == "Laser" then
+                added:getModData().LaserBatteryReamin = self.weapon:getModData().LaserBatteryReamin
+                self.weapon:getModData().LaserBatteryReamin = nil
+            end
+            if self.partType == "Light" then
+                added:getModData().LightBatteryReamin = self.weapon:getModData().LightBatteryReamin
+                self.weapon:getModData().LightBatteryReamin = nil
+            end
         end
     end
 
-    -- Tell the server too, so its own copy of the weapon drops the part instead of holding
-    -- a set the client no longer agrees with. Sent AFTER the hand-back so handedBack is a
-    -- fact, not a plan: when this side already gave the player the item, the server must
-    -- NOT hand out its own copy as well -- both sides returning "their" part is one of the
-    -- two ways the duplicate-suppressor bug minted free items (the other being the
-    -- already-holds attach path never consuming the server's loose copy).
-    local amClient = isClient and isClient() or false
+    -- Battery state rides to the server with the command; the weapon-side entry is
+    -- cleared here so it cannot be double-claimed.
+    local batteryLaser, batteryLight = nil, nil
+    if wantItem and amClient then
+        local mdBat = self.weapon:getModData()
+        if self.partType == "Laser" then
+            batteryLaser = mdBat.LaserBatteryReamin
+            mdBat.LaserBatteryReamin = nil
+        end
+        if self.partType == "Light" then
+            batteryLight = mdBat.LightBatteryReamin
+            mdBat.LightBatteryReamin = nil
+        end
+    end
+
     if amClient and sendClientCommand then
         local okId, weaponId = pcall(self.weapon.getID, self.weapon)
-        -- Send the part's fullType as well as the slot name: a slot-only match failed
-        -- server-side once while the part was demonstrably there under another type string.
-        -- Debt-settled counts as handed back: the player still owns the original item, so
-        -- the server must not hand out its copy either or the books go +1 again.
-        local playerHasItem = (added ~= nil) or debtSettled
         local okSend, err = pcall(sendClientCommand, self.character, "GGS", "detachPart", {
             slot = tostring(self.partType),
             full = (okFull and partFull or nil),
             weaponId = (okId and weaponId or nil),
-            handedBack = playerHasItem,
+            -- wantItem asks the server to hand the item back (its own detached part when
+            -- it has one, else a fresh instance at the sent condition). False when the
+            -- attach debt already settled the books or the slot refused to empty.
+            wantItem = wantItem,
+            condition = (okPC and partCond or nil),
+            batteryLaser = batteryLaser,
+            batteryLight = batteryLight,
         })
         print("[GGS RemoveFix] sent detachPart slot=" .. tostring(self.partType) .. " weaponId=" ..
-                  tostring(okId and weaponId or "nil") .. " handedBack=" .. tostring(playerHasItem) ..
+                  tostring(okId and weaponId or "nil") .. " wantItem=" .. tostring(wantItem) ..
+                  " cond=" .. tostring(okPC and partCond) ..
                   " ok=" .. tostring(okSend) .. (okSend and "" or (" err=" .. tostring(err))))
+    elseif not amClient then
+        print("[GGS RemoveFix] SP hand-back added=" .. tostring(added ~= nil))
     else
-        print("[GGS RemoveFix] NOT sending detachPart: isClient=" .. tostring(amClient) ..
-                  " sendClientCommand=" .. tostring(sendClientCommand ~= nil))
+        print("[GGS RemoveFix] NOT sending detachPart: sendClientCommand=" ..
+                  tostring(sendClientCommand ~= nil))
     end
 
     -- Exit state, both representations, one line. AWCWF_RenderPart:186 builds the held
