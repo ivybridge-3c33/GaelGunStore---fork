@@ -171,8 +171,10 @@ local function detachServerPart(playerObj, args)
                 local inventory = playerObj.getInventory and playerObj:getInventory()
                 if inventory then
                     local okAdd, added = pcall(inventory.AddItem, inventory, created)
-                    if okAdd and added and sendAddItemToContainer then
-                        pcall(sendAddItemToContainer, inventory, added)
+                    -- Same delivery as the dev spawner (see above): no display echo, and
+                    -- the condition set two lines up actually arrives.
+                    if okAdd and added and added.transmitCompleteItemToClients then
+                        pcall(added.transmitCompleteItemToClients, added)
                     end
                 end
                 print("[GGS ServerDBG] detachPart: created hand-back " .. tostring(args.full) ..
@@ -204,8 +206,12 @@ local function detachServerPart(playerObj, args)
         local inventory = playerObj.getInventory and playerObj:getInventory()
         if inventory then
             local okAdd, added = pcall(inventory.AddItem, inventory, give)
-            if okAdd and added and sendAddItemToContainer then
-                pcall(sendAddItemToContainer, inventory, added)
+            -- transmitCompleteItemToClients, NOT sendAddItemToContainer: the latter echoes
+            -- a second display-only twin on the client AND loses the item's condition in
+            -- transit (a @35 part arrived showing 100%). The dev spawner has delivered
+            -- items with this call all along, cleanly and with full state.
+            if okAdd and added and added.transmitCompleteItemToClients then
+                pcall(added.transmitCompleteItemToClients, added)
             end
             print("[GGS ServerDBG] detachPart: handed this side's part back")
         end
