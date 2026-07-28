@@ -2,6 +2,24 @@ GaelGunStore B42 Fork - Changelog
 (Fork by ivybridge-3c33. Original mod by Pen-Pen Pirulin. Framework: AWCWF.)
 
 ------------------------------------------------------------------------
+v1.4.3 - 2026-07-28
+------------------------------------------------------------------------
+Fixed (multiplayer polish, user-verified):
+- Removing a part showed a second phantom copy in the inventory panel
+  (unusable, undroppable, wrong condition) even though the server only
+  ever held one. The hand-back is now fully server-owned and delivered
+  with the item-sync path the dev spawner uses, so exactly one item
+  arrives, at the right condition, with laser/light battery state intact.
+- The inspect window's 3D view now draws parts that exist only in the
+  weapon's sync data (e.g. a handguard attached through the server) --
+  it previously read a single part store and showed a bare gun while the
+  character model was correct. Its Weapon Data sums now count those
+  parts too.
+- The inspect window's slot list is resolved at open time instead of
+  file-load time, so slots added by the framework extension (Handguard,
+  Mount and friends) are always scanned.
+
+------------------------------------------------------------------------
 v1.4.2 - 2026-07-28
 ------------------------------------------------------------------------
 Fixed (multiplayer, final duplicate-parts follow-up -- user-verified):
