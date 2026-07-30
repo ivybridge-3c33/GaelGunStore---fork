@@ -352,6 +352,28 @@ module Base
         	    cullFace = None,
     }
 
+    item Clip_308Clip20
+    {
+        Type = WeaponPart,
+        ItemType = base:weaponpart,
+        DisplayName = Clip 308 20 round,
+        Icon = 308Clip,
+        PartType = Clip,
+        Weight = 0.2,
+        Tags = GunParts,
+        MountOn = Base.ACE52_CQB;Base.ACE53;Base.AR10;Base.AssaultRifle2;Base.BAR;Base.CS5;Base.FAL;Base.FAL_CQB;Base.FR-F2;Base.G27;Base.G3A3;Base.GOL;Base.Galil;Base.HKG28;Base.HuntingRifle;Base.IA2_308;Base.JNG90;Base.L115A;Base.L96;Base.M1;Base.M110;Base.M1A1;Base.M21;Base.M24;Base.M39;Base.M40;Base.MK18;Base.SA58;Base.SR338;Base.ScarH;Base.Springfield_sniper;Base.V_M87;Base.WA2000;,
+        Tooltip = "308Clip 20 round",
+        ConditionMax = 100,
+        StaticModel = Clip_308Clip20,
+        WorldStaticModel = Clip_308Clip20,
+    }
+    model Clip_308Clip20
+    {
+                mesh = Mags/MAGS|308Clip20,
+        	    texture = GunTexture/308Clip_tex,
+        	    cullFace = None,
+    }
+
     item Clip_308Clip40
     {
         Type = WeaponPart,

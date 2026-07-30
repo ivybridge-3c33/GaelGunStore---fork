@@ -2120,7 +2120,7 @@ module Base
 
         attachment Grip
         {
-            offset = 0.0000 0.2170 0.0183,
+            offset = 0.0000 0.2170 0.0330,
             rotate = 0.0000 0.0000 0.0000,
         }
 
